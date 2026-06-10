@@ -1,4 +1,3 @@
-import { SettingsDialog } from '@/features/change-settings';
 import { PalettePicker } from '@/components/layout/PalettePicker';
 import { Button } from '@/components/ui/button';
 import {
@@ -21,7 +20,7 @@ import {
   Moon,
   Sun,
 } from 'lucide-react';
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 
 interface TopbarProps {
   onDeposit: () => void;
@@ -30,6 +29,11 @@ interface TopbarProps {
 
 type SettingsTab = 'email' | '2fa' | 'password';
 
+const SettingsDialog = lazy(() =>
+  import('@/features/change-settings').then((module) => ({
+    default: module.SettingsDialog,
+  })),
+);
 const TICKER = [
   { sym: 'BNB/USDT', price: '615.00', chg: '+1.24%', trend: 'up' },
   { sym: 'BTC/USDT', price: '68,240', chg: '-0.38%', trend: 'down' },
@@ -192,11 +196,15 @@ export function Topbar({ onDeposit, onWithdraw }: TopbarProps) {
         </div>
       </header>
 
-      <SettingsDialog
-        open={settingsOpen}
-        initialTab={settingsTab}
-        onOpenChange={setSettingsOpen}
-      />
+      <Suspense fallback={null}>
+        {settingsOpen && (
+          <SettingsDialog
+            open={settingsOpen}
+            initialTab={settingsTab}
+            onOpenChange={setSettingsOpen}
+          />
+        )}
+      </Suspense>
     </>
   );
 }
