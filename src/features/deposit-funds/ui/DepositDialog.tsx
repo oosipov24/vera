@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import QRCode from 'qrcode';
+import { CheckCircle2 } from 'lucide-react';
 
 import type { AssetSymbol, NetworkName, PaymentMethod, PaymentRail } from '@/types';
 import { Button } from '@/components/ui/button';
@@ -226,7 +227,7 @@ export function DepositDialog({ open, onClose, initialAsset }: DepositDialogProp
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[460px]">
         <DialogHeader>
           <DialogTitle>
-            <span className="m-title-row">
+            <span className="flex items-center gap-2">
               Deposit
               {step >= 2 && asset && <AssetPill label={`${asset} · ${effMethod}`} />}
             </span>
@@ -243,9 +244,9 @@ export function DepositDialog({ open, onClose, initialAsset }: DepositDialogProp
           )}
 
           {step === 2 && (
-            <div className="m-stack">
-              <div className="m-field">
-                <div className="m-field-label">Asset</div>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="text-sm font-medium text-foreground">Asset</div>
                 <Dropdown
                   value={asset}
                   options={assetList.map((item) => ({
@@ -263,10 +264,12 @@ export function DepositDialog({ open, onClose, initialAsset }: DepositDialogProp
               </div>
 
               {fiat && asset && (
-                <div className="rail-toggle">
+                <div className="flex gap-2">
                   {asset === 'EUR' && (
-                    <button
-                      className={`rail-btn ${rail === 'SEPA' ? 'on' : ''}`}
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant={rail === 'SEPA' ? 'default' : 'outline'}
                       onClick={() =>
                         setValue('rail', 'SEPA', {
                           shouldDirty: true,
@@ -275,11 +278,13 @@ export function DepositDialog({ open, onClose, initialAsset }: DepositDialogProp
                       }
                     >
                       SEPA
-                    </button>
+                    </Button>
                   )}
 
-                  <button
-                    className={`rail-btn ${rail === 'SWIFT' ? 'on' : ''}`}
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant={rail === 'SWIFT' ? 'default' : 'outline'}
                     onClick={() =>
                       setValue('rail', 'SWIFT', {
                         shouldDirty: true,
@@ -288,22 +293,24 @@ export function DepositDialog({ open, onClose, initialAsset }: DepositDialogProp
                     }
                   >
                     SWIFT
-                  </button>
+                  </Button>
                 </div>
               )}
 
-              <div className="m-field">
-                <div className="m-field-label">Amount</div>
+              <div className="space-y-2">
+                <div className="text-sm font-medium text-foreground">Amount</div>
 
-                <div className="amt-row">
+                <div className="flex items-center gap-2">
                   <input
-                    className="vinp"
+                    className="h-10 min-w-0 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                     type="number"
                     inputMode="decimal"
                     placeholder="0.00"
                     {...register('amount', { valueAsNumber: true })}
                   />
-                  <span className="amt-ccy">{asset || '—'}</span>
+                  <span className="min-w-12 rounded-md border border-border bg-muted px-3 py-2 text-center text-sm font-medium text-muted-foreground">
+                    {asset || '—'}
+                  </span>
                 </div>
 
                 {errors.amount && (
@@ -311,7 +318,7 @@ export function DepositDialog({ open, onClose, initialAsset }: DepositDialogProp
                 )}
 
                 {asset && amt > 0 && !isFiat(asset) && (
-                  <div className="amt-hint">
+                  <div className="text-xs text-muted-foreground">
                     ≈ $
                     {(amt * (PRICES_USD[asset] ?? 1)).toLocaleString('en-US', {
                       minimumFractionDigits: 2,
@@ -341,7 +348,7 @@ export function DepositDialog({ open, onClose, initialAsset }: DepositDialogProp
             ))}
 
           {step === 4 && (
-            <div className="m-stack">
+            <div className="space-y-4">
               <FileUpload
                 label={
                   effMethod === 'Crypto'
@@ -364,22 +371,14 @@ export function DepositDialog({ open, onClose, initialAsset }: DepositDialogProp
           )}
 
           {step === 5 && (
-            <div className="m-done">
-              <div className="m-done-ico">
-                <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-                  <circle cx="13" cy="13" r="12" stroke="var(--green)" strokeWidth="1.5" />
-                  <path
-                    d="M7.5 13.5l3.5 3.5 7.5-8"
-                    stroke="var(--green)"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+            <div className="rounded-xl border border-border bg-card p-5 text-center">
+              <div className="mx-auto mb-3 flex size-11 items-center justify-center rounded-full border border-primary/20 bg-primary/10 text-primary">
+                <CheckCircle2 className="size-5" />
               </div>
 
-              <div className="m-done-msg">
-                {amt.toLocaleString('en-US')} {asset} via {effMethod} — proof received. Pending review.
+              <div className="text-sm font-medium text-foreground">
+                {amt.toLocaleString('en-US')} {asset} via {effMethod} — proof received.
+                Pending review.
               </div>
             </div>
           )}
@@ -395,7 +394,7 @@ function BankDetails({ rail }: { rail: PaymentRail }) {
   const isSepa = rail === 'SEPA';
 
   return (
-    <div className="details-block">
+    <div className="space-y-3 rounded-xl border border-border bg-card p-4">
       <DetailRow label="Beneficiary" value="Vera Finance Ltd" />
       <DetailRow label="Bank" value={isSepa ? 'Bank Polska SA' : 'JPMorgan Chase, N.A.'} />
       <DetailRow
@@ -405,8 +404,8 @@ function BankDetails({ rail }: { rail: PaymentRail }) {
       />
       {!isSepa && <DetailRow label="SWIFT / BIC" value="CHASUS33" mono />}
 
-      <div className="m-warn">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <div className="flex items-start gap-2 rounded-lg border border-border bg-muted/40 p-3 text-xs text-muted-foreground">
+        <svg className="mt-0.5 size-4 shrink-0" viewBox="0 0 14 14" fill="none">
           <path
             d="M7 4.5v3M7 10h.01"
             stroke="currentColor"
@@ -415,9 +414,11 @@ function BankDetails({ rail }: { rail: PaymentRail }) {
           />
           <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.2" />
         </svg>
-        {isSepa
-          ? 'SEPA transfers arrive within 1–2 business days.'
-          : 'Settlements during U.S. banking hours only. No weekends.'}
+        <span>
+          {isSepa
+            ? 'SEPA transfers arrive within 1–2 business days.'
+            : 'Settlements during U.S. banking hours only. No weekends.'}
+        </span>
       </div>
     </div>
   );
@@ -462,34 +463,50 @@ function CryptoDetails({
   }, [address]);
 
   return (
-    <div className="details-block">
+    <div className="space-y-4 rounded-xl border border-border bg-card p-4">
       {nets.length > 1 && (
-        <div className="net-chips">
+        <div className="flex flex-wrap gap-2">
           {nets.map((item) => (
-            <button
+            <Button
               key={item}
-              className={`a-chip ${item === net ? 'on' : ''}`}
+              type="button"
+              size="sm"
+              variant={item === net ? 'default' : 'outline'}
               onClick={() => setNetwork(item)}
             >
               {item}
-            </button>
+            </Button>
           ))}
         </div>
       )}
 
-      <div className="qr-block">
-        <div className="qr-frame">
+      <div className="flex flex-col gap-4 sm:flex-row">
+        <div className="flex size-32 shrink-0 items-center justify-center rounded-xl border border-border bg-background p-2">
           {qrUrl ? (
-            <img src={qrUrl} alt={`Deposit QR for ${asset} on ${net}`} />
+            <img
+              className="size-full object-contain"
+              src={qrUrl}
+              alt={`Deposit QR for ${asset} on ${net}`}
+            />
           ) : (
-            <span className="qr-error">{qrError || 'Generating QR…'}</span>
+            <span className="text-center text-xs text-muted-foreground">
+              {qrError || 'Generating QR…'}
+            </span>
           )}
         </div>
 
-        <div className="qr-meta">
-          <div className="qr-net-label">{net}</div>
-          <div className="qr-addr-label">Deposit address ({asset})</div>
-          <div className="qr-addr">{address}</div>
+        <div className="min-w-0 flex-1 space-y-2">
+          <div className="inline-flex rounded-full border border-primary/20 bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
+            {net}
+          </div>
+
+          <div className="text-xs font-medium text-muted-foreground">
+            Deposit address ({asset})
+          </div>
+
+          <div className="break-all rounded-lg border border-border bg-muted/40 p-3 font-mono text-xs text-foreground">
+            {address}
+          </div>
         </div>
       </div>
     </div>
@@ -506,9 +523,15 @@ function DetailRow({
   mono?: boolean;
 }) {
   return (
-    <div className="detail-row">
-      <span className="detail-label">{label}</span>
-      <span className={`detail-value ${mono ? 'mono' : ''}`}>{value}</span>
+    <div className="flex flex-col gap-1 rounded-lg border border-border bg-background/60 p-3 sm:flex-row sm:items-center sm:justify-between">
+      <span className="text-xs font-medium text-muted-foreground">{label}</span>
+      <span
+        className={`break-all text-sm font-medium text-foreground ${
+          mono ? 'font-mono' : ''
+        }`}
+      >
+        {value}
+      </span>
     </div>
   );
 }
