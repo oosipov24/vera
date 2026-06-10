@@ -1,17 +1,15 @@
-import { useOrderStore, deriveTicket } from '@/store/useOrderStore';
-import { useUiStore } from '@/store/useUiStore';
 import { useCountdown } from '@/hooks/useCountdown';
-import { priceDecimals } from '@/lib/valuation';
 import { fmtAsset } from '@/lib/format';
-import { RefreshCw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { priceDecimals } from '@/lib/valuation';
+import { deriveTicket, useOrderStore } from '@/store/useOrderStore';
+import { useUiStore } from '@/store/useUiStore';
 
-//  Center panel: live two-sided RFQ quote with spread, countdown and notional.
+import { RfqHeroView } from './RfqHeroView';
+
 export function RfqHero() {
   const { quote, side, qty, unit } = useOrderStore();
-  const refreshQuote = useOrderStore((s) => s.refreshQuote);
-  const pushToast = useUiStore((s) => s.pushToast); 
+  const refreshQuote = useOrderStore((state) => state.refreshQuote);
+  const pushToast = useUiStore((state) => state.pushToast);
 
   const { secs, reset } = useCountdown({
     start: 28,
@@ -20,18 +18,17 @@ export function RfqHero() {
   });
 
   const { base, quote: quoteCcy, bid, ask, spreadBps } = quote;
-  const dp = priceDecimals((bid + ask) / 2);
+  const pricePrecision = priceDecimals((bid + ask) / 2);
   const { assetQty } = deriveTicket({ qty, unit, side, quote });
   const notionalQty = assetQty > 0 ? assetQty : 1;
-
   const spread = ask - bid;
-  const timerClassName =
-    secs <= 5
-      ? 'text-destructive'
-      : secs <= 10
-        ? 'text-warning'
-        : 'text-muted-foreground';
-        
+
+  const formatPrice = (value: number) =>
+    value.toLocaleString('en-US', {
+      minimumFractionDigits: pricePrecision,
+      maximumFractionDigits: pricePrecision,
+    });
+
   const onRefresh = () => {
     refreshQuote();
     reset();
@@ -39,149 +36,29 @@ export function RfqHero() {
   };
 
   return (
-    <section className="flex flex-col gap-4 border-b border-border px-5 py-4">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="text-sm font-bold text-foreground">
-            {base} / {quoteCcy} · OTC RFQ
-          </span>
-
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-xs font-bold text-success">
-            <span className="size-1.5 rounded-full bg-success" />
-            QUOTE ACTIVE
-          </span>
-
-          <span className={cn('font-mono text-xs', timerClassName)}>
-            {secs > 0 ? `Expires in ${secs}s` : 'Refreshing…'}
-          </span>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3 lg:justify-end">
-          <div className="text-left lg:text-right">
-            <div className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-              Notional
-            </div>
-            <div className="font-mono text-sm font-bold text-foreground">
-              {fmtAsset(base, notionalQty)} {base}
-            </div>
-          </div>
-
-          <span className="inline-flex rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
-            Vera Finance
-          </span>
-
-          <Button
-            type="button"
-            size="icon"
-            variant="outline"
-            onClick={onRefresh}
-            title="Refresh quote"
-            aria-label="Refresh quote"
-          >
-            <RefreshCw className="size-4" />
-          </Button>
-        </div>
-      </div>
-
-      <div className="grid gap-3 lg:grid-cols-[1fr_auto_1fr]">
-        <QuoteCard
-          tone="bid"
-          label="BID — YOU SELL"
-          price={bid.toLocaleString('en-US', {
-            minimumFractionDigits: dp,
-            maximumFractionDigits: dp,
-          })}
-          currency={quoteCcy}
-          tag="Best bid"
-        />
-
-        <div className="flex min-w-24 flex-row items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-3 lg:flex-col lg:justify-center">
-          <div className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-            Spread
-          </div>
-
-          <div className="font-mono text-lg font-bold text-foreground">
-            {spread.toLocaleString('en-US', {
-              minimumFractionDigits: dp,
-              maximumFractionDigits: dp,
-            })}
-          </div>
-
-          <div className="font-mono text-xs text-muted-foreground">
-            {spreadBps.toFixed(1)} bps
-          </div>
-        </div>
-
-        <QuoteCard
-          tone="ask"
-          label="ASK — YOU BUY"
-          price={ask.toLocaleString('en-US', {
-            minimumFractionDigits: dp,
-            maximumFractionDigits: dp,
-          })}
-          currency={quoteCcy}
-          tag="Best ask"
-        />
-      </div>
-    </section>
+    <RfqHeroView
+      base={base}
+      quoteCcy={quoteCcy}
+      timerText={secs > 0 ? `Expires in ${secs}s` : 'Refreshing…'}
+      timerTone={getTimerTone(secs)}
+      notionalText={`${fmtAsset(base, notionalQty)} ${base}`}
+      bidPrice={formatPrice(bid)}
+      askPrice={formatPrice(ask)}
+      spreadText={formatPrice(spread)}
+      spreadBpsText={`${spreadBps.toFixed(1)} bps`}
+      onRefresh={onRefresh}
+    />
   );
 }
-function QuoteCard({
-  tone,
-  label,
-  price,
-  currency,
-  tag,
-}: {
-  tone: 'bid' | 'ask';
-  label: string;
-  price: string;
-  currency: string;
-  tag: string;
-}) {
-  const isBid = tone === 'bid';
 
-  return (
-    <div
-      className={cn(
-        'relative rounded-xl border p-4',
-        isBid
-          ? 'border-success/20 bg-success/10'
-          : 'border-destructive/20 bg-destructive/10',
-      )}
-    >
-      <div
-        className={cn(
-          'text-[10px] font-bold uppercase tracking-wide',
-          isBid ? 'text-success' : 'text-destructive',
-        )}
-      >
-        {label}
-      </div>
+function getTimerTone(secs: number) {
+  if (secs <= 5) {
+    return 'danger';
+  }
 
-      <div
-        className={cn(
-          'mt-1 font-mono text-3xl font-bold tracking-tight',
-          isBid ? 'text-success' : 'text-destructive',
-        )}
-      >
-        {price}
-      </div>
+  if (secs <= 10) {
+    return 'warning';
+  }
 
-      <div className="mt-1 font-mono text-xs text-muted-foreground">
-        {price} {currency}
-      </div>
-
-      <span
-        className={cn(
-          'absolute bottom-3 right-3 rounded-md px-2 py-1 text-[10px] font-bold',
-          isBid
-            ? 'bg-success/10 text-success'
-            : 'bg-destructive/10 text-destructive',
-        )}
-      >
-        {tag}
-      </span>
-    </div>
-  );
+  return 'muted';
 }
