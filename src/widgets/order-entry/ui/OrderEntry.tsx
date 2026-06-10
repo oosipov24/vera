@@ -1,5 +1,4 @@
 import { Radio, Wifi } from 'lucide-react';
-import type { ChangeEvent } from 'react';
 import { useOrderStore, deriveTicket } from '@/store/useOrderStore';
 import { useTradeStore } from '@/store/useTradeStore';
 import { useUiStore } from '@/store/useUiStore';
@@ -9,6 +8,7 @@ import { fmtAsset } from '@/lib/format';
 import { priceDecimals, splitPair } from '@/lib/valuation';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
 
 export function OrderEntry() {
   const { pair, side, qty, unit, quote } = useOrderStore();
@@ -103,15 +103,13 @@ export function OrderEntry() {
         <LabelText>Quantity</LabelText>
 
         <div className="flex items-center gap-2">
-          <input
-            className="h-10 min-w-0 flex-1 rounded-md border border-input bg-background px-3 py-2 font-mono text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          <Input
+            className="min-w-0 flex-1 font-mono"
             type="number"
             inputMode="decimal"
             placeholder="0.00"
             value={qty}
-            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-              setQty(event.target.value)
-            }
+            onChange={(event) => setQty(event.target.value)}
           />
 
           <div className="flex overflow-hidden rounded-md border border-border bg-muted">
