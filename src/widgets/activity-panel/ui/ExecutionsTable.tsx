@@ -5,6 +5,7 @@ import { StatusBadge } from './StatusBadge';
 import { Dropdown } from '@/shared/ui/Dropdown';
 import { fmtAsset } from '@/lib/format';
 import { cn } from '@/lib/utils';
+import { DataTableCell, DataTableHead } from '@/shared/ui/data-table-parts';
 
 const STATUS_OPTS: Array<'All Status' | ExecutionStatus> = ['All Status', 'Executed', 'Pending', 'Rejected'];
 
@@ -54,15 +55,15 @@ export function ExecutionsTable() {
         <table className="w-full border-collapse text-sm">
           <thead>
             <tr className="border-b border-border bg-background">
-              <TableHead>Order ID</TableHead>
-              <TableHead>Pair</TableHead>
-              <TableHead>Side</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Total</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead>Executed</TableHead>
+              <DataTableHead>Order ID</DataTableHead>
+              <DataTableHead>Pair</DataTableHead>
+              <DataTableHead>Side</DataTableHead>
+              <DataTableHead>Amount</DataTableHead>
+              <DataTableHead>Price</DataTableHead>
+              <DataTableHead>Total</DataTableHead>
+              <DataTableHead>Status</DataTableHead>
+              <DataTableHead>Created</DataTableHead>
+              <DataTableHead>Executed</DataTableHead>
             </tr>
           </thead>
 
@@ -72,30 +73,30 @@ export function ExecutionsTable() {
                 key={execution.id}
                 className="border-b border-border last:border-b-0 hover:bg-muted/40"
               >
-                <TableCell mono>{execution.id}</TableCell>
-                <TableCell strong>{execution.pair}</TableCell>
-                <TableCell>
+                <DataTableCell mono>{execution.id}</DataTableCell>
+                <DataTableCell strong>{execution.pair}</DataTableCell>
+                <DataTableCell>
                   <SideTag side={execution.side} />
-                </TableCell>
-                <TableCell mono>
+                </DataTableCell>
+                <DataTableCell mono>
                   {fmtAsset(execution.asset, execution.amount)}{' '}
                   <span className="text-xs text-muted-foreground">
                     {execution.asset}
                   </span>
-                </TableCell>
-                <TableCell mono>
+                </DataTableCell>
+                <DataTableCell mono>
                   {execution.price.toLocaleString('en-US')}
-                </TableCell>
-                <TableCell mono>
+                </DataTableCell>
+                <DataTableCell mono>
                   {execution.total.toLocaleString('en-US', {
                     minimumFractionDigits: 2,
                   })}
-                </TableCell>
-                <TableCell>
+                </DataTableCell>
+                <DataTableCell>
                   <StatusBadge status={execution.status} />
-                </TableCell>
-                <TableCell time>{execution.created}</TableCell>
-                <TableCell time>{execution.executed}</TableCell>
+                </DataTableCell>
+                <DataTableCell time>{execution.created}</DataTableCell>
+                <DataTableCell time>{execution.executed}</DataTableCell>
               </tr>
             ))}
 
@@ -117,38 +118,6 @@ export function ExecutionsTable() {
         {rows.length} rows
       </div>
     </div>
-  );
-}
-function TableHead({ children }: { children: string }) {
-  return (
-    <th className="sticky top-0 z-10 whitespace-nowrap bg-background px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-      {children}
-    </th>
-  );
-}
-
-function TableCell({
-  children,
-  mono,
-  strong,
-  time,
-}: {
-  children: React.ReactNode;
-  mono?: boolean;
-  strong?: boolean;
-  time?: boolean;
-}) {
-  return (
-    <td
-      className={cn(
-        'whitespace-nowrap px-3 py-3 align-middle text-muted-foreground',
-        mono && 'font-mono text-foreground',
-        strong && 'font-semibold text-foreground',
-        time && 'font-mono text-xs text-muted-foreground',
-      )}
-    >
-      {children}
-    </td>
   );
 }
 

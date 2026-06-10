@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from 'react';
+import { useMemo, useState } from 'react';
 import { useTradeStore } from '@/store/useTradeStore';
 import type { AssetSymbol, MethodFilter, RailFilter, StatusFilter } from '@/types';
 import { StatusBadge } from './StatusBadge';
@@ -9,6 +9,7 @@ import { fmtAsset } from '@/lib/format';
 import { Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { DataTableCell, DataTableHead } from '@/shared/ui/data-table-parts';
 
 
 const RAIL_OPTS: RailFilter[] = ['All Rails', 'Fiat', 'Crypto'];
@@ -132,14 +133,14 @@ export function TransactionsTable() {
         <table className="w-full border-collapse text-sm">
           <thead>
             <tr className="border-b border-border bg-background">
-              <TableHead>Txn ID</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Asset</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Method</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead>Note / Reason</TableHead>
+              <DataTableHead>Txn ID</DataTableHead>
+              <DataTableHead>Type</DataTableHead>
+              <DataTableHead>Asset</DataTableHead>
+              <DataTableHead>Amount</DataTableHead>
+              <DataTableHead>Method</DataTableHead>
+              <DataTableHead>Status</DataTableHead>
+              <DataTableHead>Created</DataTableHead>
+              <DataTableHead>Note / Reason</DataTableHead>
             </tr>
           </thead>
 
@@ -152,20 +153,20 @@ export function TransactionsTable() {
                   key={transaction.id}
                   className="border-b border-border last:border-b-0 hover:bg-muted/40"
                 >
-                  <TableCell mono>{transaction.id}</TableCell>
-                  <TableCell>
+                  <DataTableCell mono>{transaction.id}</DataTableCell>
+                  <DataTableCell>
                     <TypeTag type={transaction.type} />
-                  </TableCell>
-                  <TableCell strong>{transaction.asset}</TableCell>
-                  <TableCell mono>
+                  </DataTableCell>
+                  <DataTableCell strong>{transaction.asset}</DataTableCell>
+                  <DataTableCell mono>
                     {fmtAsset(transaction.asset, transaction.amount)}
-                  </TableCell>
-                  <TableCell>{transaction.method}</TableCell>
-                  <TableCell>
+                  </DataTableCell>
+                  <DataTableCell>{transaction.method}</DataTableCell>
+                  <DataTableCell>
                     <StatusBadge status={transaction.status} />
-                  </TableCell>
-                  <TableCell time>{transaction.created}</TableCell>
-                  <TableCell>
+                  </DataTableCell>
+                  <DataTableCell time>{transaction.created}</DataTableCell>
+                  <DataTableCell>
                     {transaction.reason ? (
                       <TooltipCell
                         text={transaction.reason}
@@ -180,7 +181,7 @@ export function TransactionsTable() {
                     ) : (
                       <span className="text-muted-foreground">—</span>
                     )}
-                  </TableCell>
+                  </DataTableCell>
                 </tr>
               );
             })}
@@ -203,38 +204,6 @@ export function TransactionsTable() {
         {rows.length} rows
       </div>
     </div>
-  );
-}
-function TableHead({ children }: { children: string }) {
-  return (
-    <th className="sticky top-0 z-10 whitespace-nowrap bg-background px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-      {children}
-    </th>
-  );
-}
-
-function TableCell({
-  children,
-  mono,
-  strong,
-  time,
-}: {
-  children: ReactNode;
-  mono?: boolean;
-  strong?: boolean;
-  time?: boolean;
-}) {
-  return (
-    <td
-      className={cn(
-        'whitespace-nowrap px-3 py-3 align-middle text-muted-foreground',
-        mono && 'font-mono text-foreground',
-        strong && 'font-semibold text-foreground',
-        time && 'font-mono text-xs text-muted-foreground',
-      )}
-    >
-      {children}
-    </td>
   );
 }
 
