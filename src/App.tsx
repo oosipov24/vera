@@ -47,20 +47,20 @@ export default function App() {
   };
 
   return (
-    <div className="app-shell">
+    <div className="flex h-screen flex-col overflow-hidden bg-background">
       <Topbar onDeposit={() => openDeposit()} onWithdraw={() => openWithdraw()} />
 
-      <main className="app-grid">
-        <div className="col col-left">
+      <main className="grid min-h-0 flex-1 grid-cols-[320px_1fr_360px] gap-px overflow-hidden bg-border max-[1200px]:grid-cols-[280px_1fr]">
+        <div className="min-h-0 overflow-y-auto bg-background p-[18px]">
           <OrderEntry />
         </div>
 
-        <div className="col col-center">
+        <div className="flex min-h-0 flex-col overflow-y-auto bg-background">
           <RfqHero />
           <ActivityPanel />
         </div>
 
-        <div className="col col-right">
+        <div className="min-h-0 overflow-y-auto bg-background p-0 max-[1200px]:hidden">
           <Portfolio onDeposit={openDeposit} onWithdraw={openWithdraw} />
         </div>
       </main>

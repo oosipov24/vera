@@ -1,7 +1,6 @@
 /**
  * Base reset + element-level styles. Ported from the approved prototype.
- * Design variables live in tokens.css; component class styles in components.css.
- */
+* Design variables live in tokens.css; component styling is handled with Tailwind utilities and shadcn/ui. */
 
 *,
 *::before,
