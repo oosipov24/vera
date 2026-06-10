@@ -6,6 +6,16 @@ import { cn } from '@/lib/utils';
 import { PALETTES } from '@/constants/market';
 import { useUiStore } from '@/store/useUiStore';
 
+const PALETTE_SWATCH_CLASS_NAMES = [
+  'bg-[var(--palette-0)]',
+  'bg-[var(--palette-1)]',
+  'bg-[var(--palette-2)]',
+  'bg-[var(--palette-3)]',
+  'bg-[var(--palette-4)]',
+  'bg-[var(--palette-5)]',
+  'bg-[var(--palette-6)]',
+  'bg-[var(--palette-7)]',
+] as const;
 /**
  * Accent palette picker. Opens a popover of swatches; selecting one retints the
  * whole platform via the UI store, which calls the palette engine.
@@ -59,9 +69,9 @@ export function PalettePicker() {
                 type="button"
                 className={cn(
                   'relative size-8 rounded-full border-2 border-transparent transition-transform hover:scale-110',
+                  PALETTE_SWATCH_CLASS_NAMES[index] ?? 'bg-primary',
                   index === paletteIndex && 'border-foreground',
                 )}
-                style={{ background: palette.sw }}
                 title={palette.name}
                 aria-label={palette.name}
                 onClick={() => {

@@ -59,6 +59,15 @@
   --sidebar-ring: var(--purple);
 
   --radius: 0.625rem;
+
+  --palette-0: #7B6EF6;
+  --palette-1: #6366F1;
+  --palette-2: #3B82F6;
+  --palette-3: #0EA5E9;
+  --palette-4: #14B8A6;
+  --palette-5: #10B981;
+  --palette-6: #F59E0B;
+  --palette-7: #F43F5E;
 }
 
 @theme inline {

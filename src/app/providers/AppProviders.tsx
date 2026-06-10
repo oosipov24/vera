@@ -1,8 +1,10 @@
 import { useEffect, type ReactNode } from 'react';
 
-import { ToastProvider } from './ToastProvider';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { applyPalette } from '@/lib/palette';
 import { useUiStore } from '@/store/useUiStore';
+
+import { ToastProvider } from './ToastProvider';
 
 interface AppProvidersProps {
   children: ReactNode;
@@ -17,9 +19,9 @@ export function AppProviders({ children }: AppProvidersProps) {
   }, [paletteIndex, theme]);
 
   return (
-    <>
+    <TooltipProvider delayDuration={250}>
       {children}
       <ToastProvider />
-    </>
+    </TooltipProvider>
   );
 }
