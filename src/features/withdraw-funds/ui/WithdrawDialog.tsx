@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { CheckCircle2 } from 'lucide-react';
 
 import type { AssetSymbol, PaymentMethod } from '@/types';
 import { Button } from '@/components/ui/button';
@@ -12,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+
 import { Dropdown } from '@/shared/ui/Dropdown';
 import {
   StepBars,
@@ -271,7 +273,7 @@ export function WithdrawDialog({
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[520px]">
         <DialogHeader>
           <DialogTitle>
-            <span className="m-title-row">
+            <span className="flex items-center gap-2">
               Withdraw
               {asset && step !== 1 && <AssetPill label={`${asset} · ${effMethod}`} />}
             </span>
@@ -288,9 +290,9 @@ export function WithdrawDialog({
           )}
 
           {step === 2 && (
-            <div className="m-stack">
-              <div className="m-field">
-                <div className="m-field-label">Asset</div>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="text-sm font-medium text-foreground">Asset</div>
                 <Dropdown
                   value={asset}
                   options={assetList.map((item) => ({
@@ -308,10 +310,12 @@ export function WithdrawDialog({
               </div>
 
               {fiat && asset && (
-                <div className="rail-toggle">
+                <div className="flex gap-2">
                   {asset === 'EUR' && (
-                    <button
-                      className={`rail-btn ${rail === 'SEPA' ? 'on' : ''}`}
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant={rail === 'SEPA' ? 'default' : 'outline'}
                       onClick={() =>
                         setValue('rail', 'SEPA', {
                           shouldDirty: true,
@@ -320,11 +324,13 @@ export function WithdrawDialog({
                       }
                     >
                       SEPA
-                    </button>
+                    </Button>
                   )}
 
-                  <button
-                    className={`rail-btn ${rail === 'SWIFT' ? 'on' : ''}`}
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant={rail === 'SWIFT' ? 'default' : 'outline'}
                     onClick={() =>
                       setValue('rail', 'SWIFT', {
                         shouldDirty: true,
@@ -333,19 +339,22 @@ export function WithdrawDialog({
                     }
                   >
                     SWIFT
-                  </button>
+                  </Button>
                 </div>
               )}
 
-              <div className="m-field">
-                <div className="m-field-label-row">
-                  <span className="m-field-label">Amount</span>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-sm font-medium text-foreground">Amount</span>
 
                   {asset && (
-                    <span className="m-avail">
+                    <span className="flex items-center gap-2 text-xs text-muted-foreground">
                       Available: {fmtAsset(asset, bal)} {asset}
-                      <button
-                        className="amt-all"
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 px-2 text-xs"
                         onClick={() =>
                           setValue('amount', String(bal), {
                             shouldDirty: true,
@@ -354,20 +363,22 @@ export function WithdrawDialog({
                         }
                       >
                         All
-                      </button>
+                      </Button>
                     </span>
                   )}
                 </div>
 
-                <div className="amt-row">
+                <div className="flex items-center gap-2">
                   <input
-                    className="vinp"
+                    className="h-10 min-w-0 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                     type="number"
                     inputMode="decimal"
                     placeholder="0.00"
                     {...register('amount')}
                   />
-                  <span className="amt-ccy">{asset || '—'}</span>
+                  <span className="min-w-12 rounded-md border border-border bg-muted px-3 py-2 text-center text-sm font-medium text-muted-foreground">
+                    {asset || '—'}
+                  </span>
                 </div>
 
                 {errors.amount && (
@@ -377,9 +388,11 @@ export function WithdrawDialog({
                 {asset &&
                   amt > 0 &&
                   (exceeds ? (
-                    <div className="amt-hint err">⚠ Exceeds available balance</div>
+                    <div className="rounded-md border border-destructive/20 bg-destructive/10 px-3 py-2 text-xs text-destructive">
+                      ⚠ Exceeds available balance
+                    </div>
                   ) : !isFiat(asset) ? (
-                    <div className="amt-hint">
+                    <div className="text-xs text-muted-foreground">
                       ≈ $
                       {(amt * (PRICES_USD[asset] ?? 1)).toLocaleString('en-US', {
                         minimumFractionDigits: 2,
@@ -392,13 +405,13 @@ export function WithdrawDialog({
           )}
 
           {step === 3 && asset && (
-            <div className="m-stack">
+            <div className="space-y-4">
               {fiat ? (
-                <div className="m-fields-grid">
+                <div className="grid gap-4 sm:grid-cols-2">
                   {fiatFieldsFor(effMethod, asset).map((field) => (
                     <Field key={field.id} label={field.lbl} required={field.req}>
                       <input
-                        className="vinp"
+                        className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                         type="text"
                         placeholder={field.ph}
                         value={destination[field.id] ?? ''}
@@ -415,32 +428,34 @@ export function WithdrawDialog({
                   ))}
                 </div>
               ) : (
-                <div className="m-field">
-                  <div className="m-field-label">Network</div>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="text-sm font-medium text-foreground">Network</div>
 
-                  <Dropdown
-                    value={network ?? ''}
-                    options={networksFor(asset)}
-                    onChange={(nextNetwork) => {
-                      setValue('network', nextNetwork, {
-                        shouldDirty: true,
-                        shouldValidate: true,
-                      });
-                      setValue('destination', {}, { shouldDirty: true });
-                      setValue('proof', null, { shouldDirty: true });
-                    }}
-                    placeholder="Select network"
-                  />
+                    <Dropdown
+                      value={network ?? ''}
+                      options={networksFor(asset)}
+                      onChange={(nextNetwork) => {
+                        setValue('network', nextNetwork, {
+                          shouldDirty: true,
+                          shouldValidate: true,
+                        });
+                        setValue('destination', {}, { shouldDirty: true });
+                        setValue('proof', null, { shouldDirty: true });
+                      }}
+                      placeholder="Select network"
+                    />
 
-                  {errors.network && (
-                    <p className="text-xs text-destructive">
-                      {errors.network.message}
-                    </p>
-                  )}
+                    {errors.network && (
+                      <p className="text-xs text-destructive">
+                        {errors.network.message}
+                      </p>
+                    )}
+                  </div>
 
                   <Field label="Destination Address" required>
                     <input
-                      className="vinp"
+                      className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                       type="text"
                       placeholder={`Your ${asset} wallet address`}
                       value={destination.address ?? ''}
@@ -457,7 +472,7 @@ export function WithdrawDialog({
                 </div>
               )}
 
-              <div className="m-stack">
+              <div className="space-y-4">
                 <FileUpload
                   label="Supporting Document (invoice / contract)"
                   prompt="Attach invoice or contract"
@@ -477,29 +492,13 @@ export function WithdrawDialog({
           )}
 
           {step === 'done' && (
-            <div className="m-done">
-              <div className="m-done-ico">
-                <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-                  <circle
-                    cx="13"
-                    cy="13"
-                    r="12"
-                    stroke="var(--green)"
-                    strokeWidth="1.5"
-                  />
-                  <path
-                    d="M7.5 13.5l3.5 3.5 7.5-8"
-                    stroke="var(--green)"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+            <div className="rounded-xl border border-border bg-card p-5 text-center">
+              <div className="mx-auto mb-3 flex size-11 items-center justify-center rounded-full border border-primary/20 bg-primary/10 text-primary">
+                <CheckCircle2 className="size-5" />
               </div>
 
-              <div className="m-done-msg">
-                {amt.toLocaleString('en-US')} {asset} via {effMethod} is being
-                processed.
+              <div className="text-sm font-medium text-foreground">
+                {amt.toLocaleString('en-US')} {asset} via {effMethod} is being processed.
               </div>
             </div>
           )}
