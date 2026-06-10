@@ -23,7 +23,7 @@ import {
 import { fmtAsset } from '@/lib/format';
 type Method = 'Bank' | 'Crypto';
 
-interface WithdrawModalProps {
+interface WithdrawDialogProps {
   open: boolean;
   onClose: () => void;
   initialAsset?: AssetSymbol | null;
@@ -37,7 +37,7 @@ interface WithdrawModalProps {
  *     network dropdown) + supporting-document upload
  *  done — debits the balance via the store and records the transaction
  */
-export function WithdrawModal({ open, onClose, initialAsset }: WithdrawModalProps) {
+export function WithdrawDialog({ open, onClose, initialAsset }: WithdrawDialogProps) {
   const withdraw = useTradeStore((s) => s.withdraw);
   const balances = useTradeStore((s) => s.balances);
   const pushToast = useUiStore((s) => s.pushToast);
