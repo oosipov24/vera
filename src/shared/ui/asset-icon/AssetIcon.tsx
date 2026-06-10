@@ -1,34 +1,40 @@
-import type { CSSProperties } from 'react';
-
 import type { AssetSymbol } from '@/types';
+
 import { cn } from '@/lib/utils';
 
 import { ASSET_ICON_SVG } from './assetIconSvg';
 
 interface AssetIconProps {
   asset: AssetSymbol;
-  /** Pixel size of the round icon. Defaults to 32, the SVG native size. */
-  size?: number;
+  size?: 'sm' | 'md' | 'lg';
   className?: string;
 }
 
-// Renders the local SVG icon of the asset or fallback with a ticker.
-export function AssetIcon({ asset, size = 32, className }: AssetIconProps) {
-  const svg = ASSET_ICON_SVG[asset];
+const ASSET_ICON_SIZE_CLASS_NAMES: Record<
+  NonNullable<AssetIconProps['size']>,
+  string
+> = {
+  sm: 'size-6',
+  md: 'size-8',
+  lg: 'size-10',
+};
 
-  const style: CSSProperties = {
-    width: size,
-    height: size,
-  };
+export function AssetIcon({
+  asset,
+  size = 'md',
+  className,
+}: AssetIconProps) {
+  const svg = ASSET_ICON_SVG[asset];
 
   const wrapperClassName = cn(
     'flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted text-muted-foreground',
+    ASSET_ICON_SIZE_CLASS_NAMES[size],
     className,
   );
 
   if (!svg) {
     return (
-      <div className={wrapperClassName} style={style}>
+      <div className={wrapperClassName}>
         <span className="text-[9px] font-bold">{asset}</span>
       </div>
     );
@@ -37,8 +43,6 @@ export function AssetIcon({ asset, size = 32, className }: AssetIconProps) {
   return (
     <div
       className={wrapperClassName}
-      style={style}
-      // Static, trusted SVG constants — safe to inject.
       dangerouslySetInnerHTML={{ __html: svg }}
     />
   );
