@@ -1,4 +1,8 @@
-import { useEffect, useState, type ChangeEvent } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import QRCode from 'qrcode';
+
 import type { AssetSymbol, NetworkName, PaymentMethod, PaymentRail } from '@/types';
 import { Modal } from '@/components/ui/feedback';
 import { Dropdown } from '@/components/ui/Dropdown';
@@ -19,98 +23,152 @@ import {
   isFiat,
   networksFor,
 } from '@/constants/assets';
-import QRCode from 'qrcode';
-
+import {
+  depositSchema,
+  toPaymentMethod,
+  type DepositFormValues,
+  type DepositSubmitValues,
+} from '@/features/deposit-funds/model/schemas';
 type Method = 'Bank' | 'Crypto';
 
 interface DepositDialogProps {
   open: boolean;
   onClose: () => void;
-  /** Optional asset to preselect (from a balance card quick-action). */
   initialAsset?: AssetSymbol | null;
 }
 
-/**
- * Deposit flow:
- *  1. method (Bank transfer / Crypto)
- *  2. asset (fiat list for Bank, crypto list for Crypto) + amount; fiat shows
- *     a rail toggle filtered by currency (EUR → SEPA+SWIFT, else SWIFT only)
- *  3. bank details OR crypto address + QR (network-filtered)
- *  4. upload proof of payment
- *  5. done — records a Pending transaction
- */
+const EMPTY_DEPOSIT_VALUES: DepositFormValues = {
+  method: undefined,
+  rail: 'SWIFT',
+  asset: '',
+  amount: '',
+  network: '',
+  proof: null,
+};
+
 export function DepositDialog({ open, onClose, initialAsset }: DepositDialogProps) {
-  const deposit = useTradeStore((s) => s.deposit);
-  const pushToast = useUiStore((s) => s.pushToast);
+  const deposit = useTradeStore((state) => state.deposit);
+  const pushToast = useUiStore((state) => state.pushToast);
 
   const [step, setStep] = useState(1);
-  const [method, setMethod] = useState<Method | null>(null);
-  const [asset, setAsset] = useState<AssetSymbol | ''>('');
-  const [rail, setRail] = useState<PaymentRail>('SWIFT');
-  const [amount, setAmount] = useState('');
-  const [network, setNetwork] = useState<NetworkName | null>(null);
-  const [proof, setProof] = useState<File | null>(null);
 
-  // When opening, we reset the form and apply initialAsset.
-  useEffect(() => {
-    if (!open) return;
-    if (initialAsset) {
-      const fiat = isFiat(initialAsset);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<DepositFormValues, unknown, DepositSubmitValues>({
+    resolver: zodResolver(depositSchema),
+    defaultValues: EMPTY_DEPOSIT_VALUES,
+  });
 
-      setMethod(fiat ? 'Bank' : 'Crypto');
-      setAsset(initialAsset);
-      setStep(2);
-
-      if (!fiat) {
-        setNetwork(networksFor(initialAsset)[0]);
-      } else {
-        setNetwork(null);
-      }
-      setRail(initialAsset === 'EUR' ? 'SEPA' : 'SWIFT');
-
-    } else {
-      setMethod(null);
-      setAsset('');
-      setStep(1);
-    }
-    setAmount('');
-    setProof(null);
-  }, [open, initialAsset]);
+  const method = watch('method');
+  const rail = watch('rail');
+  const asset = watch('asset');
+  const amount = watch('amount');
+  const network = watch('network');
+  const proof = watch('proof');
 
   const fiat = method === 'Bank';
-  const effMethod: PaymentMethod = fiat ? rail : 'Crypto';
-  const amt = parseFloat(amount) || 0;
+  const effMethod: PaymentMethod = toPaymentMethod(method, rail);
+  const amt = Number(amount) || 0;
   const assetList = fiat ? FIAT_SET : CRYPTO_SET;
 
-  const onPickAsset = (a: AssetSymbol) => {
-    setAsset(a);
+  useEffect(() => {
+    if (!open) return;
 
-    if (fiat) {
-      setRail(a === 'EUR' ? 'SEPA' : 'SWIFT');
-      setNetwork(null);
+    if (initialAsset) {
+      const initialIsFiat = isFiat(initialAsset);
+
+      reset({
+        method: initialIsFiat ? 'Bank' : 'Crypto',
+        rail: initialAsset === 'EUR' ? 'SEPA' : 'SWIFT',
+        asset: initialAsset,
+        amount: '',
+        network: initialIsFiat ? '' : networksFor(initialAsset)[0],
+        proof: null,
+      });
+
+      setStep(2);
       return;
     }
 
-    setNetwork(networksFor(a)[0]);
+    reset(EMPTY_DEPOSIT_VALUES);
+    setStep(1);
+  }, [open, initialAsset, reset]);
+
+  const onPickMethod = (nextMethod: Method | null) => {
+    setValue('method', nextMethod ?? undefined, { shouldDirty: true, shouldValidate: true });
+    setValue('asset', '', { shouldDirty: true });
+    setValue('amount', '', { shouldDirty: true });
+    setValue('network', '', { shouldDirty: true });
+    setValue('proof', null, { shouldDirty: true });
+  };
+
+  const onPickAsset = (nextAsset: AssetSymbol) => {
+    setValue('asset', nextAsset, { shouldDirty: true, shouldValidate: true });
+
+    if (fiat) {
+      setValue('rail', nextAsset === 'EUR' ? 'SEPA' : 'SWIFT', {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+      setValue('network', '', { shouldDirty: true });
+      return;
+    }
+
+    setValue('network', networksFor(nextAsset)[0], {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  };
+
+  const onSubmit = (values: DepositSubmitValues) => {
+    if (!values.method || !values.asset) return;
+
+    deposit(values.asset as AssetSymbol, values.amount, toPaymentMethod(values.method, values.rail));
+
+    setStep(5);
+
+    pushToast(
+      'success',
+      'Deposit submitted',
+      'Proof received. Transaction added as Pending.',
+    );
   };
 
   const next = () => {
     if (step === 1 && method) {
       setStep(2);
-      setAsset('');
-    } else if (step === 2 && asset && amt > 0) {
+      setValue('asset', '', { shouldDirty: true });
+      return;
+    }
+
+    if (step === 2 && asset && amt > 0) {
       setStep(3);
-    } else if (step === 3) {
+      return;
+    }
+
+    if (step === 3) {
       setStep(4);
-    } else if (step === 4 && proof && asset) {
-      deposit(asset, amt, effMethod);
-      setStep(5);
-      pushToast('success', 'Deposit submitted', 'Proof received. Transaction added as Pending.');
+      return;
+    }
+
+    if (step === 4) {
+      void handleSubmit(onSubmit)();
     }
   };
-  const back = () => step > 1 && step < 5 && setStep(step - 1);
+
+  const back = () => {
+    if (step > 1 && step < 5) {
+      setStep(step - 1);
+    }
+  };
 
   const nextLabel = step === 3 ? 'Deposit Made' : step === 4 ? 'Confirm' : 'Continue';
+
   const nextEnabled =
     (step === 1 && !!method) ||
     (step === 2 && !!asset && amt > 0) ||
@@ -125,21 +183,32 @@ export function DepositDialog({ open, onClose, initialAsset }: DepositDialogProp
     'Submitted',
   ][step - 1];
 
-  const footer = step === 5 ? (
-    <button className="m-btn primary full" onClick={onClose}>Close</button>
-  ) : (
-    <div className="m-actions">
-      {step > 1 && <button className="m-btn ghost" onClick={back}>Back</button>}
-      <button className="m-btn cancel" onClick={onClose}>Cancel</button>
-      <button
-        className={`m-btn ${step === 4 ? 'primary' : 'success'}`}
-        disabled={!nextEnabled}
-        onClick={next}
-      >
-        {nextLabel}
+  const footer =
+    step === 5 ? (
+      <button className="m-btn primary full" onClick={onClose}>
+        Close
       </button>
-    </div>
-  );
+    ) : (
+      <div className="m-actions">
+        {step > 1 && (
+          <button className="m-btn ghost" onClick={back}>
+            Back
+          </button>
+        )}
+
+        <button className="m-btn cancel" onClick={onClose}>
+          Cancel
+        </button>
+
+        <button
+          className={`m-btn ${step === 4 ? 'primary' : 'success'}`}
+          disabled={!nextEnabled}
+          onClick={next}
+        >
+          {nextLabel}
+        </button>
+      </div>
+    );
 
   return (
     <Modal
@@ -156,68 +225,142 @@ export function DepositDialog({ open, onClose, initialAsset }: DepositDialogProp
     >
       {step < 5 && <StepBars total={4} current={step} />}
 
-      {/* method */}
       {step === 1 && (
-        <MethodCards value={method} onChange={setMethod} />
+        <MethodCards value={method ?? null} onChange={onPickMethod} />
       )}
 
-      {/* asset + amount */}
       {step === 2 && (
         <div className="m-stack">
           <div className="m-field">
             <div className="m-field-label">Asset</div>
             <Dropdown
               value={asset}
-              options={assetList.map((a) => ({ value: a, label: `${a} — ${ASSET_META[a].name}`, search: `${a} ${ASSET_META[a].name}` }))}
+              options={assetList.map((item) => ({
+                value: item,
+                label: `${item} — ${ASSET_META[item].name}`,
+                search: `${item} ${ASSET_META[item].name}`,
+              }))}
               onChange={onPickAsset}
               searchable
               placeholder="Select asset"
             />
+            {errors.asset && (
+              <p className="text-xs text-destructive">{errors.asset.message}</p>
+            )}
           </div>
 
           {fiat && asset && (
             <div className="rail-toggle">
               {asset === 'EUR' && (
-                <button className={`rail-btn ${rail === 'SEPA' ? 'on' : ''}`} onClick={() => setRail('SEPA')}>SEPA</button>
+                <button
+                  className={`rail-btn ${rail === 'SEPA' ? 'on' : ''}`}
+                  onClick={() =>
+                    setValue('rail', 'SEPA', {
+                      shouldDirty: true,
+                      shouldValidate: true,
+                    })
+                  }
+                >
+                  SEPA
+                </button>
               )}
-              <button className={`rail-btn ${rail === 'SWIFT' ? 'on' : ''}`} onClick={() => setRail('SWIFT')}>SWIFT</button>
+
+              <button
+                className={`rail-btn ${rail === 'SWIFT' ? 'on' : ''}`}
+                onClick={() =>
+                  setValue('rail', 'SWIFT', {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  })
+                }
+              >
+                SWIFT
+              </button>
             </div>
           )}
 
           <div className="m-field">
             <div className="m-field-label">Amount</div>
+
             <div className="amt-row">
-              <input className="vinp" type="number" inputMode="decimal" placeholder="0.00" value={amount} onChange={(e: ChangeEvent<HTMLInputElement>) => setAmount(e.target.value)} />
+              <input
+                className="vinp"
+                type="number"
+                inputMode="decimal"
+                placeholder="0.00"
+                {...register('amount', { valueAsNumber: true })}
+              />
               <span className="amt-ccy">{asset || '—'}</span>
             </div>
+
+            {errors.amount && (
+              <p className="text-xs text-destructive">{errors.amount.message}</p>
+            )}
+
             {asset && amt > 0 && !isFiat(asset) && (
-              <div className="amt-hint">≈ ${(amt * (PRICES_USD[asset] ?? 1)).toLocaleString('en-US', { minimumFractionDigits: 2 })} USD</div>
+              <div className="amt-hint">
+                ≈ $
+                {(amt * (PRICES_USD[asset] ?? 1)).toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                })}{' '}
+                USD
+              </div>
             )}
           </div>
         </div>
       )}
 
-      {/* details */}
-      {step === 3 && asset && (fiat ? <BankDetails rail={rail} /> : <CryptoDetails asset={asset} network={network} setNetwork={setNetwork} />)}
+      {step === 3 &&
+        asset &&
+        (fiat ? (
+          <BankDetails rail={rail} />
+        ) : (
+          <CryptoDetails
+            asset={asset}
+            network={network ?? ''}
+            setNetwork={(nextNetwork) =>
+              setValue('network', nextNetwork, {
+                shouldDirty: true,
+                shouldValidate: true,
+              })
+            }
+          />
+        ))}
 
-      {/* proof */}
       {step === 4 && (
-        <FileUpload
-          label={effMethod === 'Crypto' ? 'Transaction Screenshot' : `${effMethod} Confirmation`}
-          prompt="Drag & drop or click to browse"
-          onChange={setProof}
-        />
+        <div className="m-stack">
+          <FileUpload
+            label={effMethod === 'Crypto' ? 'Transaction Screenshot' : `${effMethod} Confirmation`}
+            prompt="Drag & drop or click to browse"
+            onChange={(file) =>
+              setValue('proof', file, {
+                shouldDirty: true,
+                shouldValidate: true,
+              })
+            }
+          />
+
+          {errors.proof && (
+            <p className="text-xs text-destructive">{errors.proof.message}</p>
+          )}
+        </div>
       )}
 
-      {/* done */}
       {step === 5 && (
         <div className="m-done">
           <div className="m-done-ico">
             <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
               <circle cx="13" cy="13" r="12" stroke="var(--green)" strokeWidth="1.5" />
-              <path d="M7.5 13.5l3.5 3.5 7.5-8" stroke="var(--green)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path
+                d="M7.5 13.5l3.5 3.5 7.5-8"
+                stroke="var(--green)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </div>
+
           <div className="m-done-msg">
             {amt.toLocaleString('en-US')} {asset} via {effMethod} — proof received. Pending review.
           </div>
@@ -227,27 +370,51 @@ export function DepositDialog({ open, onClose, initialAsset }: DepositDialogProp
   );
 }
 
-// Temporary details for demo mode.
 function BankDetails({ rail }: { rail: PaymentRail }) {
   const isSepa = rail === 'SEPA';
+
   return (
     <div className="details-block">
       <DetailRow label="Beneficiary" value="Vera Finance Ltd" />
       <DetailRow label="Bank" value={isSepa ? 'Bank Polska SA' : 'JPMorgan Chase, N.A.'} />
-      <DetailRow label={isSepa ? 'IBAN' : 'Account No.'} value={isSepa ? 'PL61109010140000071219812874' : '073061682552'} mono />
+      <DetailRow
+        label={isSepa ? 'IBAN' : 'Account No.'}
+        value={isSepa ? 'PL61109010140000071219812874' : '073061682552'}
+        mono
+      />
       {!isSepa && <DetailRow label="SWIFT / BIC" value="CHASUS33" mono />}
+
       <div className="m-warn">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 4.5v3M7 10h.01" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.2" /></svg>
-        {isSepa ? 'SEPA transfers arrive within 1–2 business days.' : 'Settlements during U.S. banking hours only. No weekends.'}
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path
+            d="M7 4.5v3M7 10h.01"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+          <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.2" />
+        </svg>
+        {isSepa
+          ? 'SEPA transfers arrive within 1–2 business days.'
+          : 'Settlements during U.S. banking hours only. No weekends.'}
       </div>
     </div>
   );
 }
 
-function CryptoDetails({asset, network, setNetwork,}: {asset: AssetSymbol; network: NetworkName | null; setNetwork: (n: NetworkName) => void;}) {
+function CryptoDetails({
+  asset,
+  network,
+  setNetwork,
+}: {
+  asset: AssetSymbol;
+  network: NetworkName | '';
+  setNetwork: (network: NetworkName) => void;
+}) {
   const nets = networksFor(asset);
-  const net = network ?? nets[0];
+  const net = network || nets[0];
   const address = NET_ADDR[net];
+
   const [qrUrl, setQrUrl] = useState('');
   const [qrError, setQrError] = useState('');
 
@@ -277,13 +444,18 @@ function CryptoDetails({asset, network, setNetwork,}: {asset: AssetSymbol; netwo
     <div className="details-block">
       {nets.length > 1 && (
         <div className="net-chips">
-          {nets.map((n) => (
-            <button key={n} className={`a-chip ${n === net ? 'on' : ''}`} onClick={() => setNetwork(n)}>
-              {n}
+          {nets.map((item) => (
+            <button
+              key={item}
+              className={`a-chip ${item === net ? 'on' : ''}`}
+              onClick={() => setNetwork(item)}
+            >
+              {item}
             </button>
           ))}
         </div>
       )}
+
       <div className="qr-block">
         <div className="qr-frame">
           {qrUrl ? (
@@ -292,6 +464,7 @@ function CryptoDetails({asset, network, setNetwork,}: {asset: AssetSymbol; netwo
             <span className="qr-error">{qrError || 'Generating QR…'}</span>
           )}
         </div>
+
         <div className="qr-meta">
           <div className="qr-net-label">{net}</div>
           <div className="qr-addr-label">Deposit address ({asset})</div>
@@ -302,7 +475,15 @@ function CryptoDetails({asset, network, setNetwork,}: {asset: AssetSymbol; netwo
   );
 }
 
-function DetailRow({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
+function DetailRow({
+  label,
+  value,
+  mono,
+}: {
+  label: string;
+  value: string;
+  mono?: boolean;
+}) {
   return (
     <div className="detail-row">
       <span className="detail-label">{label}</span>
