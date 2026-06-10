@@ -55,7 +55,6 @@ export function TradingPage() {
           <Portfolio onDeposit={openDeposit} onWithdraw={openWithdraw} />
         </div>
       </main>
-
       <Suspense fallback={null}>
         {depositOpen && (
           <DepositDialog

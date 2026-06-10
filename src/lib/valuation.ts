@@ -78,3 +78,4 @@ export function priceDecimals(mid: number): number {
   if (mid >= 0.01) return 4;
   return 6;
 }
+

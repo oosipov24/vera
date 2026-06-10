@@ -82,3 +82,4 @@ describe('splitPair', () => {
     expect(() => splitPair('ABC/XYZ' as never)).toThrow(/Invalid trading pair/);
   });
 });
+

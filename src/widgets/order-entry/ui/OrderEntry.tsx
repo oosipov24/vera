@@ -61,7 +61,7 @@ export function OrderEntry() {
           className={cn(
             'h-10',
             side === 'buy' &&
-              'bg-emerald-500 text-white hover:bg-emerald-500/90',
+              'bg-success text-success-foreground hover:bg-success/90',
           )}
           onClick={() => setSide('buy')}
         >
@@ -73,7 +73,7 @@ export function OrderEntry() {
           variant={side === 'sell' ? 'default' : 'ghost'}
           className={cn(
             'h-10',
-            side === 'sell' && 'bg-red-500 text-white hover:bg-red-500/90',
+            side === 'sell' && 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
           )}
           onClick={() => setSide('sell')}
         >
@@ -154,7 +154,7 @@ export function OrderEntry() {
         <SummaryRow
           label="Side"
           value={side === 'buy' ? 'Buy' : 'Sell'}
-          valueClassName={side === 'buy' ? 'text-emerald-500' : 'text-red-500'}
+          valueClassName={side === 'buy' ? 'text-success' : 'text-destructive'}
         />
 
         <SummaryRow label="Price" value={raw > 0 ? fmtPrice(price) : '—'} />
@@ -167,7 +167,7 @@ export function OrderEntry() {
         <SummaryRow
           label="Est. slippage"
           value="0%"
-          valueClassName="text-emerald-500"
+          valueClassName="text-success"
         />
 
         <div className="border-t border-border pt-3">
@@ -214,17 +214,17 @@ export function OrderEntry() {
 
       <div className="flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-xs text-muted-foreground">
         <span className="relative flex size-2">
-          <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-500 opacity-75" />
-          <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
+          <span className="absolute inline-flex size-full animate-ping rounded-full bg-success opacity-75" />
+          <span className="relative inline-flex size-2 rounded-full bg-success" />
         </span>
 
-        <Wifi className="size-4 text-emerald-500" />
+        <Wifi className="size-4 text-success" />
 
         <span className="font-semibold text-foreground">
           Vera Finance · Active LP
         </span>
 
-        <span className="text-emerald-500">Connected</span>
+        <span className="text-success">Connected</span>
       </div>
 
       <Button
@@ -232,8 +232,8 @@ export function OrderEntry() {
         className={cn(
           'h-12 text-base font-bold',
           side === 'buy'
-            ? 'bg-emerald-500 text-white hover:bg-emerald-500/90'
-            : 'bg-red-500 text-white hover:bg-red-500/90',
+            ? 'bg-success text-destructive-foreground hover:bg-success/90'
+            : 'bg-destructive text-destructive-foreground hover:bg-destructive/90'
         )}
         onClick={onSubmit}
       >
@@ -265,7 +265,7 @@ function InfoPlaque({
         className={cn(
           'inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-bold',
           tone === 'green'
-            ? 'bg-emerald-500/10 text-emerald-500'
+            ? 'bg-success/10 text-success'
             : 'bg-primary/10 text-primary',
         )}
       >
@@ -308,3 +308,4 @@ function SummaryRow({
     </div>
   );
 }
+

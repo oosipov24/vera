@@ -39,3 +39,4 @@ describe('fmtMoneyParts / fmtMoney', () => {
     expect(fmtMoney(1234.5, 'USD')).toBe('$1,234.50');
   });
 });
+

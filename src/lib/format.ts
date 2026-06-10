@@ -60,3 +60,4 @@ export function nextTxnId(): string {
   txnSeq += 1;
   return `TXN-${txnSeq}`;
 }
+

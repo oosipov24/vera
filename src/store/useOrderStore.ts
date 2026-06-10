@@ -59,3 +59,4 @@ export function deriveTicket(state: Pick<OrderState, 'qty' | 'unit' | 'side' | '
   const total = assetQty * price;
   return { raw, price, assetQty, total };
 }
+

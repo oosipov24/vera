@@ -2,9 +2,9 @@ import type { ExecutionStatus, TxnStatus } from '@/types';
 import { cn } from '@/lib/utils';
 
 const STATUS_CLASS: Record<string, string> = {
-  Executed: 'bg-emerald-500/10 text-emerald-500',
-  Completed: 'bg-emerald-500/10 text-emerald-500',
-  Pending: 'bg-amber-500/10 text-amber-500',
+  Executed: 'bg-success/10 text-success',
+  Completed: 'bg-success/10 text-success',
+  Pending: 'bg-warning/10 text-warning',
   'RFI Hold': 'bg-primary/10 text-primary',
   Rejected: 'bg-destructive/10 text-destructive',
 };

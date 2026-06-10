@@ -355,8 +355,8 @@ function TypeTag({ type }: { type: string }) {
       className={cn(
         'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold',
         isDeposit
-          ? 'bg-emerald-500/10 text-emerald-500'
-          : 'bg-orange-500/10 text-orange-500',
+          ? 'bg-success/10 text-success'
+          : 'bg-warning/10 text-warning',
       )}
     >
       <span className="size-1.5 rounded-full bg-current" />

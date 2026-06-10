@@ -15,3 +15,4 @@ createRoot(rootEl).render(
     <App />
   </StrictMode>,
 );
+

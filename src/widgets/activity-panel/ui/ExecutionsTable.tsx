@@ -226,8 +226,8 @@ function SideTag({ side }: { side: string }) {
       className={cn(
         'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold',
         isBuy
-          ? 'bg-emerald-500/10 text-emerald-500'
-          : 'bg-red-500/10 text-red-500',
+          ? 'bg-success/10 text-success'
+          : 'bg-destructive/10 text-destructive',
       )}
     >
       <span className="size-1.5 rounded-full bg-current" />

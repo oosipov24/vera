@@ -29,7 +29,7 @@ export function RfqHero() {
     secs <= 5
       ? 'text-destructive'
       : secs <= 10
-        ? 'text-amber-500'
+        ? 'text-warning'
         : 'text-muted-foreground';
         
   const onRefresh = () => {
@@ -46,8 +46,8 @@ export function RfqHero() {
             {base} / {quoteCcy} · OTC RFQ
           </span>
 
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-bold text-emerald-500">
-            <span className="size-1.5 rounded-full bg-emerald-500" />
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-xs font-bold text-success">
+            <span className="size-1.5 rounded-full bg-success" />
             QUOTE ACTIVE
           </span>
 
@@ -146,14 +146,14 @@ function QuoteCard({
       className={cn(
         'relative rounded-xl border p-4',
         isBid
-          ? 'border-emerald-500/20 bg-emerald-500/10'
-          : 'border-red-500/20 bg-red-500/10',
+          ? 'border-success/20 bg-success/10'
+          : 'border-destructive/20 bg-destructive/10',
       )}
     >
       <div
         className={cn(
           'text-[10px] font-bold uppercase tracking-wide',
-          isBid ? 'text-emerald-500' : 'text-red-500',
+          isBid ? 'text-success' : 'text-destructive',
         )}
       >
         {label}
@@ -162,7 +162,7 @@ function QuoteCard({
       <div
         className={cn(
           'mt-1 font-mono text-3xl font-bold tracking-tight',
-          isBid ? 'text-emerald-500' : 'text-red-500',
+          isBid ? 'text-success' : 'text-destructive',
         )}
       >
         {price}
@@ -176,8 +176,8 @@ function QuoteCard({
         className={cn(
           'absolute bottom-3 right-3 rounded-md px-2 py-1 text-[10px] font-bold',
           isBid
-            ? 'bg-emerald-500/10 text-emerald-500'
-            : 'bg-red-500/10 text-red-500',
+            ? 'bg-success/10 text-success'
+            : 'bg-destructive/10 text-destructive',
         )}
       >
         {tag}

@@ -110,7 +110,7 @@ export function Portfolio({ onDeposit, onWithdraw }: PortfolioProps) {
           </div>
         </div>
 
-        <div className="font-mono text-4xl font-bold tracking-tight text-emerald-500">
+        <div className="font-mono text-4xl font-bold tracking-tight text-success">
           {symbol}
           {whole}
           <span className="text-2xl opacity-60">{cents}</span>

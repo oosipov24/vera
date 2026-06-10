@@ -46,3 +46,4 @@ export function applyPalette(index: number, theme: ThemeMode): void {
     set('--purple-dim', hsl(82, 68, 0.3));
   }
 }
+

@@ -60,7 +60,7 @@ export function BalanceCard({ asset, onDeposit, onWithdraw }: BalanceCardProps) 
         <Button
           type="button"
           variant="ghost"
-          className="h-9 rounded-none border-r border-border text-xs text-muted-foreground hover:bg-emerald-500/10 hover:text-emerald-500"
+          className="h-9 rounded-none border-r border-border text-xs text-muted-foreground hover:bg-success/10 hover:text-success"
           onClick={() => onDeposit(asset)}
         >
           <ArrowDownToLine className="size-3.5" />

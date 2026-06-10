@@ -160,3 +160,4 @@ export function fiatFieldsFor(method: string, asset: AssetSymbol): FiatField[] {
   const key = method === 'SEPA' ? 'SEPA_EUR' : `SWIFT_${asset}`;
   return FIAT_FIELDS[key] ?? FIAT_FIELDS.SWIFT_USD;
 }
+
