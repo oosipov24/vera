@@ -1,16 +1,25 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import type { AssetSymbol } from '@/types';
 import { Topbar } from '@/widgets/topbar';
 import { OrderEntry } from '@/components/order/OrderEntry';
 import { RfqHero } from '@/components/rfq/RfqHero';
 import { ActivityPanel } from '@/components/tables/ActivityPanel';
 import { Portfolio } from '@/components/portfolio/Portfolio';
-import { DepositModal } from '@/features/deposit-funds';
-import { WithdrawModal } from '@/features/withdraw-funds';
 import { Toaster } from '@/components/ui/feedback';
 import { useUiStore } from '@/store/useUiStore';
 import { applyPalette } from '@/lib/palette';
 
+const DepositModal = lazy(() =>
+  import('@/features/deposit-funds').then((module) => ({
+    default: module.DepositModal,
+  })),
+);
+
+const WithdrawModal = lazy(() =>
+  import('@/features/withdraw-funds').then((module) => ({
+    default: module.WithdrawModal,
+  })),
+);
 
 // Root layout: trading ticket, RFQ, activity, and portfolio.
 export default function App() {
@@ -56,8 +65,24 @@ export default function App() {
         </div>
       </main>
 
-      <DepositModal open={depOpen} onClose={() => setDepOpen(false)} initialAsset={depAsset} />
-      <WithdrawModal open={wdOpen} onClose={() => setWdOpen(false)} initialAsset={wdAsset} />
+      <Suspense fallback={null}>
+        {depOpen && (
+          <DepositModal
+            open={depOpen}
+            onClose={() => setDepOpen(false)}
+            initialAsset={depAsset}
+          />
+        )}
+
+        {wdOpen && (
+          <WithdrawModal
+            open={wdOpen}
+            onClose={() => setWdOpen(false)}
+            initialAsset={wdAsset}
+          />
+        )}
+      </Suspense>
+
       <Toaster />
     </div>
   );
