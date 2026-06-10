@@ -78,14 +78,6 @@
 
 .dd-opt.sel .dd-check{opacity:1}
 
-
-.ccy-btn{padding:5px 11px;border:none;background:transparent;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--t3);cursor:pointer;border-radius:var(--r6);transition:all .15s}
-
-.ccy-btn:hover{color:var(--t1)}
-
-.ccy-btn.on{background:var(--purple-bg);color:var(--purple)}
-
-
 [data-theme="light"] .dd-menu {
   box-shadow: 0 8px 32px rgba(20,30,60,.15);
 }
