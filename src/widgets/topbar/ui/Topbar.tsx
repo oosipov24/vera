@@ -1,8 +1,8 @@
 import { useUiStore } from '@/store/useUiStore';
 import { useTradeStore } from '@/store/useTradeStore';
-import { PalettePicker } from './PalettePicker';
+import { PalettePicker } from '@/components/layout/PalettePicker';
 import { useEffect, useRef, useState } from 'react';
-import { SettingsModal } from '@/components/modals/SettingsModal';
+import { SettingsDialog } from '@/features/change-settings';
 
 interface TopbarProps {
   onDeposit: () => void;
@@ -192,7 +192,7 @@ export function Topbar({ onDeposit, onWithdraw }: TopbarProps) {
         </div>
       </div>
     </header>
-    <SettingsModal
+    <SettingsDialog
       open={settingsOpen}
       initialTab={settingsTab}
       onClose={() => setSettingsOpen(false)}

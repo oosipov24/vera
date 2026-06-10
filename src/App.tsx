@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { AssetSymbol } from '@/types';
-import { Topbar } from '@/components/layout/Topbar';
+import { Topbar } from '@/widgets/topbar';
 import { OrderEntry } from '@/components/order/OrderEntry';
 import { RfqHero } from '@/components/rfq/RfqHero';
 import { ActivityPanel } from '@/components/tables/ActivityPanel';

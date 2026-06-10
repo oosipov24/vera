@@ -2,17 +2,17 @@ import { useEffect, useState } from 'react';
 
 type SettingsTab = 'email' | '2fa' | 'password';
 
-interface SettingsModalProps {
+interface SettingsDialogProps {
   open: boolean;
   initialTab?: SettingsTab;
   onClose: () => void;
 }
 
-export function SettingsModal({
+export function SettingsDialog({
   open,
   initialTab = 'email',
   onClose,
-}: SettingsModalProps) {
+}: SettingsDialogProps) {
   const [tab, setTab] = useState<SettingsTab>(initialTab);
 
   useEffect(() => {
