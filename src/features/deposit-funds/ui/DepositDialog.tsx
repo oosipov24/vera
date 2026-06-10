@@ -4,7 +4,15 @@ import { useForm } from 'react-hook-form';
 import QRCode from 'qrcode';
 
 import type { AssetSymbol, NetworkName, PaymentMethod, PaymentRail } from '@/types';
-import { Modal } from '@/shared/ui/feedback';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Dropdown } from '@/shared/ui/Dropdown';
 import {
   StepBars,
@@ -185,188 +193,201 @@ export function DepositDialog({ open, onClose, initialAsset }: DepositDialogProp
 
   const footer =
     step === 5 ? (
-      <button className="m-btn primary full" onClick={onClose}>
+      <Button type="button" className="w-full" onClick={onClose}>
         Close
-      </button>
+      </Button>
     ) : (
-      <div className="m-actions">
+      <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
         {step > 1 && (
-          <button className="m-btn ghost" onClick={back}>
+          <Button type="button" variant="ghost" onClick={back}>
             Back
-          </button>
+          </Button>
         )}
 
-        <button className="m-btn cancel" onClick={onClose}>
+        <Button type="button" variant="outline" onClick={onClose}>
           Cancel
-        </button>
+        </Button>
 
-        <button
-          className={`m-btn ${step === 4 ? 'primary' : 'success'}`}
-          disabled={!nextEnabled}
-          onClick={next}
-        >
+        <Button type="button" disabled={!nextEnabled} onClick={next}>
           {nextLabel}
-        </button>
+        </Button>
       </div>
     );
 
   return (
-    <Modal
+    <Dialog
       open={open}
-      onClose={onClose}
-      title={
-        <span className="m-title-row">
-          Deposit
-          {step >= 2 && asset && <AssetPill label={`${asset} · ${effMethod}`} />}
-        </span>
-      }
-      subtitle={subtitle}
-      footer={footer}
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen) {
+          onClose();
+        }
+      }}
     >
-      {step < 5 && <StepBars total={4} current={step} />}
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[460px]">
+        <DialogHeader>
+          <DialogTitle>
+            <span className="m-title-row">
+              Deposit
+              {step >= 2 && asset && <AssetPill label={`${asset} · ${effMethod}`} />}
+            </span>
+          </DialogTitle>
 
-      {step === 1 && (
-        <MethodCards value={method ?? null} onChange={onPickMethod} />
-      )}
+          <DialogDescription>{subtitle}</DialogDescription>
+        </DialogHeader>
 
-      {step === 2 && (
-        <div className="m-stack">
-          <div className="m-field">
-            <div className="m-field-label">Asset</div>
-            <Dropdown
-              value={asset}
-              options={assetList.map((item) => ({
-                value: item,
-                label: `${item} — ${ASSET_META[item].name}`,
-                search: `${item} ${ASSET_META[item].name}`,
-              }))}
-              onChange={onPickAsset}
-              searchable
-              placeholder="Select asset"
-            />
-            {errors.asset && (
-              <p className="text-xs text-destructive">{errors.asset.message}</p>
-            )}
-          </div>
+        <div className="space-y-4">
+          {step < 5 && <StepBars total={4} current={step} />}
 
-          {fiat && asset && (
-            <div className="rail-toggle">
-              {asset === 'EUR' && (
-                <button
-                  className={`rail-btn ${rail === 'SEPA' ? 'on' : ''}`}
-                  onClick={() =>
-                    setValue('rail', 'SEPA', {
-                      shouldDirty: true,
-                      shouldValidate: true,
-                    })
-                  }
-                >
-                  SEPA
-                </button>
+          {step === 1 && (
+            <MethodCards value={method ?? null} onChange={onPickMethod} />
+          )}
+
+          {step === 2 && (
+            <div className="m-stack">
+              <div className="m-field">
+                <div className="m-field-label">Asset</div>
+                <Dropdown
+                  value={asset}
+                  options={assetList.map((item) => ({
+                    value: item,
+                    label: `${item} — ${ASSET_META[item].name}`,
+                    search: `${item} ${ASSET_META[item].name}`,
+                  }))}
+                  onChange={onPickAsset}
+                  searchable
+                  placeholder="Select asset"
+                />
+                {errors.asset && (
+                  <p className="text-xs text-destructive">{errors.asset.message}</p>
+                )}
+              </div>
+
+              {fiat && asset && (
+                <div className="rail-toggle">
+                  {asset === 'EUR' && (
+                    <button
+                      className={`rail-btn ${rail === 'SEPA' ? 'on' : ''}`}
+                      onClick={() =>
+                        setValue('rail', 'SEPA', {
+                          shouldDirty: true,
+                          shouldValidate: true,
+                        })
+                      }
+                    >
+                      SEPA
+                    </button>
+                  )}
+
+                  <button
+                    className={`rail-btn ${rail === 'SWIFT' ? 'on' : ''}`}
+                    onClick={() =>
+                      setValue('rail', 'SWIFT', {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      })
+                    }
+                  >
+                    SWIFT
+                  </button>
+                </div>
               )}
 
-              <button
-                className={`rail-btn ${rail === 'SWIFT' ? 'on' : ''}`}
-                onClick={() =>
-                  setValue('rail', 'SWIFT', {
+              <div className="m-field">
+                <div className="m-field-label">Amount</div>
+
+                <div className="amt-row">
+                  <input
+                    className="vinp"
+                    type="number"
+                    inputMode="decimal"
+                    placeholder="0.00"
+                    {...register('amount', { valueAsNumber: true })}
+                  />
+                  <span className="amt-ccy">{asset || '—'}</span>
+                </div>
+
+                {errors.amount && (
+                  <p className="text-xs text-destructive">{errors.amount.message}</p>
+                )}
+
+                {asset && amt > 0 && !isFiat(asset) && (
+                  <div className="amt-hint">
+                    ≈ $
+                    {(amt * (PRICES_USD[asset] ?? 1)).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                    })}{' '}
+                    USD
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {step === 3 &&
+            asset &&
+            (fiat ? (
+              <BankDetails rail={rail} />
+            ) : (
+              <CryptoDetails
+                asset={asset}
+                network={network ?? ''}
+                setNetwork={(nextNetwork) =>
+                  setValue('network', nextNetwork, {
                     shouldDirty: true,
                     shouldValidate: true,
                   })
                 }
-              >
-                SWIFT
-              </button>
+              />
+            ))}
+
+          {step === 4 && (
+            <div className="m-stack">
+              <FileUpload
+                label={
+                  effMethod === 'Crypto'
+                    ? 'Transaction Screenshot'
+                    : `${effMethod} Confirmation`
+                }
+                prompt="Drag & drop or click to browse"
+                onChange={(file) =>
+                  setValue('proof', file, {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  })
+                }
+              />
+
+              {errors.proof && (
+                <p className="text-xs text-destructive">{errors.proof.message}</p>
+              )}
             </div>
           )}
 
-          <div className="m-field">
-            <div className="m-field-label">Amount</div>
-
-            <div className="amt-row">
-              <input
-                className="vinp"
-                type="number"
-                inputMode="decimal"
-                placeholder="0.00"
-                {...register('amount', { valueAsNumber: true })}
-              />
-              <span className="amt-ccy">{asset || '—'}</span>
-            </div>
-
-            {errors.amount && (
-              <p className="text-xs text-destructive">{errors.amount.message}</p>
-            )}
-
-            {asset && amt > 0 && !isFiat(asset) && (
-              <div className="amt-hint">
-                ≈ $
-                {(amt * (PRICES_USD[asset] ?? 1)).toLocaleString('en-US', {
-                  minimumFractionDigits: 2,
-                })}{' '}
-                USD
+          {step === 5 && (
+            <div className="m-done">
+              <div className="m-done-ico">
+                <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+                  <circle cx="13" cy="13" r="12" stroke="var(--green)" strokeWidth="1.5" />
+                  <path
+                    d="M7.5 13.5l3.5 3.5 7.5-8"
+                    stroke="var(--green)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
               </div>
-            )}
-          </div>
-        </div>
-      )}
 
-      {step === 3 &&
-        asset &&
-        (fiat ? (
-          <BankDetails rail={rail} />
-        ) : (
-          <CryptoDetails
-            asset={asset}
-            network={network ?? ''}
-            setNetwork={(nextNetwork) =>
-              setValue('network', nextNetwork, {
-                shouldDirty: true,
-                shouldValidate: true,
-              })
-            }
-          />
-        ))}
-
-      {step === 4 && (
-        <div className="m-stack">
-          <FileUpload
-            label={effMethod === 'Crypto' ? 'Transaction Screenshot' : `${effMethod} Confirmation`}
-            prompt="Drag & drop or click to browse"
-            onChange={(file) =>
-              setValue('proof', file, {
-                shouldDirty: true,
-                shouldValidate: true,
-              })
-            }
-          />
-
-          {errors.proof && (
-            <p className="text-xs text-destructive">{errors.proof.message}</p>
+              <div className="m-done-msg">
+                {amt.toLocaleString('en-US')} {asset} via {effMethod} — proof received. Pending review.
+              </div>
+            </div>
           )}
         </div>
-      )}
 
-      {step === 5 && (
-        <div className="m-done">
-          <div className="m-done-ico">
-            <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-              <circle cx="13" cy="13" r="12" stroke="var(--green)" strokeWidth="1.5" />
-              <path
-                d="M7.5 13.5l3.5 3.5 7.5-8"
-                stroke="var(--green)"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
-
-          <div className="m-done-msg">
-            {amt.toLocaleString('en-US')} {asset} via {effMethod} — proof received. Pending review.
-          </div>
-        </div>
-      )}
-    </Modal>
+        <DialogFooter>{footer}</DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
