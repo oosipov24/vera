@@ -45,8 +45,4 @@ export function applyPalette(index: number, theme: ThemeMode): void {
     set('--purple-bg', hsl(82, 68, 0.12));
     set('--purple-dim', hsl(82, 68, 0.3));
   }
-
-  // logomark gradient in-hue
-  const lm = document.querySelector<HTMLElement>('.logomark');
-  if (lm) lm.style.background = `linear-gradient(135deg, ${hsl(80, 66)}, ${hsl(80, 72)})`;
 }
