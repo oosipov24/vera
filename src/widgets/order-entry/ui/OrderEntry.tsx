@@ -1,3 +1,4 @@
+import { Radio, Wifi } from 'lucide-react';
 import type { ChangeEvent } from 'react';
 import { useOrderStore, deriveTicket } from '@/store/useOrderStore';
 import { useTradeStore } from '@/store/useTradeStore';
@@ -6,6 +7,8 @@ import { Dropdown } from '@/shared/ui/Dropdown';
 import { TRADING_PAIRS } from '@/constants/market';
 import { fmtAsset } from '@/lib/format';
 import { priceDecimals, splitPair } from '@/lib/valuation';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 export function OrderEntry() {
   const { pair, side, qty, unit, quote } = useOrderStore();
@@ -50,132 +53,260 @@ export function OrderEntry() {
   const fmtQuote = (n: number) => `${fmtAsset(quoteCcy, n)} ${quoteCcy}`;
 
   return (
-    <div className="order-entry">
-      {/* Buy / Sell */}
-      <div className="bs-toggle">
-        <button className={`bs-btn buy ${side === 'buy' ? 'on' : ''}`} onClick={() => setSide('buy')}>
+    <div className="flex flex-col gap-4">
+      <div className="grid grid-cols-2 gap-2 rounded-xl border border-border bg-muted/40 p-1">
+        <Button
+          type="button"
+          variant={side === 'buy' ? 'default' : 'ghost'}
+          className={cn(
+            'h-10',
+            side === 'buy' &&
+              'bg-emerald-500 text-white hover:bg-emerald-500/90',
+          )}
+          onClick={() => setSide('buy')}
+        >
           Buy
-        </button>
-        <button className={`bs-btn sell ${side === 'sell' ? 'on' : ''}`} onClick={() => setSide('sell')}>
+        </Button>
+
+        <Button
+          type="button"
+          variant={side === 'sell' ? 'default' : 'ghost'}
+          className={cn(
+            'h-10',
+            side === 'sell' && 'bg-red-500 text-white hover:bg-red-500/90',
+          )}
+          onClick={() => setSide('sell')}
+        >
           Sell
-        </button>
+        </Button>
       </div>
 
-      {/* Market */}
-      <label className="oe-label">Market</label>
-      <div className="oe-static">CRYPTO SPOT (OTC)</div>
+      <div className="space-y-2">
+        <LabelText>Market</LabelText>
+        <div className="rounded-xl border border-border bg-card px-3 py-2.5 text-sm font-semibold text-foreground">
+          CRYPTO SPOT (OTC)
+        </div>
+      </div>
 
-      {/* Symbol */}
-      <label className="oe-label">Symbol</label>
-      <Dropdown
-        value={pair}
-        options={TRADING_PAIRS}
-        onChange={(v) => setPair(v)}
-        searchable
-        searchPlaceholder="Search symbol…"
-        className="oe-symbol"
-      />
-
-      {/* Quantity */}
-      <label className="oe-label">Quantity</label>
-      <div className="qty-row">
-        <input
-          className="qty-inp"
-          type="number"
-          inputMode="decimal"
-          placeholder="0.00"
-          value={qty}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setQty(e.target.value)}
+      <div className="space-y-2">
+        <LabelText>Symbol</LabelText>
+        <Dropdown
+          value={pair}
+          options={TRADING_PAIRS}
+          onChange={(value) => setPair(value)}
+          searchable
+          searchPlaceholder="Search symbol…"
         />
-        <div className="qty-units">
-          <button className={`qty-btn ${unit === 'asset' ? 'on' : ''}`} onClick={() => setUnit('asset')}>
-            {base}
-          </button>
-          <button className={`qty-btn ${unit === 'quote' ? 'on' : ''}`} onClick={() => setUnit('quote')}>
-            {quoteCcy}
-          </button>
+      </div>
+
+      <div className="space-y-2">
+        <LabelText>Quantity</LabelText>
+
+        <div className="flex items-center gap-2">
+          <input
+            className="h-10 min-w-0 flex-1 rounded-md border border-input bg-background px-3 py-2 font-mono text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            type="number"
+            inputMode="decimal"
+            placeholder="0.00"
+            value={qty}
+            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+              setQty(event.target.value)
+            }
+          />
+
+          <div className="flex overflow-hidden rounded-md border border-border bg-muted">
+            <Button
+              type="button"
+              size="sm"
+              variant={unit === 'asset' ? 'default' : 'ghost'}
+              className="rounded-none px-3 font-mono text-xs"
+              onClick={() => setUnit('asset')}
+            >
+              {base}
+            </Button>
+
+            <Button
+              type="button"
+              size="sm"
+              variant={unit === 'quote' ? 'default' : 'ghost'}
+              className="rounded-none px-3 font-mono text-xs"
+              onClick={() => setUnit('quote')}
+            >
+              {quoteCcy}
+            </Button>
+          </div>
         </div>
       </div>
 
-      {/* Strategy */}
-      <label className="oe-label">Strategy</label>
-      <div className="oe-plaque">
-        <span className="plaque-badge green">SOR</span>
-        <span className="plaque-text">Smart Order Routing</span>
-      </div>
+      <InfoPlaque badge="SOR" tone="green">
+        Smart Order Routing
+      </InfoPlaque>
 
-      {/* Order type */}
-      <label className="oe-label">Order Type</label>
-      <div className="oe-plaque">
-        <span className="plaque-badge purple">RFQ</span>
-        <span className="plaque-text">Request for Quote — best available price</span>
-      </div>
+      <InfoPlaque badge="RFQ" tone="primary">
+        Request for Quote — best available price
+      </InfoPlaque>
 
-      {/* Summary */}
-      <div className="order-summary">
-        <div className="os-title">Order Summary</div>
-        <div className="os-row">
-          <span>Pair</span>
-          <span className="os-val">
-            {base} / {quoteCcy}
-          </span>
+      <div className="space-y-3 rounded-xl border border-border bg-card p-4">
+        <div className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+          Order Summary
         </div>
-        <div className="os-row">
-          <span>Side</span>
-          <span className="os-val" style={{ color: side === 'buy' ? 'var(--green)' : 'var(--red)' }}>
-            {side === 'buy' ? 'Buy' : 'Sell'}
-          </span>
-        </div>
-        <div className="os-row">
-          <span>Price</span>
-          <span className="os-val">{raw > 0 ? fmtPrice(price) : '—'}</span>
-        </div>
-        <div className="os-row">
-          <span>Quantity</span>
-          <span className="os-val">{raw > 0 ? `${assetQty.toFixed(4)} ${base}` : '—'}</span>
-        </div>
-        <div className="os-row">
-          <span>Est. slippage</span>
-          <span className="os-val" style={{ color: 'var(--green)' }}>
-            0%
-          </span>
-        </div>
-        <div className="os-row strong">
-          <span>You pay</span>
-          <span className="os-val">
-            {raw > 0
-              ? side === 'buy'
-                ? fmtQuote(total)
-                : `${fmtAsset(base, assetQty)} ${base}`
-              : '—'}
-          </span>
-        </div>
-        <div className="os-row strong">
-          <span>You receive</span>
-          <span className="os-val">
-            {raw > 0
-              ? side === 'buy'
-                ? `${fmtAsset(base, assetQty)} ${base}`
-                : fmtQuote(total)
-              : '—'}
-          </span>
+
+        <SummaryRow label="Pair" value={`${base} / ${quoteCcy}`} />
+
+        <SummaryRow
+          label="Side"
+          value={side === 'buy' ? 'Buy' : 'Sell'}
+          valueClassName={side === 'buy' ? 'text-emerald-500' : 'text-red-500'}
+        />
+
+        <SummaryRow label="Price" value={raw > 0 ? fmtPrice(price) : '—'} />
+
+        <SummaryRow
+          label="Quantity"
+          value={raw > 0 ? `${assetQty.toFixed(4)} ${base}` : '—'}
+        />
+
+        <SummaryRow
+          label="Est. slippage"
+          value="0%"
+          valueClassName="text-emerald-500"
+        />
+
+        <div className="border-t border-border pt-3">
+          <SummaryRow
+            label="You pay"
+            value={
+              raw > 0
+                ? side === 'buy'
+                  ? fmtQuote(total)
+                  : `${fmtAsset(base, assetQty)} ${base}`
+                : '—'
+            }
+            strong
+          />
+
+          <div className="mt-2">
+            <SummaryRow
+              label="You receive"
+              value={
+                raw > 0
+                  ? side === 'buy'
+                    ? `${fmtAsset(base, assetQty)} ${base}`
+                    : fmtQuote(total)
+                  : '—'
+              }
+              strong
+            />
+          </div>
         </div>
       </div>
 
       {alert && (
-        <div className={`rfq-alert ${alert.kind}`}>{alert.msg}</div>
+        <div
+          className={cn(
+            'rounded-xl border px-3 py-2 text-sm leading-5',
+            alert.kind === 'danger'
+              ? 'border-destructive/20 bg-destructive/10 text-destructive'
+              : 'border-primary/20 bg-primary/10 text-primary',
+          )}
+        >
+          {alert.msg}
+        </div>
       )}
 
-      {/* LP plaque */}
-      <div className="lp-plaque">
-        <span className="lp-conn-dot" />
-        <span className="lp-label">Vera Finance · Active LP</span>
-        <span className="lp-conn">: Connected</span>
+      <div className="flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-xs text-muted-foreground">
+        <span className="relative flex size-2">
+          <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-500 opacity-75" />
+          <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
+        </span>
+
+        <Wifi className="size-4 text-emerald-500" />
+
+        <span className="font-semibold text-foreground">
+          Vera Finance · Active LP
+        </span>
+
+        <span className="text-emerald-500">Connected</span>
       </div>
 
-      <button className={`submit-btn ${side}`} onClick={onSubmit}>
+      <Button
+        type="button"
+        className={cn(
+          'h-12 text-base font-bold',
+          side === 'buy'
+            ? 'bg-emerald-500 text-white hover:bg-emerald-500/90'
+            : 'bg-red-500 text-white hover:bg-red-500/90',
+        )}
+        onClick={onSubmit}
+      >
         {side === 'buy' ? `Buy ${base}` : `Sell ${base}`}
-      </button>
+      </Button>
+    </div>
+  );
+}
+function LabelText({ children }: { children: string }) {
+  return (
+    <div className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+      {children}
+    </div>
+  );
+}
+
+function InfoPlaque({
+  badge,
+  tone,
+  children,
+}: {
+  badge: string;
+  tone: 'green' | 'primary';
+  children: string;
+}) {
+  return (
+    <div className="flex items-center gap-3 rounded-xl border border-border bg-card px-3 py-2.5">
+      <span
+        className={cn(
+          'inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-bold',
+          tone === 'green'
+            ? 'bg-emerald-500/10 text-emerald-500'
+            : 'bg-primary/10 text-primary',
+        )}
+      >
+        <Radio className="size-3" />
+        {badge}
+      </span>
+
+      <span className="text-sm text-muted-foreground">{children}</span>
+    </div>
+  );
+}
+
+function SummaryRow({
+  label,
+  value,
+  strong,
+  valueClassName,
+}: {
+  label: string;
+  value: string;
+  strong?: boolean;
+  valueClassName?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        'flex items-center justify-between gap-3 text-sm',
+        strong ? 'font-semibold text-foreground' : 'text-muted-foreground',
+      )}
+    >
+      <span>{label}</span>
+      <span
+        className={cn(
+          'text-right font-mono font-semibold text-foreground',
+          valueClassName,
+        )}
+      >
+        {value}
+      </span>
     </div>
   );
 }
