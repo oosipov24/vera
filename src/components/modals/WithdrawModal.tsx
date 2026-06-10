@@ -2,7 +2,13 @@ import { useEffect, useState, type ChangeEvent } from 'react';
 import type { AssetSymbol, NetworkName, PaymentMethod, PaymentRail } from '@/types';
 import { Modal } from '@/components/ui/feedback';
 import { Dropdown } from '@/components/ui/Dropdown';
-import { StepBars, AssetPill, FileUpload, Field, MethodCards } from './parts';
+import {
+  StepBars,
+  AssetPill,
+  FileUpload,
+  Field,
+  MethodCards,
+} from '@/shared/ui/transfer-flow-parts';
 import { useTradeStore } from '@/store/useTradeStore';
 import { useUiStore } from '@/store/useUiStore';
 import {

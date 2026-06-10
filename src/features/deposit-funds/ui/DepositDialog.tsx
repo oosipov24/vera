@@ -2,7 +2,12 @@ import { useEffect, useState, type ChangeEvent } from 'react';
 import type { AssetSymbol, NetworkName, PaymentMethod, PaymentRail } from '@/types';
 import { Modal } from '@/components/ui/feedback';
 import { Dropdown } from '@/components/ui/Dropdown';
-import { StepBars, AssetPill, FileUpload, MethodCards } from './parts';
+import {
+  StepBars,
+  AssetPill,
+  FileUpload,
+  MethodCards,
+} from '@/shared/ui/transfer-flow-parts';
 import { useTradeStore } from '@/store/useTradeStore';
 import { useUiStore } from '@/store/useUiStore';
 import {
@@ -18,7 +23,7 @@ import QRCode from 'qrcode';
 
 type Method = 'Bank' | 'Crypto';
 
-interface DepositModalProps {
+interface DepositDialogProps {
   open: boolean;
   onClose: () => void;
   /** Optional asset to preselect (from a balance card quick-action). */
@@ -34,7 +39,7 @@ interface DepositModalProps {
  *  4. upload proof of payment
  *  5. done — records a Pending transaction
  */
-export function DepositModal({ open, onClose, initialAsset }: DepositModalProps) {
+export function DepositDialog({ open, onClose, initialAsset }: DepositDialogProps) {
   const deposit = useTradeStore((s) => s.deposit);
   const pushToast = useUiStore((s) => s.pushToast);
 

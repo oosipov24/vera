@@ -1,0 +1,1 @@
+export { DepositDialog as DepositModal } from './ui/DepositDialog';

@@ -5,7 +5,7 @@ import { OrderEntry } from '@/components/order/OrderEntry';
 import { RfqHero } from '@/components/rfq/RfqHero';
 import { ActivityPanel } from '@/components/tables/ActivityPanel';
 import { Portfolio } from '@/components/portfolio/Portfolio';
-import { DepositModal } from '@/components/modals/DepositModal';
+import { DepositModal } from '@/features/deposit-funds';
 import { WithdrawModal } from '@/components/modals/WithdrawModal';
 import { Toaster } from '@/components/ui/feedback';
 import { useUiStore } from '@/store/useUiStore';
