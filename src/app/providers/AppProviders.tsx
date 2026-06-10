@@ -1,6 +1,6 @@
 import { useEffect, type ReactNode } from 'react';
 
-import { Toaster } from '@/shared/ui/feedback';
+import { ToastProvider } from './ToastProvider';
 import { applyPalette } from '@/lib/palette';
 import { useUiStore } from '@/store/useUiStore';
 
@@ -19,7 +19,7 @@ export function AppProviders({ children }: AppProvidersProps) {
   return (
     <>
       {children}
-      <Toaster />
+      <ToastProvider />
     </>
   );
 }
