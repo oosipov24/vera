@@ -4,7 +4,7 @@ import { Topbar } from '@/widgets/topbar';
 import { OrderEntry } from '@/widgets/order-entry';
 import { RfqHero } from '@/widgets/rfq-panel';
 import { ActivityPanel } from '@/widgets/activity-panel';
-import { Portfolio } from '@/components/portfolio/Portfolio';
+import { Portfolio } from '@/widgets/portfolio-panel';
 import { Toaster } from '@/components/ui/feedback';
 import { useUiStore } from '@/store/useUiStore';
 import { applyPalette } from '@/lib/palette';
