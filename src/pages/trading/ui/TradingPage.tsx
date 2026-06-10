@@ -1,13 +1,10 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 
 import { ActivityPanel } from '@/widgets/activity-panel';
 import { OrderEntry } from '@/widgets/order-entry';
 import { Portfolio } from '@/widgets/portfolio-panel';
 import { RfqHero } from '@/widgets/rfq-panel';
 import { Topbar } from '@/widgets/topbar';
-import { Toaster } from '@/shared/ui/feedback';
-import { applyPalette } from '@/lib/palette';
-import { useUiStore } from '@/store/useUiStore';
 import type { AssetSymbol } from '@/types';
 
 const DepositDialog = lazy(() =>
@@ -24,18 +21,11 @@ const WithdrawDialog = lazy(() =>
 
 // Trading layout: order ticket, RFQ, activity, and portfolio.
 export function TradingPage() {
-  const theme = useUiStore((state) => state.theme);
-  const paletteIndex = useUiStore((state) => state.paletteIndex);
 
   const [depositOpen, setDepositOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [depositAsset, setDepositAsset] = useState<AssetSymbol | null>(null);
   const [withdrawAsset, setWithdrawAsset] = useState<AssetSymbol | null>(null);
-
-  useEffect(() => {
-    applyPalette(paletteIndex, theme);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const openDeposit = (asset?: AssetSymbol) => {
     setDepositAsset(asset ?? null);
@@ -84,7 +74,6 @@ export function TradingPage() {
         )}
       </Suspense>
 
-      <Toaster />
     </div>
   );
 }
