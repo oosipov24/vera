@@ -1,202 +1,202 @@
-import { useUiStore } from '@/store/useUiStore';
-import { useTradeStore } from '@/store/useTradeStore';
-import { PalettePicker } from '@/components/layout/PalettePicker';
-import { useEffect, useRef, useState } from 'react';
 import { SettingsDialog } from '@/features/change-settings';
+import { PalettePicker } from '@/components/layout/PalettePicker';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { useTradeStore } from '@/store/useTradeStore';
+import { useUiStore } from '@/store/useUiStore';
+import {
+  ArrowDownToLine,
+  ArrowUpFromLine,
+  ChevronDown,
+  LockKeyhole,
+  LogOut,
+  Mail,
+  Moon,
+  Sun,
+} from 'lucide-react';
+import { useState } from 'react';
 
 interface TopbarProps {
   onDeposit: () => void;
   onWithdraw: () => void;
 }
 
+type SettingsTab = 'email' | '2fa' | 'password';
+
 const TICKER = [
-  { sym: 'BNB/USDT', price: '615.00', chg: '+1.24%', up: true },
-  { sym: 'BTC/USDT', price: '68,240', chg: '-0.38%', up: false },
-  { sym: 'ETH/USDT', price: '3,812', chg: '+2.11%', up: true },
-  { sym: 'ADA/USDT', price: '0.4210', chg: '+0.87%', up: true },
-  { sym: 'SOL/USDT', price: '165.40', chg: '-1.02%', up: false },
-  { sym: 'XRP/USDT', price: '0.6183', chg: '+0.54%', up: true },
-];
+  { sym: 'BNB/USDT', price: '615.00', chg: '+1.24%', trend: 'up' },
+  { sym: 'BTC/USDT', price: '68,240', chg: '-0.38%', trend: 'down' },
+  { sym: 'ETH/USDT', price: '3,812', chg: '+2.11%', trend: 'up' },
+  { sym: 'ADA/USDT', price: '0.4210', chg: '+0.87%', trend: 'up' },
+  { sym: 'SOL/USDT', price: '165.40', chg: '-1.02%', trend: 'down' },
+  { sym: 'XRP/USDT', price: '0.6183', chg: '+0.54%', trend: 'up' },
+] as const;
 
-// Global top navigation bar
 export function Topbar({ onDeposit, onWithdraw }: TopbarProps) {
-  const theme = useUiStore((s) => s.theme);
-  const toggleTheme = useUiStore((s) => s.toggleTheme);
-  const accountType = useTradeStore((s) => s.accountType);
+  const theme = useUiStore((state) => state.theme);
+  const toggleTheme = useUiStore((state) => state.toggleTheme);
+  const accountType = useTradeStore((state) => state.accountType);
 
-  const [open, setOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [settingsTab, setSettingsTab] = useState<'email' | '2fa' | 'password'>('email');
+  const [settingsTab, setSettingsTab] = useState<SettingsTab>('email');
 
-  const userMenuRef = useRef<HTMLDivElement | null>(null);
+  const openSettings = (tab: SettingsTab) => {
+    setSettingsTab(tab);
+    setSettingsOpen(true);
+  };
 
-  useEffect(() => {
-    if (!open) return;
-
-    const handlePointerDown = (event: MouseEvent) => {
-      if (
-        userMenuRef.current &&
-        !userMenuRef.current.contains(event.target as Node)
-      ) {
-        setOpen(false);
-      }
-    };
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handlePointerDown);
-    document.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.removeEventListener('mousedown', handlePointerDown);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [open]);
-  
   return (
     <>
-    <header className="topbar">
-      <div className="tb-left">
-        <div className="logo">
-          <div className="logomark">V</div>
-          <span className="logo-name">
-            Vera Finance<span>*</span>
-          </span>
-        </div>
+      <header className="sticky top-0 z-50 flex h-14 shrink-0 items-center gap-3 border-b border-border bg-background px-4">
+        <div className="flex min-w-0 flex-1 items-center gap-5">
+          <div className="flex shrink-0 items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">
+              V
+            </div>
 
-        <div className="ticker" aria-hidden>
-          <div className="ticker-track">
-            {[...TICKER, ...TICKER].map((t, i) => (
-              <span className="t-item" key={i}>
-                <span className="t-dot" style={{ background: t.up ? 'var(--green)' : 'var(--red)' }} />
-                <span className="t-sym">{t.sym}</span>
-                <span className="t-price" style={{ color: t.up ? 'var(--green)' : 'var(--red)' }}>
-                  {t.price}
-                </span>
-                <span className={`t-chg ${t.up ? 'up' : 'dn'}`}>{t.chg}</span>
-              </span>
-            ))}
+            <span className="whitespace-nowrap text-sm font-bold tracking-tight text-foreground">
+              Vera Finance<span className="text-primary">*</span>
+            </span>
+          </div>
+
+          <div className="min-w-0 flex-1 overflow-hidden" aria-hidden="true">
+            <div className="flex w-max animate-[ticker_38s_linear_infinite] items-center gap-6 whitespace-nowrap">
+              {[...TICKER, ...TICKER].map((item, index) => {
+                const isUp = item.trend === 'up';
+
+                return (
+                  <span
+                    className="inline-flex items-center gap-1.5 text-xs"
+                    key={`${item.sym}-${index}`}
+                  >
+                    <span
+                      className={`size-1.5 rounded-full ${
+                        isUp ? 'bg-primary' : 'bg-destructive'
+                      }`}
+                    />
+                    <span className="font-bold text-muted-foreground">
+                      {item.sym}
+                    </span>
+                    <span
+                      className={`font-mono font-semibold ${
+                        isUp ? 'text-primary' : 'text-destructive'
+                      }`}
+                    >
+                      {item.price}
+                    </span>
+                    <span
+                      className={`rounded px-1.5 py-0.5 font-mono text-[11px] ${
+                        isUp
+                          ? 'bg-primary/10 text-primary'
+                          : 'bg-destructive/10 text-destructive'
+                      }`}
+                    >
+                      {item.chg}
+                    </span>
+                  </span>
+                );
+              })}
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="tb-right">
-        <button className="btn-dep" onClick={onDeposit}>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
-            <path d="M7 2v7m0 0l-3-3m3 3l3-3M2.5 11.5h9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          Deposit
-        </button>
-        <button className="btn-wd" onClick={onWithdraw}>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
-            <path d="M7 9V2m0 0L4 5m3-3l3 3M2.5 11.5h9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          Withdraw
-        </button>
+        <div className="flex shrink-0 items-center gap-2">
+          <Button size="sm" onClick={onDeposit}>
+            <ArrowDownToLine className="size-4" />
+            Deposit
+          </Button>
 
-        <PalettePicker />
+          <Button size="sm" variant="outline" onClick={onWithdraw}>
+            <ArrowUpFromLine className="size-4" />
+            Withdraw
+          </Button>
 
-        <button className="theme-toggle" onClick={toggleTheme} title="Toggle theme" aria-label="Toggle theme">
-          {theme === 'dark' ? (
-            <svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden>
-              <path d="M15 10.5A6.5 6.5 0 017.5 3a6.5 6.5 0 100 13 6.5 6.5 0 007.5-5.5z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
-            </svg>
-          ) : (
-            <svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden>
-              <circle cx="9" cy="9" r="3.5" stroke="currentColor" strokeWidth="1.4" />
-              <path d="M9 1.5v2M9 14.5v2M1.5 9h2M14.5 9h2M3.8 3.8l1.4 1.4M12.8 12.8l1.4 1.4M3.8 14.2l1.4-1.4M12.8 5.2l1.4-1.4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-            </svg>
-          )}
-        </button>
+          <PalettePicker />
 
-        <div className="acct-type-pill">{accountType}</div>
-          <div className="live-pill">
-            <span className="live-dot" />
+          <Button
+            size="icon"
+            variant="outline"
+            type="button"
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? (
+              <Moon className="size-4" />
+            ) : (
+              <Sun className="size-4" />
+            )}
+          </Button>
+
+          <div className="hidden items-center rounded-full border border-border bg-primary/10 px-3 py-1 text-xs font-bold text-primary md:inline-flex">
+            {accountType}
+          </div>
+
+          <div className="hidden items-center gap-1.5 rounded-full border border-border bg-primary/10 px-3 py-1 text-xs font-semibold text-primary md:inline-flex">
+            <span className="size-1.5 rounded-full bg-primary" />
             Live Account
           </div>
-        <div className="user-menu-wrap" ref={userMenuRef}>
-          <button
-            className={`user-btn ${open ? 'open' : ''}`}
-            type="button"
-            aria-haspopup="menu"
-            aria-expanded={open}
-            onClick={() => setOpen((v) => !v)}
-          >
-            <span className="user-av">T1</span>
-            <span className="user-nm">Test 11</span>
 
-            <svg
-              className="user-chevron"
-              width="10"
-              height="10"
-              viewBox="0 0 12 12"
-              fill="none"
-              aria-hidden="true"
-            >
-              <path
-                d="M2 4.5l4 4 4-4"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="gap-2"
+              >
+                <span className="flex size-6 items-center justify-center rounded-full border border-primary/30 bg-primary/10 text-[10px] font-bold text-primary">
+                  T1
+                </span>
+                <span className="hidden sm:inline">Test 11</span>
+                <ChevronDown className="size-3.5 text-muted-foreground" />
+              </Button>
+            </DropdownMenuTrigger>
 
-          {open && (
-            <div className="user-menu" role="menu">
-              <div className="um-header">
-                <div className="um-name">Test 11</div>
-                <div className="um-email">test@vera-finance.com</div>
-              </div>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>
+                <div className="flex flex-col gap-1">
+                  <span className="text-sm font-semibold">Test 11</span>
+                  <span className="font-mono text-xs font-normal text-muted-foreground">
+                    test@vera-finance.com
+                  </span>
+                </div>
+              </DropdownMenuLabel>
 
-              <div className="um-list">
-                <button
-                  className="um-item"
-                  type="button"
-                  role="menuitem"
-                  onClick={() => {
-                    setSettingsTab('email');
-                    setSettingsOpen(true);
-                    setOpen(false);
-                  }}
-                >
-                  Settings
-                </button>
+              <DropdownMenuSeparator />
 
-                <button
-                  className="um-item"
-                  type="button"
-                  role="menuitem"
-                  onClick={() => {
-                    setSettingsTab('password');
-                    setSettingsOpen(true);
-                    setOpen(false);
-                  }}
-                >
-                  Reset Password
-                </button>
+              <DropdownMenuItem onClick={() => openSettings('email')}>
+                <Mail className="size-4" />
+                Settings
+              </DropdownMenuItem>
 
-                <div className="um-divider" />
+              <DropdownMenuItem onClick={() => openSettings('password')}>
+                <LockKeyhole className="size-4" />
+                Reset Password
+              </DropdownMenuItem>
 
-                <button className="um-item danger" type="button" role="menuitem">
-                  Log Out
-                </button>
-              </div>
-            </div>
-          )}
+              <DropdownMenuSeparator />
+
+              <DropdownMenuItem className="text-destructive focus:text-destructive">
+                <LogOut className="size-4" />
+                Log Out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-      </div>
-    </header>
-    <SettingsDialog
-      open={settingsOpen}
-      initialTab={settingsTab}
-      onClose={() => setSettingsOpen(false)}
-    />
+      </header>
+
+      <SettingsDialog
+        open={settingsOpen}
+        initialTab={settingsTab}
+        onOpenChange={setSettingsOpen}
+      />
     </>
   );
 }
