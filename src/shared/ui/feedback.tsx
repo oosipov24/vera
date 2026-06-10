@@ -1,56 +1,102 @@
-import { useState, type ReactNode, type MouseEvent } from 'react';
+import { Info, X } from 'lucide-react';
+import { useState, type MouseEvent, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
+
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { useUiStore } from '@/store/useUiStore';
 
+const TOAST_TONE: Record<string, string> = {
+  success: 'border-emerald-500/20 bg-emerald-500/10 text-emerald-500',
+  error: 'border-destructive/20 bg-destructive/10 text-destructive',
+  info: 'border-primary/20 bg-primary/10 text-primary',
+};
 
+const TOAST_ICON_TONE: Record<string, string> = {
+  success: 'bg-emerald-500/10 text-emerald-500',
+  error: 'bg-destructive/10 text-destructive',
+  info: 'bg-primary/10 text-primary',
+};
 
-//  Toaster 
 const TOAST_ICON: Record<string, ReactNode> = {
   success: (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-      <path d="M3.5 8.5l3 3 6-7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M3.5 8.5l3 3 6-7"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   ),
   error: (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-      <path d="M8 4.5v4M8 11h.01" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path
+        d="M8 4.5v4M8 11h.01"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
       <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.3" />
     </svg>
   ),
-  info: (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-      <path d="M8 7.5v4M8 5h.01" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.3" />
-    </svg>
-  ),
+  info: <Info className="size-4" />,
 };
 
-// Renders the live toast queue (top-right). Reads from the UI store
+// Renders the live toast queue in the top-right corner.
 export function Toaster() {
-  const toasts = useUiStore((s) => s.toasts);
-  const dismiss = useUiStore((s) => s.dismissToast);
+  const toasts = useUiStore((state) => state.toasts);
+  const dismiss = useUiStore((state) => state.dismissToast);
 
   return (
-    <div className="toast-wrap" aria-live="polite">
-      {toasts.map((t) => (
-        <div key={t.id} className={`toast ${t.kind}`} role="status">
-          <div className="toast-ico">{TOAST_ICON[t.kind]}</div>
-          <div className="toast-body">
-            <div className="toast-title">{t.title}</div>
-            <div className="toast-msg">{t.message}</div>
+    <div
+      className="fixed right-4 top-4 z-[1000] flex w-[min(360px,calc(100vw-32px))] flex-col gap-2"
+      aria-live="polite"
+    >
+      {toasts.map((toast) => (
+        <div
+          key={toast.id}
+          className={cn(
+            'flex items-start gap-3 rounded-xl border bg-card p-3 text-card-foreground shadow-lg',
+            TOAST_TONE[toast.kind],
+          )}
+          role="status"
+        >
+          <div
+            className={cn(
+              'flex size-6 shrink-0 items-center justify-center rounded-full',
+              TOAST_ICON_TONE[toast.kind],
+            )}
+          >
+            {TOAST_ICON[toast.kind]}
           </div>
-          <button className="toast-x" onClick={() => dismiss(t.id)} aria-label="Dismiss">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
-              <path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-            </svg>
-          </button>
+
+          <div className="min-w-0 flex-1">
+            <div className="text-sm font-bold text-foreground">
+              {toast.title}
+            </div>
+            <div className="mt-0.5 text-xs leading-5 text-muted-foreground">
+              {toast.message}
+            </div>
+          </div>
+
+          <Button
+            type="button"
+            size="icon"
+            variant="ghost"
+            className="size-7 shrink-0 text-muted-foreground hover:text-foreground"
+            onClick={() => dismiss(toast.id)}
+            aria-label="Dismiss"
+          >
+            <X className="size-4" />
+          </Button>
         </div>
       ))}
     </div>
   );
 }
 
-//  Tooltip (truncated cell hover) 
 interface TooltipCellProps {
   text: string;
   className?: string;
@@ -67,14 +113,14 @@ interface TipState {
 export function TooltipCell({ text, className, children }: TooltipCellProps) {
   const [tip, setTip] = useState<TipState | null>(null);
 
-  const show = (e: MouseEvent<HTMLElement>) => {
-    const r = e.currentTarget.getBoundingClientRect();
-    // Estimate the bubble height; refined for above/below placement only.
-    const estH = 36;
-    const above = r.top - estH - 12 > 8;
+  const show = (event: MouseEvent<HTMLElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const estimatedHeight = 36;
+    const above = rect.top - estimatedHeight - 12 > 8;
+
     setTip({
-      top: above ? r.top - 10 : r.bottom + 10,
-      left: r.left,
+      top: above ? rect.top - 10 : rect.bottom + 10,
+      left: rect.left,
       place: above ? 'above' : 'below',
     });
   };
@@ -86,14 +132,16 @@ export function TooltipCell({ text, className, children }: TooltipCellProps) {
       <span className={className} onMouseEnter={show} onMouseLeave={hide}>
         {children}
       </span>
+
       {tip &&
         createPortal(
           <div
-            className={`vtip ${tip.place}`}
+            className="fixed z-[2000] max-w-72 rounded-lg border border-border bg-popover px-3 py-2 text-xs leading-5 text-popover-foreground shadow-lg"
             style={{
               top: tip.top,
               left: Math.min(Math.max(8, tip.left), window.innerWidth - 292),
-              transform: tip.place === 'above' ? 'translateY(-100%)' : undefined,
+              transform:
+                tip.place === 'above' ? 'translateY(-100%)' : undefined,
             }}
             role="tooltip"
           >
