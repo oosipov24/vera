@@ -3,11 +3,10 @@ import {
   useId,
   useRef,
   useState,
-  type ChangeEvent,
   type ReactNode,
 } from 'react';
 import { Check, ChevronDown } from 'lucide-react';
-
+import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
 export interface DropdownOption<T extends string = string> {
@@ -120,15 +119,12 @@ export function Dropdown<T extends string>({
         >
           {searchable && (
             <div className="border-b border-border p-2">
-              <input
-                className="h-9 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+              <Input
                 type="text"
                 autoFocus
                 placeholder={searchPlaceholder}
                 value={query}
-                onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                  setQuery(event.target.value)
-                }
+                onChange={(event) => setQuery(event.target.value)}
               />
             </div>
           )}
