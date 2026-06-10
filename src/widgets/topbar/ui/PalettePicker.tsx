@@ -1,55 +1,73 @@
+import { Palette } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { useUiStore } from '@/store/useUiStore';
+
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { PALETTES } from '@/constants/market';
+import { useUiStore } from '@/store/useUiStore';
 
 /**
  * Accent palette picker. Opens a popover of swatches; selecting one retints the
- * whole platform via the UI store (which calls the palette engine).
+ * whole platform via the UI store, which calls the palette engine.
  */
 export function PalettePicker() {
-  const paletteIndex = useUiStore((s) => s.paletteIndex);
-  const setPalette = useUiStore((s) => s.setPalette);
+  const paletteIndex = useUiStore((state) => state.paletteIndex);
+  const setPalette = useUiStore((state) => state.setPalette);
+
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!open) return;
-    const onDoc = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+
+    const onDocumentMouseDown = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
     };
-    document.addEventListener('mousedown', onDoc);
-    return () => document.removeEventListener('mousedown', onDoc);
+
+    document.addEventListener('mousedown', onDocumentMouseDown);
+
+    return () => {
+      document.removeEventListener('mousedown', onDocumentMouseDown);
+    };
   }, [open]);
 
   return (
-    <div style={{ position: 'relative' }} ref={ref}>
-      <button
-        className="theme-toggle"
+    <div className="relative" ref={ref}>
+      <Button
+        type="button"
+        size="icon"
+        variant="outline"
         title="Accent color"
         aria-label="Accent color"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => setOpen((current) => !current)}
       >
-        <svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden>
-          <circle cx="9" cy="9" r="7" stroke="currentColor" strokeWidth="1.4" />
-          <circle cx="6.3" cy="6.8" r="1.1" fill="currentColor" />
-          <circle cx="11.7" cy="6.8" r="1.1" fill="currentColor" />
-          <circle cx="6.3" cy="11.2" r="1.1" fill="currentColor" />
-          <circle cx="11.7" cy="11.2" r="1.1" fill="currentColor" />
-        </svg>
-      </button>
+        <Palette className="size-4" />
+      </Button>
 
       {open && (
-        <div className="palette-menu show">
-          <div className="palette-title">Accent color</div>
-          <div className="palette-grid">
-            {PALETTES.map((p, i) => (
+        <div className="absolute right-0 top-11 z-50 w-44 rounded-xl border border-border bg-popover p-3 text-popover-foreground shadow-lg">
+          <div className="mb-3 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+            Accent color
+          </div>
+
+          <div className="grid grid-cols-4 gap-2">
+            {PALETTES.map((palette, index) => (
               <button
-                key={p.name}
-                className={`palette-sw ${i === paletteIndex ? 'on' : ''}`}
-                style={{ background: p.sw }}
-                title={p.name}
-                aria-label={p.name}
-                onClick={() => setPalette(i)}
+                key={palette.name}
+                type="button"
+                className={cn(
+                  'relative size-8 rounded-full border-2 border-transparent transition-transform hover:scale-110',
+                  index === paletteIndex && 'border-foreground',
+                )}
+                style={{ background: palette.sw }}
+                title={palette.name}
+                aria-label={palette.name}
+                onClick={() => {
+                  setPalette(index);
+                  setOpen(false);
+                }}
               />
             ))}
           </div>
