@@ -4,6 +4,7 @@ import type { ExecutionStatus } from '@/types';
 import { StatusBadge } from './StatusBadge';
 import { Dropdown } from '@/shared/ui/Dropdown';
 import { fmtAsset } from '@/lib/format';
+import { cn } from '@/lib/utils';
 
 const STATUS_OPTS: Array<'All Status' | ExecutionStatus> = ['All Status', 'Executed', 'Pending', 'Rejected'];
 
@@ -30,67 +31,141 @@ export function ExecutionsTable() {
   });
 
   return (
-    <div className="activity-table">
-      <div className="filters-row">
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="mb-3 flex flex-wrap items-center gap-2">
         <Dropdown
           value={status}
           options={STATUS_OPTS}
           onChange={setStatus}
-          className="filter-dd"
+          className="min-w-32"
         />
+
         <input
-          className="filter-search"
+          className="h-9 min-w-32 max-w-56 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
           placeholder="Search"
           value={query}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
+          onChange={(event: ChangeEvent<HTMLInputElement>) =>
+            setQuery(event.target.value)
+          }
         />
       </div>
 
-      <div className="vt-wrap">
-        <table className="vt">
+      <div className="min-h-0 flex-1 overflow-auto rounded-xl border border-border">
+        <table className="w-full border-collapse text-sm">
           <thead>
-            <tr>
-              <th>Order ID</th>
-              <th>Pair</th>
-              <th>Side</th>
-              <th>Amount</th>
-              <th>Price</th>
-              <th>Total</th>
-              <th>Status</th>
-              <th>Created</th>
-              <th>Executed</th>
+            <tr className="border-b border-border bg-background">
+              <TableHead>Order ID</TableHead>
+              <TableHead>Pair</TableHead>
+              <TableHead>Side</TableHead>
+              <TableHead>Amount</TableHead>
+              <TableHead>Price</TableHead>
+              <TableHead>Total</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Created</TableHead>
+              <TableHead>Executed</TableHead>
             </tr>
           </thead>
+
           <tbody>
-            {rows.map((e) => (
-              <tr key={e.id}>
-                <td className="td-mono">{e.id}</td>
-                <td className="td-pair">{e.pair}</td>
-                <td>
-                  <span className={`side-tag ${e.side.toLowerCase()}`}>{e.side}</span>
-                </td>
-                <td className="td-mono">
-                  {fmtAsset(e.asset, e.amount)} <span className="td-unit">{e.asset}</span>
-                </td>
-                <td className="td-mono">{e.price.toLocaleString('en-US')}</td>
-                <td className="td-mono">{e.total.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                <td><StatusBadge status={e.status} /></td>
-                <td className="td-time">{e.created}</td>
-                <td className="td-time">{e.executed}</td>
+            {rows.map((execution) => (
+              <tr
+                key={execution.id}
+                className="border-b border-border last:border-b-0 hover:bg-muted/40"
+              >
+                <TableCell mono>{execution.id}</TableCell>
+                <TableCell strong>{execution.pair}</TableCell>
+                <TableCell>
+                  <SideTag side={execution.side} />
+                </TableCell>
+                <TableCell mono>
+                  {fmtAsset(execution.asset, execution.amount)}{' '}
+                  <span className="text-xs text-muted-foreground">
+                    {execution.asset}
+                  </span>
+                </TableCell>
+                <TableCell mono>
+                  {execution.price.toLocaleString('en-US')}
+                </TableCell>
+                <TableCell mono>
+                  {execution.total.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                  })}
+                </TableCell>
+                <TableCell>
+                  <StatusBadge status={execution.status} />
+                </TableCell>
+                <TableCell time>{execution.created}</TableCell>
+                <TableCell time>{execution.executed}</TableCell>
               </tr>
             ))}
+
             {rows.length === 0 && (
               <tr>
-                <td colSpan={9} className="td-empty">No executions match your filters</td>
+                <td
+                  colSpan={9}
+                  className="px-3 py-8 text-center text-sm text-muted-foreground"
+                >
+                  No executions match your filters
+                </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
 
-      <div className="vt-foot">
-        <span className="vt-count">{rows.length} rows</span>
+      <div className="pt-2 text-xs text-muted-foreground">
+        {rows.length} rows
       </div>
     </div>
+  );
+}
+function TableHead({ children }: { children: string }) {
+  return (
+    <th className="sticky top-0 z-10 whitespace-nowrap bg-background px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+      {children}
+    </th>
+  );
+}
+
+function TableCell({
+  children,
+  mono,
+  strong,
+  time,
+}: {
+  children: React.ReactNode;
+  mono?: boolean;
+  strong?: boolean;
+  time?: boolean;
+}) {
+  return (
+    <td
+      className={cn(
+        'whitespace-nowrap px-3 py-3 align-middle text-muted-foreground',
+        mono && 'font-mono text-foreground',
+        strong && 'font-semibold text-foreground',
+        time && 'font-mono text-xs text-muted-foreground',
+      )}
+    >
+      {children}
+    </td>
+  );
+}
+
+function SideTag({ side }: { side: string }) {
+  const isBuy = side.toLowerCase() === 'buy';
+
+  return (
+    <span
+      className={cn(
+        'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold',
+        isBuy
+          ? 'bg-emerald-500/10 text-emerald-500'
+          : 'bg-red-500/10 text-red-500',
+      )}
+    >
+      <span className="size-1.5 rounded-full bg-current" />
+      {side}
+    </span>
   );
 }
