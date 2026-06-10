@@ -1,41 +1,29 @@
 import { ArrowDownToLine, ArrowUpFromLine } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { useTradeStore } from '@/store/useTradeStore';
-import { useUiStore } from '@/store/useUiStore';
-import type { AssetSymbol } from '@/types';
 import { AssetIcon } from '@/shared/ui/asset-icon';
-import { ASSET_META, isFiat } from '@/constants/assets';
-import { fmtAsset, fmtMoney } from '@/lib/format';
-import { valueInUSD } from '@/lib/valuation';
+import type { AssetSymbol } from '@/types';
 
 interface BalanceCardProps {
   asset: AssetSymbol;
+  name: string;
+  sub: string;
+  amount: string;
+  secondary: string;
   onDeposit: (asset: AssetSymbol) => void;
   onWithdraw: (asset: AssetSymbol) => void;
 }
 
 /** A single asset balance row with quick deposit/withdraw actions. */
-export function BalanceCard({ asset, onDeposit, onWithdraw }: BalanceCardProps) {
-  const bal = useTradeStore((state) => state.balances[asset] ?? 0);
-  const reserved = useTradeStore((state) => state.reserved[asset] ?? 0);
-  const displayCcy = useUiStore((state) => state.displayCcy);
-
-  const meta = ASSET_META[asset];
-  const fiat = isFiat(asset);
-
-  const amount = fiat
-    ? `${meta.symbol ?? ''}${fmtAsset(asset, bal)}`
-    : fmtAsset(asset, bal);
-
-  const sub = fiat ? `${asset} · ${meta.rail ?? ''}` : asset;
-
-  const secondary = fiat
-    ? fmtMoney(valueInUSD(asset, bal), displayCcy)
-    : reserved > 0
-      ? `${fmtAsset(asset, reserved)} reserved`
-      : '0 reserved';
-
+export function BalanceCard({
+  asset,
+  name,
+  sub,
+  amount,
+  secondary,
+  onDeposit,
+  onWithdraw,
+}: BalanceCardProps) {
   return (
     <div className="overflow-hidden rounded-xl border border-border bg-card">
       <div className="flex items-center gap-3 p-3">
@@ -43,7 +31,7 @@ export function BalanceCard({ asset, onDeposit, onWithdraw }: BalanceCardProps) 
 
         <div className="min-w-0 flex-1">
           <div className="truncate text-sm font-bold text-foreground">
-            {meta.name}
+            {name}
           </div>
           <div className="truncate text-xs text-muted-foreground">{sub}</div>
         </div>
