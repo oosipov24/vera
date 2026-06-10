@@ -5,6 +5,8 @@ import { CheckCircle2 } from 'lucide-react';
 
 import type { AssetSymbol, PaymentMethod } from '@/types';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+
 import {
   Dialog,
   DialogContent,
@@ -369,8 +371,8 @@ export function WithdrawDialog({
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <input
-                    className="h-10 min-w-0 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                  <Input
+                    className="min-w-0 flex-1"
                     type="number"
                     inputMode="decimal"
                     placeholder="0.00"
@@ -410,8 +412,7 @@ export function WithdrawDialog({
                 <div className="grid gap-4 sm:grid-cols-2">
                   {fiatFieldsFor(effMethod, asset).map((field) => (
                     <Field key={field.id} label={field.lbl} required={field.req}>
-                      <input
-                        className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                      <Input
                         type="text"
                         placeholder={field.ph}
                         value={destination[field.id] ?? ''}
@@ -454,8 +455,7 @@ export function WithdrawDialog({
                   </div>
 
                   <Field label="Destination Address" required>
-                    <input
-                      className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                    <Input
                       type="text"
                       placeholder={`Your ${asset} wallet address`}
                       value={destination.address ?? ''}
