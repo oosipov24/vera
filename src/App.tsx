@@ -1,5 +1,5 @@
-import { TradingPage } from '@/pages/trading';
+import { AppRouter } from '@/app/router';
 
 export default function App() {
-  return <TradingPage />;
+  return <AppRouter />;
 }
