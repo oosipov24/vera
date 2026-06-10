@@ -1,4 +1,4 @@
-import { PalettePicker } from '@/components/layout/PalettePicker';
+import { PalettePicker } from './PalettePicker';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,

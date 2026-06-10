@@ -1,6 +1,6 @@
 import { useTradeStore } from '@/store/useTradeStore';
 import type { AssetSymbol } from '@/types';
-import { AssetIcon } from '@/components/icons/AssetIcon';
+import { AssetIcon } from '@/shared/ui/asset-icon';
 import { ASSET_META, isFiat } from '@/constants/assets';
 import { fmtAsset, fmtMoney } from '@/lib/format';
 import { valueInUSD } from '@/lib/valuation';
