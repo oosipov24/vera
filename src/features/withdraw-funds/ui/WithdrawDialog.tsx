@@ -3,7 +3,15 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import type { AssetSymbol, PaymentMethod } from '@/types';
-import { Modal } from '@/shared/ui/feedback';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Dropdown } from '@/shared/ui/Dropdown';
 import {
   StepBars,
@@ -228,264 +236,277 @@ export function WithdrawDialog({
 
   const footer =
     step === 'done' ? (
-      <button className="m-btn primary full" onClick={onClose}>
+      <Button type="button" className="w-full" onClick={onClose}>
         Close
-      </button>
+      </Button>
     ) : (
-      <div className="m-actions">
+      <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
         {(step === 2 || step === 3) && (
-          <button className="m-btn ghost" onClick={back}>
+          <Button type="button" variant="ghost" onClick={back}>
             Back
-          </button>
+          </Button>
         )}
 
-        <button className="m-btn cancel" onClick={onClose}>
+        <Button type="button" variant="outline" onClick={onClose}>
           Cancel
-        </button>
+        </Button>
 
-        <button className="m-btn primary" disabled={!nextEnabled} onClick={next}>
+        <Button type="button" disabled={!nextEnabled} onClick={next}>
           {nextLabel}
-        </button>
+        </Button>
       </div>
     );
 
   const stepNum = step === 'done' ? 3 : step;
 
   return (
-    <Modal
+    <Dialog
       open={open}
-      onClose={onClose}
-      title={
-        <span className="m-title-row">
-          Withdraw
-          {asset && step !== 1 && <AssetPill label={`${asset} · ${effMethod}`} />}
-        </span>
-      }
-      subtitle={subtitle}
-      footer={footer}
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen) {
+          onClose();
+        }
+      }}
     >
-      {step !== 'done' && <StepBars total={3} current={stepNum} />}
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[520px]">
+        <DialogHeader>
+          <DialogTitle>
+            <span className="m-title-row">
+              Withdraw
+              {asset && step !== 1 && <AssetPill label={`${asset} · ${effMethod}`} />}
+            </span>
+          </DialogTitle>
 
-      {step === 1 && (
-        <MethodCards value={method ?? null} onChange={onPickMethod} />
-      )}
+          <DialogDescription>{subtitle}</DialogDescription>
+        </DialogHeader>
 
-      {step === 2 && (
-        <div className="m-stack">
-          <div className="m-field">
-            <div className="m-field-label">Asset</div>
-            <Dropdown
-              value={asset}
-              options={assetList.map((item) => ({
-                value: item,
-                label: `${item} — ${ASSET_META[item].name}`,
-                search: `${item} ${ASSET_META[item].name}`,
-              }))}
-              onChange={onPickAsset}
-              searchable
-              placeholder="Select asset"
-            />
-            {errors.asset && (
-              <p className="text-xs text-destructive">{errors.asset.message}</p>
-            )}
-          </div>
+        <div className="space-y-4">
+          {step !== 'done' && <StepBars total={3} current={stepNum} />}
 
-          {fiat && asset && (
-            <div className="rail-toggle">
-              {asset === 'EUR' && (
-                <button
-                  className={`rail-btn ${rail === 'SEPA' ? 'on' : ''}`}
-                  onClick={() =>
-                    setValue('rail', 'SEPA', {
-                      shouldDirty: true,
-                      shouldValidate: true,
-                    })
-                  }
-                >
-                  SEPA
-                </button>
-              )}
-
-              <button
-                className={`rail-btn ${rail === 'SWIFT' ? 'on' : ''}`}
-                onClick={() =>
-                  setValue('rail', 'SWIFT', {
-                    shouldDirty: true,
-                    shouldValidate: true,
-                  })
-                }
-              >
-                SWIFT
-              </button>
-            </div>
+          {step === 1 && (
+            <MethodCards value={method ?? null} onChange={onPickMethod} />
           )}
 
-          <div className="m-field">
-            <div className="m-field-label-row">
-              <span className="m-field-label">Amount</span>
+          {step === 2 && (
+            <div className="m-stack">
+              <div className="m-field">
+                <div className="m-field-label">Asset</div>
+                <Dropdown
+                  value={asset}
+                  options={assetList.map((item) => ({
+                    value: item,
+                    label: `${item} — ${ASSET_META[item].name}`,
+                    search: `${item} ${ASSET_META[item].name}`,
+                  }))}
+                  onChange={onPickAsset}
+                  searchable
+                  placeholder="Select asset"
+                />
+                {errors.asset && (
+                  <p className="text-xs text-destructive">{errors.asset.message}</p>
+                )}
+              </div>
 
-              {asset && (
-                <span className="m-avail">
-                  Available: {fmtAsset(asset, bal)} {asset}
+              {fiat && asset && (
+                <div className="rail-toggle">
+                  {asset === 'EUR' && (
+                    <button
+                      className={`rail-btn ${rail === 'SEPA' ? 'on' : ''}`}
+                      onClick={() =>
+                        setValue('rail', 'SEPA', {
+                          shouldDirty: true,
+                          shouldValidate: true,
+                        })
+                      }
+                    >
+                      SEPA
+                    </button>
+                  )}
+
                   <button
-                    className="amt-all"
+                    className={`rail-btn ${rail === 'SWIFT' ? 'on' : ''}`}
                     onClick={() =>
-                      setValue('amount', String(bal), {
+                      setValue('rail', 'SWIFT', {
                         shouldDirty: true,
                         shouldValidate: true,
                       })
                     }
                   >
-                    All
+                    SWIFT
                   </button>
-                </span>
-              )}
-            </div>
-
-            <div className="amt-row">
-              <input
-                className="vinp"
-                type="number"
-                inputMode="decimal"
-                placeholder="0.00"
-                {...register('amount')}
-              />
-              <span className="amt-ccy">{asset || '—'}</span>
-            </div>
-
-            {errors.amount && (
-              <p className="text-xs text-destructive">{errors.amount.message}</p>
-            )}
-
-            {asset &&
-              amt > 0 &&
-              (exceeds ? (
-                <div className="amt-hint err">⚠ Exceeds available balance</div>
-              ) : !isFiat(asset) ? (
-                <div className="amt-hint">
-                  ≈ $
-                  {(amt * (PRICES_USD[asset] ?? 1)).toLocaleString('en-US', {
-                    minimumFractionDigits: 2,
-                  })}{' '}
-                  USD
                 </div>
-              ) : null)}
-          </div>
-        </div>
-      )}
+              )}
 
-      {step === 3 && asset && (
-        <div className="m-stack">
-          {fiat ? (
-            <div className="m-fields-grid">
-              {fiatFieldsFor(effMethod, asset).map((field) => (
-                <Field key={field.id} label={field.lbl} required={field.req}>
+              <div className="m-field">
+                <div className="m-field-label-row">
+                  <span className="m-field-label">Amount</span>
+
+                  {asset && (
+                    <span className="m-avail">
+                      Available: {fmtAsset(asset, bal)} {asset}
+                      <button
+                        className="amt-all"
+                        onClick={() =>
+                          setValue('amount', String(bal), {
+                            shouldDirty: true,
+                            shouldValidate: true,
+                          })
+                        }
+                      >
+                        All
+                      </button>
+                    </span>
+                  )}
+                </div>
+
+                <div className="amt-row">
                   <input
                     className="vinp"
-                    type="text"
-                    placeholder={field.ph}
-                    value={destination[field.id] ?? ''}
-                    onChange={(event) =>
-                      setDestinationField(field.id, event.target.value)
-                    }
+                    type="number"
+                    inputMode="decimal"
+                    placeholder="0.00"
+                    {...register('amount')}
                   />
-                  {errors.destination?.[field.id] && (
-                    <p className="text-xs text-destructive">
-                      {errors.destination[field.id]?.message}
-                    </p>
-                  )}
-                </Field>
-              ))}
-            </div>
-          ) : (
-            <div className="m-field">
-              <div className="m-field-label">Network</div>
+                  <span className="amt-ccy">{asset || '—'}</span>
+                </div>
 
-              <Dropdown
-                value={network ?? ''}
-                options={networksFor(asset)}
-                onChange={(nextNetwork) => {
-                  setValue('network', nextNetwork, {
-                    shouldDirty: true,
-                    shouldValidate: true,
-                  });
-                  setValue('destination', {}, { shouldDirty: true });
-                  setValue('proof', null, { shouldDirty: true });
-                }}
-                placeholder="Select network"
-              />
-
-              {errors.network && (
-                <p className="text-xs text-destructive">
-                  {errors.network.message}
-                </p>
-              )}
-
-              <Field label="Destination Address" required>
-                <input
-                  className="vinp"
-                  type="text"
-                  placeholder={`Your ${asset} wallet address`}
-                  value={destination.address ?? ''}
-                  onChange={(event) =>
-                    setDestinationField('address', event.target.value)
-                  }
-                />
-                {errors.destination?.address && (
-                  <p className="text-xs text-destructive">
-                    {errors.destination.address.message}
-                  </p>
+                {errors.amount && (
+                  <p className="text-xs text-destructive">{errors.amount.message}</p>
                 )}
-              </Field>
+
+                {asset &&
+                  amt > 0 &&
+                  (exceeds ? (
+                    <div className="amt-hint err">⚠ Exceeds available balance</div>
+                  ) : !isFiat(asset) ? (
+                    <div className="amt-hint">
+                      ≈ $
+                      {(amt * (PRICES_USD[asset] ?? 1)).toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                      })}{' '}
+                      USD
+                    </div>
+                  ) : null)}
+              </div>
             </div>
           )}
 
-          <div className="m-stack">
-            <FileUpload
-              label="Supporting Document (invoice / contract)"
-              prompt="Attach invoice or contract"
-              onChange={(file) =>
-                setValue('proof', file, {
-                  shouldDirty: true,
-                  shouldValidate: true,
-                })
-              }
-            />
+          {step === 3 && asset && (
+            <div className="m-stack">
+              {fiat ? (
+                <div className="m-fields-grid">
+                  {fiatFieldsFor(effMethod, asset).map((field) => (
+                    <Field key={field.id} label={field.lbl} required={field.req}>
+                      <input
+                        className="vinp"
+                        type="text"
+                        placeholder={field.ph}
+                        value={destination[field.id] ?? ''}
+                        onChange={(event) =>
+                          setDestinationField(field.id, event.target.value)
+                        }
+                      />
+                      {errors.destination?.[field.id] && (
+                        <p className="text-xs text-destructive">
+                          {errors.destination[field.id]?.message}
+                        </p>
+                      )}
+                    </Field>
+                  ))}
+                </div>
+              ) : (
+                <div className="m-field">
+                  <div className="m-field-label">Network</div>
 
-            {errors.proof && (
-              <p className="text-xs text-destructive">{errors.proof.message}</p>
-            )}
-          </div>
+                  <Dropdown
+                    value={network ?? ''}
+                    options={networksFor(asset)}
+                    onChange={(nextNetwork) => {
+                      setValue('network', nextNetwork, {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      });
+                      setValue('destination', {}, { shouldDirty: true });
+                      setValue('proof', null, { shouldDirty: true });
+                    }}
+                    placeholder="Select network"
+                  />
+
+                  {errors.network && (
+                    <p className="text-xs text-destructive">
+                      {errors.network.message}
+                    </p>
+                  )}
+
+                  <Field label="Destination Address" required>
+                    <input
+                      className="vinp"
+                      type="text"
+                      placeholder={`Your ${asset} wallet address`}
+                      value={destination.address ?? ''}
+                      onChange={(event) =>
+                        setDestinationField('address', event.target.value)
+                      }
+                    />
+                    {errors.destination?.address && (
+                      <p className="text-xs text-destructive">
+                        {errors.destination.address.message}
+                      </p>
+                    )}
+                  </Field>
+                </div>
+              )}
+
+              <div className="m-stack">
+                <FileUpload
+                  label="Supporting Document (invoice / contract)"
+                  prompt="Attach invoice or contract"
+                  onChange={(file) =>
+                    setValue('proof', file, {
+                      shouldDirty: true,
+                      shouldValidate: true,
+                    })
+                  }
+                />
+
+                {errors.proof && (
+                  <p className="text-xs text-destructive">{errors.proof.message}</p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {step === 'done' && (
+            <div className="m-done">
+              <div className="m-done-ico">
+                <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+                  <circle
+                    cx="13"
+                    cy="13"
+                    r="12"
+                    stroke="var(--green)"
+                    strokeWidth="1.5"
+                  />
+                  <path
+                    d="M7.5 13.5l3.5 3.5 7.5-8"
+                    stroke="var(--green)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+
+              <div className="m-done-msg">
+                {amt.toLocaleString('en-US')} {asset} via {effMethod} is being
+                processed.
+              </div>
+            </div>
+          )}
         </div>
-      )}
 
-      {step === 'done' && (
-        <div className="m-done">
-          <div className="m-done-ico">
-            <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-              <circle
-                cx="13"
-                cy="13"
-                r="12"
-                stroke="var(--green)"
-                strokeWidth="1.5"
-              />
-              <path
-                d="M7.5 13.5l3.5 3.5 7.5-8"
-                stroke="var(--green)"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
-
-          <div className="m-done-msg">
-            {amt.toLocaleString('en-US')} {asset} via {effMethod} is being
-            processed.
-          </div>
-        </div>
-      )}
-    </Modal>
+        <DialogFooter>{footer}</DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
