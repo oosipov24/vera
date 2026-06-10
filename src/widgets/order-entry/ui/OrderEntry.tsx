@@ -2,7 +2,7 @@ import type { ChangeEvent } from 'react';
 import { useOrderStore, deriveTicket } from '@/store/useOrderStore';
 import { useTradeStore } from '@/store/useTradeStore';
 import { useUiStore } from '@/store/useUiStore';
-import { Dropdown } from '@/components/ui/Dropdown';
+import { Dropdown } from '@/shared/ui/Dropdown';
 import { TRADING_PAIRS } from '@/constants/market';
 import { fmtAsset } from '@/lib/format';
 import { priceDecimals, splitPair } from '@/lib/valuation';

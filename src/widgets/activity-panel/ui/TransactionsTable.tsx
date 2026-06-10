@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { useTradeStore } from '@/store/useTradeStore';
 import type { AssetSymbol, MethodFilter, RailFilter, StatusFilter } from '@/types';
 import { StatusBadge } from './StatusBadge';
-import { Dropdown } from '@/components/ui/Dropdown';
+import { Dropdown } from '@/shared/ui/Dropdown';
 import { TooltipCell } from '@/components/ui/feedback';
 import { FIAT_METHODS } from '@/constants/assets';
 import { fmtAsset } from '@/lib/format';

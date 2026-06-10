@@ -2,7 +2,7 @@ import { useState, type ChangeEvent } from 'react';
 import { useTradeStore } from '@/store/useTradeStore';
 import type { ExecutionStatus } from '@/types';
 import { StatusBadge } from './StatusBadge';
-import { Dropdown } from '@/components/ui/Dropdown';
+import { Dropdown } from '@/shared/ui/Dropdown';
 import { fmtAsset } from '@/lib/format';
 
 const STATUS_OPTS: Array<'All Status' | ExecutionStatus> = ['All Status', 'Executed', 'Pending', 'Rejected'];

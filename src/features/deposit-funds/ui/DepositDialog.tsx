@@ -5,7 +5,7 @@ import QRCode from 'qrcode';
 
 import type { AssetSymbol, NetworkName, PaymentMethod, PaymentRail } from '@/types';
 import { Modal } from '@/components/ui/feedback';
-import { Dropdown } from '@/components/ui/Dropdown';
+import { Dropdown } from '@/shared/ui/Dropdown';
 import {
   StepBars,
   AssetPill,
