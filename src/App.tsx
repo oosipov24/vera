@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import type { AssetSymbol } from '@/types';
 import { Topbar } from '@/widgets/topbar';
-import { OrderEntry } from '@/components/order/OrderEntry';
+import { OrderEntry } from '@/widgets/order-entry';
 import { RfqHero } from '@/components/rfq/RfqHero';
 import { ActivityPanel } from '@/components/tables/ActivityPanel';
 import { Portfolio } from '@/components/portfolio/Portfolio';
