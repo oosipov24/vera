@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import type { AssetSymbol, PaymentMethod } from '@/types';
-import { Modal } from '@/components/ui/feedback';
+import { Modal } from '@/shared/ui/feedback';
 import { Dropdown } from '@/shared/ui/Dropdown';
 import {
   StepBars,
