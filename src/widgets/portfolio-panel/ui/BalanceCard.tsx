@@ -1,10 +1,13 @@
+import { ArrowDownToLine, ArrowUpFromLine } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
 import { useTradeStore } from '@/store/useTradeStore';
+import { useUiStore } from '@/store/useUiStore';
 import type { AssetSymbol } from '@/types';
 import { AssetIcon } from '@/shared/ui/asset-icon';
 import { ASSET_META, isFiat } from '@/constants/assets';
 import { fmtAsset, fmtMoney } from '@/lib/format';
 import { valueInUSD } from '@/lib/valuation';
-import { useUiStore } from '@/store/useUiStore';
 
 interface BalanceCardProps {
   asset: AssetSymbol;
@@ -14,16 +17,19 @@ interface BalanceCardProps {
 
 /** A single asset balance row with quick deposit/withdraw actions. */
 export function BalanceCard({ asset, onDeposit, onWithdraw }: BalanceCardProps) {
-  const bal = useTradeStore((s) => s.balances[asset] ?? 0);
-  const reserved = useTradeStore((s) => s.reserved[asset] ?? 0);
-  const displayCcy = useUiStore((s) => s.displayCcy);
+  const bal = useTradeStore((state) => state.balances[asset] ?? 0);
+  const reserved = useTradeStore((state) => state.reserved[asset] ?? 0);
+  const displayCcy = useUiStore((state) => state.displayCcy);
+
   const meta = ASSET_META[asset];
   const fiat = isFiat(asset);
 
-  const amount = fiat ? `${meta.symbol ?? ''}${fmtAsset(asset, bal)}` : fmtAsset(asset, bal);
-  const sub = fiat
-    ? `${asset} · ${meta.rail ?? ''}`
-    : asset;
+  const amount = fiat
+    ? `${meta.symbol ?? ''}${fmtAsset(asset, bal)}`
+    : fmtAsset(asset, bal);
+
+  const sub = fiat ? `${asset} · ${meta.rail ?? ''}` : asset;
+
   const secondary = fiat
     ? fmtMoney(valueInUSD(asset, bal), displayCcy)
     : reserved > 0
@@ -31,31 +37,45 @@ export function BalanceCard({ asset, onDeposit, onWithdraw }: BalanceCardProps) 
       : '0 reserved';
 
   return (
-    <div className="bal-card">
-      <div className="bal-top">
+    <div className="overflow-hidden rounded-xl border border-border bg-card">
+      <div className="flex items-center gap-3 p-3">
         <AssetIcon asset={asset} />
-        <div className="coin-info">
-          <span className="coin-nm">{meta.name}</span>
-          <span className="coin-tk">{sub}</span>
+
+        <div className="min-w-0 flex-1">
+          <div className="truncate text-sm font-bold text-foreground">
+            {meta.name}
+          </div>
+          <div className="truncate text-xs text-muted-foreground">{sub}</div>
         </div>
-        <div className="coin-bal">
-          <span className="coin-amt">{amount}</span>
-          <span className="coin-rsv">{secondary}</span>
+
+        <div className="text-right">
+          <div className="font-mono text-sm font-bold text-foreground">
+            {amount}
+          </div>
+          <div className="text-xs text-muted-foreground">{secondary}</div>
         </div>
       </div>
-      <div className="bal-strip">
-        <button className="strip-btn dep" onClick={() => onDeposit(asset)}>
-          <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden>
-            <path d="M6 2v6m0 0L3.5 5.5M6 8l2.5-2.5M2.5 10h7" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+
+      <div className="grid grid-cols-2 border-t border-border">
+        <Button
+          type="button"
+          variant="ghost"
+          className="h-9 rounded-none border-r border-border text-xs text-muted-foreground hover:bg-emerald-500/10 hover:text-emerald-500"
+          onClick={() => onDeposit(asset)}
+        >
+          <ArrowDownToLine className="size-3.5" />
           Deposit
-        </button>
-        <button className="strip-btn wd" onClick={() => onWithdraw(asset)}>
-          <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden>
-            <path d="M6 8V2m0 0L3.5 4.5M6 2l2.5 2.5M2.5 10h7" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+        </Button>
+
+        <Button
+          type="button"
+          variant="ghost"
+          className="h-9 rounded-none text-xs text-muted-foreground hover:bg-primary/10 hover:text-primary"
+          onClick={() => onWithdraw(asset)}
+        >
+          <ArrowUpFromLine className="size-3.5" />
           Withdraw
-        </button>
+        </Button>
       </div>
     </div>
   );
