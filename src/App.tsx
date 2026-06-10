@@ -9,15 +9,15 @@ import { Toaster } from '@/shared/ui/feedback';
 import { useUiStore } from '@/store/useUiStore';
 import { applyPalette } from '@/lib/palette';
 
-const DepositModal = lazy(() =>
+const DepositDialog = lazy(() =>
   import('@/features/deposit-funds').then((module) => ({
-    default: module.DepositModal,
+    default: module.DepositDialog,
   })),
 );
 
-const WithdrawModal = lazy(() =>
+const WithdrawDialog = lazy(() =>
   import('@/features/withdraw-funds').then((module) => ({
-    default: module.WithdrawModal,
+    default: module.WithdrawDialog,
   })),
 );
 
@@ -67,7 +67,7 @@ export default function App() {
 
       <Suspense fallback={null}>
         {depOpen && (
-          <DepositModal
+          <DepositDialog
             open={depOpen}
             onClose={() => setDepOpen(false)}
             initialAsset={depAsset}
@@ -75,7 +75,7 @@ export default function App() {
         )}
 
         {wdOpen && (
-          <WithdrawModal
+          <WithdrawDialog
             open={wdOpen}
             onClose={() => setWdOpen(false)}
             initialAsset={wdAsset}

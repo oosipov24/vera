@@ -1,1 +1,1 @@
-export { WithdrawDialog as WithdrawModal } from './ui/WithdrawDialog';
+export { WithdrawDialog } from './ui/WithdrawDialog';

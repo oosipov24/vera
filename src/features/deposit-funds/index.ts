@@ -1,1 +1,1 @@
-export { DepositDialog as DepositModal } from './ui/DepositDialog';
+export { DepositDialog } from './ui/DepositDialog';
