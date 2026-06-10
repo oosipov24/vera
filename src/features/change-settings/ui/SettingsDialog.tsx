@@ -26,8 +26,12 @@ export function SettingsDialog({
 }: SettingsDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl overflow-hidden p-0">
-        <div className="grid min-h-[460px] grid-cols-[180px_1fr]">
+      <DialogContent className="max-h-[min(720px,calc(100vh-2rem))] w-[min(920px,calc(100vw-2rem))] overflow-hidden p-0 sm:max-w-[920px]">
+        <Tabs
+          defaultValue={initialTab}
+          orientation="vertical"
+          className="grid min-h-[520px] grid-cols-[240px_minmax(0,1fr)]"
+        >
           <aside className="border-r border-border bg-muted/20">
             <div className="border-b border-border p-5">
               <DialogHeader className="space-y-1 text-left">
@@ -36,55 +40,49 @@ export function SettingsDialog({
               </DialogHeader>
             </div>
 
-            <Tabs
-              defaultValue={initialTab}
-              className="contents"
-              orientation="vertical"
-            >
-              <div className="p-2">
-                <TabsList className="grid h-auto w-full grid-cols-1 bg-transparent p-0">
-                  <TabsTrigger
-                    value="email"
-                    className="justify-start gap-2 px-3 py-2"
-                  >
-                    <Mail className="size-4" />
-                    Email
-                  </TabsTrigger>
+            <div className="p-3">
+              <TabsList className="grid h-auto w-full grid-cols-1 gap-1 bg-transparent p-0">
+                <TabsTrigger
+                  value="email"
+                  className="justify-start gap-2 px-3 py-2"
+                >
+                  <Mail className="size-4" />
+                  Email
+                </TabsTrigger>
 
-                  <TabsTrigger
-                    value="2fa"
-                    className="justify-start gap-2 px-3 py-2"
-                  >
-                    <ShieldCheck className="size-4" />
-                    Two-Factor Auth
-                  </TabsTrigger>
+                <TabsTrigger
+                  value="2fa"
+                  className="justify-start gap-2 px-3 py-2"
+                >
+                  <ShieldCheck className="size-4" />
+                  Two-Factor Auth
+                </TabsTrigger>
 
-                  <TabsTrigger
-                    value="password"
-                    className="justify-start gap-2 px-3 py-2"
-                  >
-                    <KeyRound className="size-4" />
-                    Password
-                  </TabsTrigger>
-                </TabsList>
-              </div>
-
-              <section className="absolute left-[180px] right-0 top-0 h-full overflow-y-auto p-6">
-                <TabsContent value="email" className="m-0">
-                  <EmailSettingsForm />
-                </TabsContent>
-
-                <TabsContent value="2fa" className="m-0">
-                  <TwoFactorForm />
-                </TabsContent>
-
-                <TabsContent value="password" className="m-0">
-                  <PasswordResetForm />
-                </TabsContent>
-              </section>
-            </Tabs>
+                <TabsTrigger
+                  value="password"
+                  className="justify-start gap-2 px-3 py-2"
+                >
+                  <KeyRound className="size-4" />
+                  Password
+                </TabsTrigger>
+              </TabsList>
+            </div>
           </aside>
-        </div>
+
+          <section className="min-w-0 overflow-y-auto p-8">
+            <TabsContent value="email" className="m-0 max-w-xl">
+              <EmailSettingsForm />
+            </TabsContent>
+
+            <TabsContent value="2fa" className="m-0 max-w-xl">
+              <TwoFactorForm />
+            </TabsContent>
+
+            <TabsContent value="password" className="m-0 max-w-xl">
+              <PasswordResetForm />
+            </TabsContent>
+          </section>
+        </Tabs>
       </DialogContent>
     </Dialog>
   );
