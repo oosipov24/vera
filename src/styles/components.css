@@ -54,54 +54,6 @@
 .t-chg.dn { color: var(--red); background: var(--red-bg); }
 .user-nm { font-size: 12px; font-weight: 600; color: var(--t1); }
 
-
-
-/*  ACTIVITY / TABLES  */
-.activity-panel { flex: 1; display: flex; flex-direction: column; min-height: 0; padding: 0 20px 16px; }
-.o-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--b1); margin-bottom: 14px; }
-.o-tab { background: none; border: none; padding: 14px 4px; margin-right: 18px; font-size: 13px; font-weight: 600; color: var(--t3); border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color .15s; }
-.o-tab.on { color: var(--t1); border-bottom-color: var(--purple); }
-.o-tab:hover { color: var(--t2); }
-
-.activity-table { display: flex; flex-direction: column; min-height: 0; flex: 1; }
-.filters-row { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
-.filter-dd { min-width: 130px; }
-.filter-search { flex: 1; min-width: 120px; max-width: 220px; background: var(--bg2); border: 1px solid var(--b1); border-radius: var(--r8); padding: 8px 12px; font-size: 13px; color: var(--t1); outline: none; }
-.filter-search:focus { border-color: var(--purple); }
-.btn-statement { display: inline-flex; align-items: center; gap: 6px; background: var(--bg2); border: 1px solid var(--b1); border-radius: var(--r8); padding: 8px 12px; font-size: 12px; font-weight: 600; color: var(--t2); margin-left: auto; transition: border-color .15s, color .15s; }
-.btn-statement:hover { border-color: var(--purple-dim); color: var(--purple); }
-
-.vt-wrap { overflow: auto; flex: 1; min-height: 0; }
-.vt { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-.vt thead th { text-align: left; font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--t4); padding: 8px 12px; border-bottom: 1px solid var(--b1); position: sticky; top: 0; background: var(--bg); white-space: nowrap; }
-.vt tbody td { padding: 12px; border-bottom: 1px solid var(--b1); color: var(--t2); vertical-align: middle; }
-.vt tbody tr:hover { background: var(--bg2); }
-.td-mono { font-family: var(--mono); color: var(--t1); }
-.td-pair { font-weight: 700; color: var(--t1); }
-.td-unit { color: var(--t4); font-size: 11px; }
-.td-time { font-family: var(--mono); font-size: 11px; color: var(--t3); white-space: nowrap; }
-.td-empty { text-align: center; color: var(--t4); padding: 28px 12px !important; }
-.td-reason { max-width: 220px; }
-.reason-cell { display: inline-block; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: default; color: var(--t3); }
-.reason-cell.rfi { color: var(--blue); }
-.vt-foot { padding: 10px 2px 0; }
-.vt-count { font-size: 11px; color: var(--t4); }
-
-.side-tag, .type-tag { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: var(--r4); display: inline-flex; align-items: center; gap: 4px; }
-.side-tag::before, .type-tag::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
-.side-tag.buy { color: var(--green); background: var(--green-bg); }
-.side-tag.sell { color: var(--red); background: var(--red-bg); }
-.type-tag.deposit { color: var(--green); background: var(--green-bg); }
-.type-tag.withdrawal { color: var(--orange); background: var(--orange-bg); }
-
-.status-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: var(--r6); white-space: nowrap; }
-.status-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
-.status-badge.green { color: var(--green); background: var(--green-bg); }
-.status-badge.yellow { color: var(--yellow); background: var(--yellow-bg); }
-.status-badge.red { color: var(--red); background: var(--red-bg); }
-.status-badge.blue { color: var(--blue); background: var(--blue-bg); }
-.status-badge.gray { color: var(--t3); background: var(--bg4); }
-
 /*  PORTFOLIO  */
 .portfolio { padding: 18px; display: flex; flex-direction: column; gap: 14px; height: 100%; }
 .port-total { display: flex; flex-direction: column; }
