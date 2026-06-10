@@ -3,7 +3,7 @@ import type { AssetSymbol } from '@/types';
 import { Topbar } from '@/widgets/topbar';
 import { OrderEntry } from '@/widgets/order-entry';
 import { RfqHero } from '@/widgets/rfq-panel';
-import { ActivityPanel } from '@/components/tables/ActivityPanel';
+import { ActivityPanel } from '@/widgets/activity-panel';
 import { Portfolio } from '@/components/portfolio/Portfolio';
 import { Toaster } from '@/components/ui/feedback';
 import { useUiStore } from '@/store/useUiStore';
