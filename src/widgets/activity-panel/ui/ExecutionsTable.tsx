@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent } from 'react';
+import { useState } from 'react';
 import { useTradeStore } from '@/store/useTradeStore';
 import type { ExecutionStatus } from '@/types';
 import { StatusBadge } from './StatusBadge';
@@ -6,6 +6,7 @@ import { Dropdown } from '@/shared/ui/Dropdown';
 import { fmtAsset } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import { DataTableCell, DataTableHead } from '@/shared/ui/data-table-parts';
+import { Input } from '@/components/ui/input';
 
 const STATUS_OPTS: Array<'All Status' | ExecutionStatus> = ['All Status', 'Executed', 'Pending', 'Rejected'];
 
@@ -41,13 +42,11 @@ export function ExecutionsTable() {
           className="min-w-32"
         />
 
-        <input
-          className="h-9 min-w-32 max-w-56 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+        <Input
+          className="min-w-32 max-w-56 flex-1"
           placeholder="Search"
           value={query}
-          onChange={(event: ChangeEvent<HTMLInputElement>) =>
-            setQuery(event.target.value)
-          }
+          onChange={(event) => setQuery(event.target.value)}
         />
       </div>
 
