@@ -2,9 +2,8 @@ import { Palette } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 import { PALETTES } from '@/constants/market';
-import { useUiStore } from '@/store/useUiStore';
+import { cn } from '@/lib/utils';
 
 const PALETTE_SWATCH_CLASS_NAMES = [
   'bg-[var(--palette-0)]',
@@ -16,19 +15,26 @@ const PALETTE_SWATCH_CLASS_NAMES = [
   'bg-[var(--palette-6)]',
   'bg-[var(--palette-7)]',
 ] as const;
-/**
- * Accent palette picker. Opens a popover of swatches; selecting one retints the
- * whole platform via the UI store, which calls the palette engine.
- */
-export function PalettePicker() {
-  const paletteIndex = useUiStore((state) => state.paletteIndex);
-  const setPalette = useUiStore((state) => state.setPalette);
 
+interface PalettePickerProps {
+  paletteIndex: number;
+  onPaletteChange: (index: number) => void;
+}
+
+/**
+ * Accent palette picker. UI-only component.
+ */
+export function PalettePicker({
+  paletteIndex,
+  onPaletteChange,
+}: PalettePickerProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      return;
+    }
 
     const onDocumentMouseDown = (event: MouseEvent) => {
       if (ref.current && !ref.current.contains(event.target as Node)) {
@@ -75,7 +81,7 @@ export function PalettePicker() {
                 title={palette.name}
                 aria-label={palette.name}
                 onClick={() => {
-                  setPalette(index);
+                  onPaletteChange(index);
                   setOpen(false);
                 }}
               />
