@@ -6,6 +6,8 @@ import { CheckCircle2 } from 'lucide-react';
 
 import type { AssetSymbol, NetworkName, PaymentMethod, PaymentRail } from '@/types';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+
 import {
   Dialog,
   DialogContent,
@@ -301,8 +303,8 @@ export function DepositDialog({ open, onClose, initialAsset }: DepositDialogProp
                 <div className="text-sm font-medium text-foreground">Amount</div>
 
                 <div className="flex items-center gap-2">
-                  <input
-                    className="h-10 min-w-0 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                  <Input
+                    className="min-w-0 flex-1"
                     type="number"
                     inputMode="decimal"
                     placeholder="0.00"
