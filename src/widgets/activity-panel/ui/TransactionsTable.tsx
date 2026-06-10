@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { useTradeStore } from '@/store/useTradeStore';
 import type { AssetSymbol, MethodFilter, RailFilter, StatusFilter } from '@/types';
 import { StatusBadge } from './StatusBadge';
@@ -6,6 +6,10 @@ import { Dropdown } from '@/shared/ui/Dropdown';
 import { TooltipCell } from '@/shared/ui/feedback';
 import { FIAT_METHODS } from '@/constants/assets';
 import { fmtAsset } from '@/lib/format';
+import { Download } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+
 
 const RAIL_OPTS: RailFilter[] = ['All Rails', 'Fiat', 'Crypto'];
 const STATUS_OPTS: StatusFilter[] = ['All Status', 'Completed', 'Pending', 'RFI Hold', 'Rejected'];
@@ -88,78 +92,166 @@ export function TransactionsTable() {
     URL.revokeObjectURL(url);
   };
   return (
-    <div className="activity-table">
-      <div className="filters-row">
-        <Dropdown value={status} options={STATUS_OPTS} onChange={setStatus} className="filter-dd" />
-        <Dropdown value={rail} options={RAIL_OPTS} onChange={onRail} className="filter-dd" />
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <Dropdown
+          value={status}
+          options={STATUS_OPTS}
+          onChange={setStatus}
+          className="min-w-32"
+        />
+
+        <Dropdown
+          value={rail}
+          options={RAIL_OPTS}
+          onChange={onRail}
+          className="min-w-32"
+        />
+
         <Dropdown
           value={method}
           options={methodOptions}
           onChange={setMethod}
-          className="filter-dd"
-          renderValue={(v) => methodLabel(v)}
+          className="min-w-32"
+          renderValue={(value) => methodLabel(value)}
         />
-        <button className="btn-statement" type="button" onClick={downloadStatement}>
-          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden>
-            <path d="M7 2v7m0 0L4 6m3 3l3-3M2.5 11.5h9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="ml-auto gap-2"
+          onClick={downloadStatement}
+        >
+          <Download className="size-4" />
           Statement
-        </button>
+        </Button>
       </div>
 
-      <div className="vt-wrap">
-        <table className="vt">
+      <div className="min-h-0 flex-1 overflow-auto rounded-xl border border-border">
+        <table className="w-full border-collapse text-sm">
           <thead>
-            <tr>
-              <th>Txn ID</th>
-              <th>Type</th>
-              <th>Asset</th>
-              <th>Amount</th>
-              <th>Method</th>
-              <th>Status</th>
-              <th>Created</th>
-              <th>Note / Reason</th>
+            <tr className="border-b border-border bg-background">
+              <TableHead>Txn ID</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead>Asset</TableHead>
+              <TableHead>Amount</TableHead>
+              <TableHead>Method</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Created</TableHead>
+              <TableHead>Note / Reason</TableHead>
             </tr>
           </thead>
+
           <tbody>
-            {rows.map((t) => {
-              const isRFI = t.status === 'RFI Hold';
+            {rows.map((transaction) => {
+              const isRFI = transaction.status === 'RFI Hold';
+
               return (
-                <tr key={t.id}>
-                  <td className="td-mono">{t.id}</td>
-                  <td>
-                    <span className={`type-tag ${t.type.toLowerCase()}`}>{t.type}</span>
-                  </td>
-                  <td className="td-pair">{t.asset}</td>
-                  <td className="td-mono">{fmtAsset(t.asset, t.amount)}</td>
-                  <td>{t.method}</td>
-                  <td><StatusBadge status={t.status} /></td>
-                  <td className="td-time">{t.created}</td>
-                  <td className="td-reason">
-                    {t.reason ? (
-                      <TooltipCell text={t.reason} className={`reason-cell ${isRFI ? 'rfi' : ''}`}>
+                <tr
+                  key={transaction.id}
+                  className="border-b border-border last:border-b-0 hover:bg-muted/40"
+                >
+                  <TableCell mono>{transaction.id}</TableCell>
+                  <TableCell>
+                    <TypeTag type={transaction.type} />
+                  </TableCell>
+                  <TableCell strong>{transaction.asset}</TableCell>
+                  <TableCell mono>
+                    {fmtAsset(transaction.asset, transaction.amount)}
+                  </TableCell>
+                  <TableCell>{transaction.method}</TableCell>
+                  <TableCell>
+                    <StatusBadge status={transaction.status} />
+                  </TableCell>
+                  <TableCell time>{transaction.created}</TableCell>
+                  <TableCell>
+                    {transaction.reason ? (
+                      <TooltipCell
+                        text={transaction.reason}
+                        className={cn(
+                          'inline-block max-w-56 cursor-default overflow-hidden text-ellipsis whitespace-nowrap text-muted-foreground',
+                          isRFI && 'text-primary',
+                        )}
+                      >
                         {isRFI ? '⚠ ' : ''}
-                        {t.reason}
+                        {transaction.reason}
                       </TooltipCell>
                     ) : (
-                      <span style={{ color: 'var(--t4)' }}>—</span>
+                      <span className="text-muted-foreground">—</span>
                     )}
-                  </td>
+                  </TableCell>
                 </tr>
               );
             })}
+
             {rows.length === 0 && (
               <tr>
-                <td colSpan={8} className="td-empty">No transactions match your filters</td>
+                <td
+                  colSpan={8}
+                  className="px-3 py-8 text-center text-sm text-muted-foreground"
+                >
+                  No transactions match your filters
+                </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
 
-      <div className="vt-foot">
-        <span className="vt-count">{rows.length} rows</span>
+      <div className="pt-2 text-xs text-muted-foreground">
+        {rows.length} rows
       </div>
     </div>
+  );
+}
+function TableHead({ children }: { children: string }) {
+  return (
+    <th className="sticky top-0 z-10 whitespace-nowrap bg-background px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+      {children}
+    </th>
+  );
+}
+
+function TableCell({
+  children,
+  mono,
+  strong,
+  time,
+}: {
+  children: ReactNode;
+  mono?: boolean;
+  strong?: boolean;
+  time?: boolean;
+}) {
+  return (
+    <td
+      className={cn(
+        'whitespace-nowrap px-3 py-3 align-middle text-muted-foreground',
+        mono && 'font-mono text-foreground',
+        strong && 'font-semibold text-foreground',
+        time && 'font-mono text-xs text-muted-foreground',
+      )}
+    >
+      {children}
+    </td>
+  );
+}
+
+function TypeTag({ type }: { type: string }) {
+  const isDeposit = type.toLowerCase() === 'deposit';
+
+  return (
+    <span
+      className={cn(
+        'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold',
+        isDeposit
+          ? 'bg-emerald-500/10 text-emerald-500'
+          : 'bg-orange-500/10 text-orange-500',
+      )}
+    >
+      <span className="size-1.5 rounded-full bg-current" />
+      {type}
+    </span>
   );
 }
