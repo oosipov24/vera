@@ -103,11 +103,10 @@ export function Portfolio({ onDeposit, onWithdraw }: PortfolioProps) {
         amount: fiat
           ? `${meta.symbol ?? ''}${fmtAsset(asset, balance)}`
           : fmtAsset(asset, balance),
-        secondary: fiat
-          ? fmtMoney(valueInUSD(asset, balance), displayCcy)
-          : reservedAmount > 0
-            ? `${fmtAsset(asset, reservedAmount)} reserved`
-            : '0 reserved',
+        estimate: fmtMoney(valueInUSD(asset, balance), displayCcy),
+        secondary: reservedAmount > 0
+          ? `${fmtAsset(asset, reservedAmount)} reserved`
+          : '0 reserved',
       };
     },
     [balances, displayCcy, reserved],

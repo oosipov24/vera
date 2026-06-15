@@ -1,17 +1,21 @@
-import { TRADING_PAIRS } from '@/constants/market';
 import { fmtAsset } from '@/lib/format';
 import { priceDecimals, splitPair } from '@/lib/valuation';
 import { deriveTicket, useOrderStore } from '@/store/useOrderStore';
 import { useTradeStore } from '@/store/useTradeStore';
 import { useUiStore } from '@/store/useUiStore';
 import type { AssetSymbol } from '@/types';
-
 import { OrderEntryView } from './OrderEntryView';
+import { LIQUIDITY_PROVIDER_OPTIONS, TRADING_PAIRS } from '@/constants/market';
 
 export function OrderEntry() {
-  const { pair, side, qty, unit, quote } = useOrderStore();
-  const { setPair, setSide, setQty, setUnit } = useOrderStore();
-
+  const { pair, side, qty, unit, quote, liquidityProvider } = useOrderStore();
+  const {
+    setPair,
+    setSide,
+    setQty,
+    setUnit,
+    setLiquidityProvider,
+  } = useOrderStore();
   const submitOrder = useTradeStore((state) => state.submitOrder);
   const balances = useTradeStore((state) => state.balances);
   const pushToast = useUiStore((state) => state.pushToast);
@@ -87,6 +91,12 @@ export function OrderEntry() {
 
   return (
     <OrderEntryView
+      market="CRYPTO"
+      marketOptions={['CRYPTO', 'FOREX', 'COMMODITIES']}
+      onMarketChange={() => undefined}
+      liquidityProvider={liquidityProvider}
+      liquidityProviderOptions={LIQUIDITY_PROVIDER_OPTIONS}
+      onLiquidityProviderChange={setLiquidityProvider}
       pair={pair}
       pairOptions={TRADING_PAIRS}
       side={side}

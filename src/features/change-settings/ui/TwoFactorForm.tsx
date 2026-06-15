@@ -62,7 +62,7 @@ export function TwoFactorForm() {
             <div className="text-sm font-semibold">1. Scan QR code</div>
 
             <div className="mt-3 flex items-start gap-4">
-              <div className="flex size-24 shrink-0 items-center justify-center rounded-lg border border-border bg-muted">
+              <div className="flex size-24 shrink-0 items-center justify-center rounded-r8 border border-border bg-muted">
                 <QrCode className="size-12 text-muted-foreground" />
               </div>
 
@@ -75,7 +75,7 @@ export function TwoFactorForm() {
                   Or enter manually:
                 </p>
 
-                <Badge variant="secondary" className="font-mono">
+                <Badge variant="secondary" className="font-mono bg-primary/10 text-primary px-2 py-4 rounded-r8">
                   VERA-XXXX-XXXX-XXXX
                 </Badge>
               </div>
@@ -88,7 +88,7 @@ export function TwoFactorForm() {
               id="settings-2fa-code"
               inputMode="numeric"
               placeholder="000000"
-              className="text-center font-mono tracking-[0.35em]"
+              className="text-center font-mono tracking-[0.35em] h-10 bg-muted/50"
               {...register('code')}
             />
             {errors.code && (

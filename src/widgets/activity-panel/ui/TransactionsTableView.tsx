@@ -8,6 +8,7 @@ import { Download } from 'lucide-react';
 import { useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { fmtAsset } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import { Dropdown } from '@/shared/ui/Dropdown';
@@ -35,13 +36,21 @@ interface TransactionsTableViewProps {
   railOptions: RailFilter[];
   method: MethodFilter;
   methodOptions: MethodFilter[];
+  createdDate: string;
   onStatusChange: (status: StatusFilter) => void;
   onRailChange: (rail: RailFilter) => void;
   onMethodChange: (method: MethodFilter) => void;
+  onCreatedDateChange: (date: string) => void;
   onDownloadStatement: () => void;
 }
 
 const columnHelper = createColumnHelper<TransactionTableRow>();
+
+const FILTER_CONTROL_CLASS =
+  'h-8 w-36 rounded-r8 border-border bg-card px-2 py-1 text-control-sm font-medium';
+
+const STATEMENT_BUTTON_CLASS =
+  'ml-auto h-8 gap-2 rounded-r8 border-border bg-popover px-2 py-1 text-control-sm font-semibold text-foreground shadow-none hover:bg-accent hover:text-foreground';
 
 export function TransactionsTableView({
   rows,
@@ -51,9 +60,11 @@ export function TransactionsTableView({
   railOptions,
   method,
   methodOptions,
+  createdDate,
   onStatusChange,
   onRailChange,
   onMethodChange,
+  onCreatedDateChange,
   onDownloadStatement,
 }: TransactionsTableViewProps) {
   const columns = useMemo(
@@ -61,7 +72,7 @@ export function TransactionsTableView({
       columnHelper.accessor('id', {
         header: 'Txn ID',
         cell: (info) => (
-          <span className="font-mono text-foreground">
+          <span className="trading-mono text-muted-foreground">
             {info.getValue()}
           </span>
         ),
@@ -84,7 +95,7 @@ export function TransactionsTableView({
           const transaction = info.row.original;
 
           return (
-            <span className="font-mono text-foreground">
+            <span className="trading-mono text-foreground">
               {fmtAsset(transaction.asset, info.getValue())}
             </span>
           );
@@ -103,7 +114,7 @@ export function TransactionsTableView({
       columnHelper.accessor('created', {
         header: 'Created',
         cell: (info) => (
-          <span className="font-mono text-xs text-muted-foreground">
+          <span className="trading-mono text-control-sm text-muted-foreground">
             {info.getValue()}
           </span>
         ),
@@ -123,7 +134,7 @@ export function TransactionsTableView({
               text={reason}
               className={cn(
                 'inline-block max-w-56 cursor-default overflow-hidden text-ellipsis whitespace-nowrap text-muted-foreground',
-                isRFI && 'text-primary',
+                isRFI && 'text-warning',
               )}
             >
               {isRFI ? '⚠ ' : ''}
@@ -154,29 +165,37 @@ export function TransactionsTableView({
           value={status}
           options={statusOptions}
           onChange={onStatusChange}
-          className="min-w-32"
+          className={FILTER_CONTROL_CLASS}
         />
 
         <Dropdown
           value={rail}
           options={railOptions}
           onChange={onRailChange}
-          className="min-w-32"
+          className={FILTER_CONTROL_CLASS}
         />
 
         <Dropdown
           value={method}
           options={methodOptions}
           onChange={onMethodChange}
-          className="min-w-32"
+          className={FILTER_CONTROL_CLASS}
           renderValue={(value) => methodLabel(value)}
+        />
+
+        <Input
+          type="date"
+          aria-label="Created date"
+          className={FILTER_CONTROL_CLASS}
+          value={createdDate}
+          onChange={(event) => onCreatedDateChange(event.target.value)}
         />
 
         <Button
           type="button"
           variant="outline"
           size="sm"
-          className="ml-auto gap-2"
+          className={STATEMENT_BUTTON_CLASS}
           onClick={onDownloadStatement}
         >
           <Download className="size-4" />
@@ -184,7 +203,7 @@ export function TransactionsTableView({
         </Button>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-auto rounded-xl border border-border">
+      <div className="min-h-0 flex-1 overflow-auto rounded-r8 border border-border">
         <table className="w-full border-collapse text-sm">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -195,7 +214,7 @@ export function TransactionsTableView({
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="sticky top-0 z-10 whitespace-nowrap bg-background px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wide text-muted-foreground"
+                    className="sticky top-0 z-10 whitespace-nowrap bg-background px-3 py-2 text-left text-control-sm font-bold uppercase tracking-wide text-muted-foreground"
                   >
                     {header.isPlaceholder
                       ? null
@@ -253,10 +272,10 @@ function TypeTag({ type }: { type: string }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold',
+        'inline-flex items-center gap-1.5 rounded-r8 px-2.5 py-1 text-control-sm font-bold uppercase',
         isDeposit
-          ? 'bg-success/10 text-success'
-          : 'bg-warning/10 text-warning',
+          ? 'bg-success-surface text-success-action'
+          : 'bg-warning-surface text-warning',
       )}
     >
       <span className="size-1.5 rounded-full bg-current" />

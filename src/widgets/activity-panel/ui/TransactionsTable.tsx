@@ -20,7 +20,7 @@ const FIAT_METHOD_SET: string[] = [...FIAT_METHODS];
 /**
  * Deposits / withdrawals table container.
  *
- * Filters: payment rail, method, and status.
+ * Filters: payment rail, method, status, and created date.
  */
 export function TransactionsTable() {
   const transactions = useTradeStore((state) => state.transactions);
@@ -28,6 +28,7 @@ export function TransactionsTable() {
   const [rail, setRail] = useState<RailFilter>('All Rails');
   const [method, setMethod] = useState<MethodFilter>('All');
   const [status, setStatus] = useState<StatusFilter>('All Status');
+  const [createdDate, setCreatedDate] = useState('');
 
   const methodOptions = useMemo<MethodFilter[]>(() => {
     const fiatRails = [
@@ -81,9 +82,16 @@ export function TransactionsTable() {
         return false;
       }
 
+      if (
+        createdDate &&
+        normalizeDateForFilter(transaction.created) !== createdDate
+      ) {
+        return false;
+      }
+
       return true;
     });
-  }, [transactions, rail, method, status]);
+  }, [transactions, rail, method, status, createdDate]);
 
   const onRailChange = (nextRail: RailFilter) => {
     setRail(nextRail);
@@ -140,10 +148,38 @@ export function TransactionsTable() {
       railOptions={RAIL_OPTS}
       method={method}
       methodOptions={methodOptions}
+      createdDate={createdDate}
       onStatusChange={setStatus}
       onRailChange={onRailChange}
       onMethodChange={setMethod}
+      onCreatedDateChange={setCreatedDate}
       onDownloadStatement={downloadStatement}
     />
   );
+}
+
+function normalizeDateForFilter(value: string) {
+  const trimmedValue = value.trim();
+
+  if (!trimmedValue) {
+    return '';
+  }
+
+  const isoMatch = trimmedValue.match(/^(\d{4})-(\d{2})-(\d{2})/);
+
+  if (isoMatch) {
+    return `${isoMatch[1]}-${isoMatch[2]}-${isoMatch[3]}`;
+  }
+
+  const europeanMatch = trimmedValue.match(
+    /^(\d{1,2})[./](\d{1,2})[./](\d{4})/,
+  );
+
+  if (europeanMatch) {
+    const [, day, month, year] = europeanMatch;
+
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }
+
+  return '';
 }

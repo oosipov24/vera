@@ -32,6 +32,10 @@ export const TRADING_PAIRS: TradingPair[] = PAIR_BASES.flatMap((base) =>
   QUOTES.filter((q) => q !== base).map((q) => `${base}/${q}` as TradingPair),
 );
 
+export const LIQUIDITY_PROVIDER_OPTIONS = ['RNV', 'FLX', 'Test', 'SMART'] as const;
+
+export type LiquidityProvider = (typeof LIQUIDITY_PROVIDER_OPTIONS)[number];
+
 export const DEFAULT_PAIR: TradingPair = 'BNB/USDT';
 
 /** Spread (in bps) used to derive bid/ask around the mid price. */

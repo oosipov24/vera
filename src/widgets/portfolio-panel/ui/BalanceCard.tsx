@@ -9,6 +9,7 @@ interface BalanceCardProps {
   name: string;
   sub: string;
   amount: string;
+  estimate?: string;
   secondary: string;
   onDeposit: (asset: AssetSymbol) => void;
   onWithdraw: (asset: AssetSymbol) => void;
@@ -20,6 +21,7 @@ export function BalanceCard({
   name,
   sub,
   amount,
+  estimate,
   secondary,
   onDeposit,
   onWithdraw,
@@ -33,32 +35,42 @@ export function BalanceCard({
           <div className="truncate text-sm font-bold text-foreground">
             {name}
           </div>
+
           <div className="truncate text-xs text-muted-foreground">{sub}</div>
         </div>
 
         <div className="text-right">
-          <div className="font-mono text-sm font-bold text-foreground">
+          <div className="trading-mono text-sm font-bold text-foreground">
             {amount}
           </div>
+
+          {estimate && (
+            <div className="trading-mono text-xs text-muted-foreground">
+              ≈ {estimate}
+            </div>
+          )}
+
           <div className="text-xs text-muted-foreground">{secondary}</div>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 border-t border-border">
+      <div className="flex border-t border-border">
         <Button
           type="button"
           variant="ghost"
-          className="h-9 rounded-none border-r border-border text-xs text-muted-foreground hover:bg-success/10 hover:text-success"
+          className="h-9 flex-1 rounded-none border-0 text-control-sm font-semibold text-success-action shadow-none hover:bg-success-surface hover:text-success-action"
           onClick={() => onDeposit(asset)}
         >
           <ArrowDownToLine className="size-3.5" />
           Deposit
         </Button>
 
+        <span className="w-px self-stretch bg-border" aria-hidden="true" />
+
         <Button
           type="button"
           variant="ghost"
-          className="h-9 rounded-none text-xs text-muted-foreground hover:bg-primary/10 hover:text-primary"
+          className="h-9 flex-1 rounded-none border-0 text-control-sm font-semibold text-primary shadow-none hover:bg-primary/10 hover:text-primary"
           onClick={() => onWithdraw(asset)}
         >
           <ArrowUpFromLine className="size-3.5" />

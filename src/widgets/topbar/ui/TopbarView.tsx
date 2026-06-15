@@ -80,7 +80,7 @@ export function TopbarView({
                   <span
                     className={
                       isUp
-                        ? 'size-1.5 rounded-full bg-primary'
+                        ? 'size-1.5 rounded-full bg-success-action'
                         : 'size-1.5 rounded-full bg-destructive'
                     }
                   />
@@ -90,7 +90,7 @@ export function TopbarView({
                   <span
                     className={
                       isUp
-                        ? 'font-mono font-semibold text-primary'
+                        ? 'font-mono font-semibold text-success-action'
                         : 'font-mono font-semibold text-destructive'
                     }
                   >
@@ -99,7 +99,7 @@ export function TopbarView({
                   <span
                     className={
                       isUp
-                        ? 'rounded bg-primary/10 px-1.5 py-0.5 font-mono text-[11px] text-primary'
+                        ? 'rounded bg-success-surface px-1.5 py-0.5 font-mono text-[11px] text-success-action'
                         : 'rounded bg-destructive/10 px-1.5 py-0.5 font-mono text-[11px] text-destructive'
                     }
                   >
@@ -113,12 +113,23 @@ export function TopbarView({
       </div>
 
       <div className="flex shrink-0 items-center gap-2">
-        <Button size="sm" onClick={onDeposit}>
+        <Button
+          type="button"
+          size="sm"
+          className="h-8 gap-2 rounded-r8 border border-success-action bg-success-action px-2.5 py-1 text-control font-semibold text-success-action-foreground shadow-none hover:bg-success-action/90 hover:text-success-action-foreground"
+          onClick={onDeposit}
+        >
           <ArrowDownToLine className="size-4" />
           Deposit
         </Button>
 
-        <Button size="sm" variant="outline" onClick={onWithdraw}>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          className="h-8 gap-2 rounded-lg border border-border px-2.5 py-1 text-xs font-semibold text-foreground shadow-none hover:bg-accent hover:text-foreground"
+          onClick={onWithdraw}
+        >
           <ArrowUpFromLine className="size-4" />
           Withdraw
         </Button>
@@ -142,18 +153,23 @@ export function TopbarView({
           )}
         </Button>
 
-        <div className="hidden items-center rounded-full border border-border bg-primary/10 px-3 py-1 text-xs font-bold text-primary md:inline-flex">
+        <div className="hidden items-center rounded-full border border-border bg-primary/10 px-3 py-1 text-[12px] font-bold text-primary md:inline-flex">
           {accountType}
         </div>
 
-        <div className="hidden items-center gap-1.5 rounded-full border border-border bg-primary/10 px-3 py-1 text-xs font-semibold text-primary md:inline-flex">
-          <span className="size-1.5 rounded-full bg-primary" />
+        <div className="hidden items-center gap-1.5 rounded-full border border-border bg-success-surface px-3 py-1 text-[12px] font-semibold text-success-action md:inline-flex">
+          <span className="size-1.5 rounded-full bg-success-action" />
           Live Account
         </div>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button type="button" variant="outline" size="sm" className="gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-8 gap-2 rounded-lg border border-border bg-popover px-2.5 py-1 text-xs font-semibold text-muted-foreground shadow-none hover:bg-accent hover:text-foreground"
+            >
               <span className="flex size-6 items-center justify-center rounded-full border border-primary/30 bg-primary/10 text-[10px] font-bold text-primary">
                 T1
               </span>
@@ -162,31 +178,44 @@ export function TopbarView({
             </Button>
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>
+          <DropdownMenuContent
+            align="end"
+            sideOffset={8}
+            className="w-56 rounded-r8 border border-border bg-popover p-1 text-popover-foreground shadow-2xl"
+          >
+            <DropdownMenuLabel className="px-3 py-2">
               <div className="flex flex-col gap-1">
-                <span className="text-sm font-semibold">Test 11</span>
-                <span className="font-mono text-xs font-normal text-muted-foreground">
+                <span className="text-xs font-semibold text-foreground">
+                  Test 11
+                </span>
+
+                <span className="trading-mono text-xs font-normal text-muted-foreground">
                   test@vera-finance.com
                 </span>
               </div>
             </DropdownMenuLabel>
 
-            <DropdownMenuSeparator />
+            <DropdownMenuSeparator className="my-1 bg-border" />
 
-            <DropdownMenuItem onClick={() => onOpenSettings('email')}>
-              <Mail className="size-4" />
+            <DropdownMenuItem
+              className="h-8 rounded-r6 px-3 text-xs font-medium text-muted-foreground focus:bg-muted focus:text-foreground"
+              onClick={() => onOpenSettings('email')}
+            >
+              <Mail className="size-4 text-muted-foreground" />
               Settings
             </DropdownMenuItem>
 
-            <DropdownMenuItem onClick={() => onOpenSettings('password')}>
-              <LockKeyhole className="size-4" />
+            <DropdownMenuItem
+              className="h-8 rounded-r6 px-3 text-xs font-medium text-muted-foreground focus:bg-muted focus:text-foreground"
+              onClick={() => onOpenSettings('password')}
+            >
+              <LockKeyhole className="size-4 text-muted-foreground" />
               Reset Password
             </DropdownMenuItem>
 
-            <DropdownMenuSeparator />
+            <DropdownMenuSeparator className="my-1 bg-border" />
 
-            <DropdownMenuItem className="text-destructive focus:text-destructive">
+            <DropdownMenuItem className="h-8 rounded-r6 px-3 text-xs font-medium text-danger-action focus:bg-danger-surface focus:text-danger-action">
               <LogOut className="size-4" />
               Log Out
             </DropdownMenuItem>

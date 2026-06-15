@@ -26,13 +26,13 @@ export function SettingsDialog({
 }: SettingsDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[min(720px,calc(100vh-2rem))] w-[min(920px,calc(100vw-2rem))] overflow-hidden p-0 sm:max-w-[920px]">
+      <DialogContent className="max-h-[min(720px,calc(100vh-2rem))] overflow-hidden p-0 sm:max-w-[820px]">
         <Tabs
           defaultValue={initialTab}
           orientation="vertical"
-          className="grid min-h-[520px] grid-cols-[240px_minmax(0,1fr)]"
+          className="grid min-h-[520px] grid-cols-[240px_minmax(0,1fr)] gap-0"
         >
-          <aside className="border-r border-border bg-muted/20">
+          <aside className="border-r border-border bg-sidebar">
             <div className="border-b border-border p-5">
               <DialogHeader className="space-y-1 text-left">
                 <DialogTitle className="text-base">Settings</DialogTitle>
@@ -69,7 +69,7 @@ export function SettingsDialog({
             </div>
           </aside>
 
-          <section className="min-w-0 overflow-y-auto p-8">
+          <section className="min-w-0 overflow-y-auto p-8 bg-background">
             <TabsContent value="email" className="m-0 max-w-xl">
               <EmailSettingsForm />
             </TabsContent>

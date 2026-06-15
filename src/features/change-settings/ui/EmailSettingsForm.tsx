@@ -40,7 +40,7 @@ export function EmailSettingsForm() {
       </div>
 
       <Card>
-        <CardContent className="flex items-center justify-between gap-4 p-4">
+        <CardContent className="flex items-center justify-between gap-4 p-4 ">
           <div className="flex items-center gap-3">
             <div className="flex size-9 items-center justify-center rounded-full bg-primary/10 text-primary">
               <Mail className="size-4" />
@@ -54,7 +54,7 @@ export function EmailSettingsForm() {
             </div>
           </div>
 
-          <Badge variant="secondary" className="gap-1 text-primary">
+          <Badge variant="secondary" className="gap-1 text-success-action bg-success-surface px-2 py-3 text-center border border-success/20">
             <Check className="size-3" />
             Verified
           </Badge>
@@ -68,6 +68,7 @@ export function EmailSettingsForm() {
             id="settings-new-email"
             type="email"
             placeholder="Enter new email"
+            className="h-10 bg-muted/50"
             {...register('newEmail')}
           />
           {errors.newEmail && (
@@ -81,6 +82,7 @@ export function EmailSettingsForm() {
             id="settings-confirm-email"
             type="email"
             placeholder="Confirm new email"
+            className="h-10 bg-muted/50"
             {...register('confirmEmail')}
           />
           {errors.confirmEmail && (
@@ -96,6 +98,7 @@ export function EmailSettingsForm() {
             id="settings-current-password"
             type="password"
             placeholder="Enter password"
+            className="h-10 bg-muted/50"
             {...register('currentPassword')}
           />
           {errors.currentPassword && (
@@ -107,7 +110,7 @@ export function EmailSettingsForm() {
       </div>
 
       <div className="flex justify-end">
-        <Button type="submit" disabled={isSubmitting}>
+        <Button type="submit" className="px-5 py-5" disabled={isSubmitting}>
           Update Email
         </Button>
       </div>

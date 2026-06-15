@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "@fontsource-variable/geist";
+@import "@fontsource-variable/plus-jakarta-sans";
+@import "@fontsource-variable/jetbrains-mono";
 @import "shadcn/tailwind.css";
 
 /* Legacy Vera visual tokens moved from src/styles/tokens.css */
@@ -16,11 +17,11 @@
 :root {
   --bg: #0A0C10; --bg2: #0F1117; --bg3: #141720; --bg4: #191D28; --bg5: #1E2230;
   --b1: #1E2230; --b2: #272C3F; --b3: #323748;
-  --t1: #F0F2F8; --t2: #A8AEC4; --t3: #7E84A0; --t4: #5A6184;
+  --t1: #F0F2F8; --t2: #A8AEC4; --t3: #565C78; --t4: #5A6184;
 
   --purple: #7B6EF6; --purple-bg: rgba(123, 110, 246, .12); --purple-dim: rgba(123, 110, 246, .25);
-  --green: #34D399; --green-bg: rgba(52, 211, 153, .1); --green-dim: rgba(52, 211, 153, .2); --green-text: #042B1A;
-  --red: #F87171; --red-bg: rgba(248, 113, 113, .1); --red-dim: rgba(248, 113, 113, .2); --red-text: #2A0505;
+  --green: #34D399; --green-bg: #0B2A1E; --green-dim: rgba(52, 211, 153, .2); --green-text: #042B1A;
+  --red: #F87171; --red-bg: #2A0E0E; --red-dim: rgba(248, 113, 113, .2); --red-text: #2A0505;
   --yellow: #FBBF24; --yellow-bg: rgba(251, 191, 36, .1);
   --orange: #FB923C; --orange-bg: rgba(251, 146, 60, .1);
   --blue: #60A5FA; --blue-bg: rgba(96, 165, 250, .1);
@@ -50,6 +51,8 @@
   --background: var(--bg);
   --foreground: var(--t1);
 
+  --font-trading-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
   --card: var(--bg2);
   --card-foreground: var(--t1);
 
@@ -71,14 +74,29 @@
   --destructive: var(--red);
   --destructive-foreground: #ffffff;
 
-  --success: var(--green, #34d399);
+  --success: var(--green);
   --success-foreground: #ffffff;
+  --success-surface: var(--green-bg);
+  --success-surface-strong: var(--green-dim);
+  --success-action: var(--green);
+  --success-action-foreground: var(--green-text);
 
-  --warning: var(--yellow, #f59e0b);
+  --danger: var(--red);
+  --danger-foreground: #ffffff;
+  --danger-surface: var(--red-bg);
+  --danger-surface-strong: var(--red-dim);
+  --danger-action: var(--red);
+  --danger-action-foreground: var(--red-text);
+
+  --warning: var(--yellow);
   --warning-foreground: #ffffff;
+  --warning-surface: var(--yellow-bg);
 
-  --info: var(--blue, #38bdf8);
+  --info: var(--blue);
   --info-foreground: #ffffff;
+  --info-surface: var(--blue-bg);
+
+  --brand-surface: var(--purple-bg);
 
   --border: var(--b1);
   --input: var(--b2);
@@ -99,6 +117,13 @@
   --sidebar-border: var(--b1);
   --sidebar-ring: var(--purple);
 
+  --dropdown-surface: var(--bg3);
+  --dropdown-border: var(--b2);
+  --dropdown-option-hover: var(--bg4);
+  --dropdown-muted: var(--t2);
+  --dropdown-foreground: var(--t1);
+  --dropdown-placeholder: var(--t4);
+
   --radius: 0.625rem;
 
   --palette-0: #7B6EF6;
@@ -114,8 +139,36 @@
 @theme inline {
   --spacing: 0.25rem;
 
+  --text-xs: 12px;
+  --text-xs--line-height: 16px;
+
   --font-heading: var(--font-sans);
-  --font-sans: "Geist Variable", sans-serif;
+  --font-sans: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", sans-serif;
+  --font-mono: var(--font-trading-mono);
+
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-surface: var(--success-surface);
+  --color-success-surface-strong: var(--success-surface-strong);
+  --color-success-action: var(--success-action);
+  --color-success-action-foreground: var(--success-action-foreground);
+
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
+  --color-danger-surface: var(--danger-surface);
+  --color-danger-surface-strong: var(--danger-surface-strong);
+  --color-danger-action: var(--danger-action);
+  --color-danger-action-foreground: var(--danger-action-foreground);
+
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-surface: var(--warning-surface);
+
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-info-surface: var(--info-surface);
+
+  --color-brand-surface: var(--brand-surface);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -169,6 +222,20 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
+  --color-dropdown-surface: var(--dropdown-surface);
+  --color-dropdown-border: var(--dropdown-border);
+  --color-dropdown-option-hover: var(--dropdown-option-hover);
+  --color-dropdown-muted: var(--dropdown-muted);
+  --color-dropdown-foreground: var(--dropdown-foreground);
+  --color-dropdown-placeholder: var(--dropdown-placeholder);
+  
+  --radius-r4: var(--r4);
+  --radius-r6: var(--r6);
+  --radius-r8: var(--r8);
+  --radius-r10: var(--r10);
+  --radius-r12: var(--r12);
+  --radius-r16: var(--r16);
+  --radius-r20: var(--r20);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -176,6 +243,10 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+}
+.trading-mono {
+  font-family: var(--font-trading-mono) !important;
+  font-variant-numeric: tabular-nums;
 }
 
 @layer base {

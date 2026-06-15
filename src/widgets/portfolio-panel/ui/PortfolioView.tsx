@@ -17,6 +17,7 @@ export interface PortfolioBalanceItem {
   name: string;
   sub: string;
   amount: string;
+  estimate?: string;
   secondary: string;
 }
 
@@ -69,12 +70,16 @@ export function PortfolioView({
             Estimated Portfolio Value
           </div>
 
-          <div className="flex rounded-lg border border-border bg-muted p-1">
+          <div className="flex rounded-r8 border border-border bg-muted p-1">
             <Button
               type="button"
               size="sm"
-              variant={displayCcy === 'USD' ? 'default' : 'ghost'}
-              className="h-7 px-3 font-mono text-xs"
+              variant="ghost"
+              className={cn(
+                'h-7 rounded-r6 px-3 trading-mono text-control-sm font-bold text-muted-foreground shadow-none hover:bg-accent hover:text-foreground',
+                displayCcy === 'USD' &&
+                  'bg-primary/10 text-primary hover:bg-primary/10 hover:text-primary',
+              )}
               onClick={() => onDisplayCcyChange('USD')}
             >
               USD
@@ -83,8 +88,12 @@ export function PortfolioView({
             <Button
               type="button"
               size="sm"
-              variant={displayCcy === 'EUR' ? 'default' : 'ghost'}
-              className="h-7 px-3 font-mono text-xs"
+              variant="ghost"
+              className={cn(
+                'h-7 rounded-r6 px-3 trading-mono text-control-sm font-bold text-muted-foreground shadow-none hover:bg-accent hover:text-foreground',
+                displayCcy === 'EUR' &&
+                  'bg-primary/10 text-primary hover:bg-primary/10 hover:text-primary',
+              )}
               onClick={() => onDisplayCcyChange('EUR')}
             >
               EUR
@@ -99,14 +108,17 @@ export function PortfolioView({
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-1 rounded-xl border border-border bg-muted p-1">
+      <div className="grid grid-cols-4 gap-1 rounded-r8 border border-border bg-card p-1">
         {views.map((item) => (
           <Button
             key={item.key}
             type="button"
             size="sm"
-            variant={view === item.key ? 'default' : 'ghost'}
-            className="h-8 px-2 text-xs font-bold"
+            variant="ghost"
+            className={cn(
+              'h-8 rounded-r8 px-2 text-control-sm font-bold text-muted-foreground shadow-none hover:bg-muted hover:text-foreground',
+              view === item.key && 'bg-muted text-foreground hover:bg-muted hover:text-foreground',
+            )}
             onClick={() => onViewChange(item.key)}
           >
             {item.label}
@@ -187,6 +199,7 @@ function AllPortfolioView({
                   name={item.name}
                   sub={item.sub}
                   amount={item.amount}
+                  estimate={item.estimate}
                   secondary={item.secondary}
                   onDeposit={onDeposit}
                   onWithdraw={onWithdraw}
@@ -231,6 +244,7 @@ function SinglePortfolioView({
             name={item.name}
             sub={item.sub}
             amount={item.amount}
+            estimate={item.estimate}
             secondary={item.secondary}
             onDeposit={onDeposit}
             onWithdraw={onWithdraw}

@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import type { OrderSide, QtyUnit, Quote, TradingPair } from '@/types';
 import { DEFAULT_PAIR } from '@/constants/market';
 import { quoteFor } from '@/lib/valuation';
+import type { LiquidityProvider } from '@/constants/market';
 
 /**
  * Cross-component state for the active order ticket: which pair, side, quantity,
@@ -11,16 +12,16 @@ import { quoteFor } from '@/lib/valuation';
 interface OrderState {
   pair: TradingPair;
   side: OrderSide;
-  /** Raw quantity as typed (interpreted via `unit`). */
   qty: string;
   unit: QtyUnit;
   quote: Quote;
+  liquidityProvider: LiquidityProvider;
 
   setPair(pair: TradingPair): void;
   setSide(side: OrderSide): void;
   setQty(qty: string): void;
   setUnit(unit: QtyUnit): void;
-  /** Refresh the quote (BACKEND SEAM: fetch a fresh RFQ from the LP). */
+  setLiquidityProvider(provider: LiquidityProvider): void;
   refreshQuote(): void;
 }
 
@@ -30,6 +31,7 @@ export const useOrderStore = create<OrderState>((set, get) => ({
   qty: '',
   unit: 'asset',
   quote: quoteFor(DEFAULT_PAIR),
+  liquidityProvider: 'RNV',
 
   setPair(pair) {
     set({ pair, quote: quoteFor(pair) });
@@ -43,11 +45,13 @@ export const useOrderStore = create<OrderState>((set, get) => ({
   setUnit(unit) {
     set({ unit });
   },
+  setLiquidityProvider(liquidityProvider) {
+    set({ liquidityProvider });
+  },
   refreshQuote() {
     set({ quote: quoteFor(get().pair) });
   },
 }));
-
 /**
  * Derive the working numbers for the current ticket: the asset quantity, the
  * effective price for the chosen side, and the quote-currency total.

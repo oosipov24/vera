@@ -29,7 +29,7 @@ export function ActivityPanel() {
               type="button"
               variant="ghost"
               className={cn(
-                'rounded-none border-b-2 border-transparent px-1 pb-3 pt-4 text-sm font-semibold text-muted-foreground hover:text-foreground',
+                '-mb-px h-auto rounded-none border-x-0 border-t-0 border-b-2 border-transparent bg-transparent px-2 py-4 text-sm font-semibold text-muted-foreground shadow-none hover:bg-transparent hover:text-foreground',
                 active && 'border-primary text-foreground hover:text-foreground',
               )}
               onClick={() => setTab(item.value)}

@@ -14,6 +14,12 @@ import type { AssetSymbol, ExecutionStatus } from '@/types';
 
 import { StatusBadge } from './StatusBadge';
 
+const FILTER_CONTROL_CLASS =
+  'h-8 w-36 rounded-r8 border-border bg-card px-2 py-1 text-xs font-medium';
+
+const SEARCH_CONTROL_CLASS =
+  'h-8 w-56 rounded-r8 border-border bg-card px-2 py-1 text-xs';
+
 export interface ExecutionTableRow {
   id: string;
   pair: string;
@@ -32,8 +38,12 @@ interface ExecutionsTableViewProps {
   status: 'All Status' | ExecutionStatus;
   statusOptions: Array<'All Status' | ExecutionStatus>;
   query: string;
+  createdDate?: string;
+  executedDate?: string;
   onStatusChange: (status: 'All Status' | ExecutionStatus) => void;
   onQueryChange: (query: string) => void;
+  onCreatedDateChange?: (date: string) => void;
+  onExecutedDateChange?: (date: string) => void;
 }
 
 const columnHelper = createColumnHelper<ExecutionTableRow>();
@@ -43,6 +53,10 @@ export function ExecutionsTableView({
   status,
   statusOptions,
   query,
+  createdDate,
+  executedDate,
+  onCreatedDateChange,
+  onExecutedDateChange,
   onStatusChange,
   onQueryChange,
 }: ExecutionsTableViewProps) {
@@ -51,7 +65,7 @@ export function ExecutionsTableView({
       columnHelper.accessor('id', {
         header: 'Order ID',
         cell: (info) => (
-          <span className="font-mono text-foreground">{info.getValue()}</span>
+          <span className="font-mono text-muted-foreground">{info.getValue()}</span>
         ),
       }),
       columnHelper.accessor('pair', {
@@ -138,18 +152,34 @@ export function ExecutionsTableView({
           value={status}
           options={statusOptions}
           onChange={onStatusChange}
-          className="min-w-32"
+          className={FILTER_CONTROL_CLASS}
         />
 
         <Input
-          className="min-w-32 max-w-56 flex-1"
+          type="date"
+          aria-label="Created date"
+          className={FILTER_CONTROL_CLASS}
+          value={createdDate ?? ''}
+          onChange={(event) => onCreatedDateChange?.(event.target.value)}
+        />
+
+        <Input
+          type="date"
+          aria-label="Executed date"
+          className={FILTER_CONTROL_CLASS}
+          value={executedDate ?? ''}
+          onChange={(event) => onExecutedDateChange?.(event.target.value)}
+        />
+
+        <Input
+          className={SEARCH_CONTROL_CLASS}
           placeholder="Search"
           value={query}
           onChange={(event) => onQueryChange(event.target.value)}
         />
       </div>
 
-      <div className="min-h-0 flex-1 overflow-auto rounded-xl border border-border">
+      <div className="min-h-0 flex-1 overflow-auto rounded-r8 border border-border">
         <table className="w-full border-collapse text-sm">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -183,7 +213,7 @@ export function ExecutionsTableView({
                 {row.getVisibleCells().map((cell) => (
                   <td
                     key={cell.id}
-                    className="whitespace-nowrap px-3 py-3 align-middle text-sm text-muted-foreground"
+                    className="whitespace-nowrap px-3 py-3 align-middle text-xs text-muted-foreground"
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
@@ -195,7 +225,7 @@ export function ExecutionsTableView({
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="px-3 py-8 text-center text-sm text-muted-foreground"
+                  className="px-3 py-8 text-center text-xs text-muted-foreground"
                 >
                   No executions match your filters
                 </td>
@@ -216,10 +246,10 @@ function SideTag({ side }: { side: string }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold',
+        'inline-flex items-center gap-1.5 rounded-r8 px-2.5 py-1 text-xs font-bold uppercase',
         isBuy
-          ? 'bg-success/10 text-success'
-          : 'bg-destructive/10 text-destructive',
+          ? 'bg-success-surface text-success-action'
+          : 'bg-danger-surface text-danger-action',
       )}
     >
       <span className="size-1.5 rounded-full bg-current" />

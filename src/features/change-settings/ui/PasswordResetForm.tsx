@@ -64,7 +64,7 @@ export function PasswordResetForm() {
             id="settings-otp"
             inputMode="numeric"
             placeholder="000000"
-            className="font-mono tracking-[0.35em]"
+            className="font-mono tracking-[0.35em] h-10 bg-muted/50"
             {...register('otp')}
           />
           {errors.otp && (
@@ -78,6 +78,7 @@ export function PasswordResetForm() {
             id="settings-new-password"
             type="password"
             placeholder="Min. 8 characters"
+            className="h-10 bg-muted/50"
             {...register('newPassword')}
           />
           {errors.newPassword && (
@@ -93,6 +94,7 @@ export function PasswordResetForm() {
             id="settings-confirm-password"
             type="password"
             placeholder="Repeat new password"
+            className="h-10 bg-muted/50"
             {...register('confirmPassword')}
           />
           {errors.confirmPassword && (

@@ -7,7 +7,7 @@ import { useUiStore } from '@/store/useUiStore';
 import { RfqHeroView } from './RfqHeroView';
 
 export function RfqHero() {
-  const { quote, side, qty, unit } = useOrderStore();
+  const { quote, side, qty, unit, liquidityProvider } = useOrderStore();
   const refreshQuote = useOrderStore((state) => state.refreshQuote);
   const pushToast = useUiStore((state) => state.pushToast);
 
@@ -47,6 +47,7 @@ export function RfqHero() {
       spreadText={formatPrice(spread)}
       spreadBpsText={`${spreadBps.toFixed(1)} bps`}
       onRefresh={onRefresh}
+      liquidityProvider={liquidityProvider}
     />
   );
 }

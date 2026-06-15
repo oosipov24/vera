@@ -5,6 +5,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 
@@ -16,7 +17,7 @@ export interface DropdownOption<T extends string = string> {
 
 interface DropdownProps<T extends string> {
   value: T | '';
-  options: Array<DropdownOption<T> | T>;
+  options: readonly (DropdownOption<T> | T)[];
   onChange: (value: T) => void;
   placeholder?: string;
   searchable?: boolean;
@@ -31,12 +32,6 @@ function normalizeOption<T extends string>(
   return typeof option === 'string' ? { value: option } : option;
 }
 
-/**
- * Shared select wrapper backed by shadcn/ui Select.
- *
- * The searchable props are kept for API compatibility with the old local
- * dropdown. Searchable selects should later move to a Popover + Command wrapper.
- */
 export function Dropdown<T extends string>({
   value,
   options,
@@ -46,14 +41,12 @@ export function Dropdown<T extends string>({
   renderValue,
 }: DropdownProps<T>) {
   const normalizedOptions = options.map(normalizeOption);
-  const selectedOption = normalizedOptions.find(
-    (option) => option.value === value,
-  );
 
-  const triggerContent = renderValue
-    ? renderValue(value)
-    : selectedOption?.label ??
-      (value ? value : <span className="text-muted-foreground">{placeholder}</span>);
+  const placeholderContent = renderValue ? (
+    renderValue('')
+  ) : (
+    <span className="text-dropdown-placeholder">{placeholder}</span>
+  );
 
   return (
     <Select
@@ -62,21 +55,43 @@ export function Dropdown<T extends string>({
     >
       <SelectTrigger
         className={cn(
-          'h-10 min-w-32 rounded-md border-border bg-background px-3 text-sm text-foreground shadow-none',
+          'h-9 rounded-[8px] border border-border bg-card px-[11px] text-left text-xs font-medium text-dropdown-foreground shadow-none',
+          'hover:bg-muted focus:ring-0 focus:ring-offset-0 data-[state=open]:border-primary data-[state=open]:bg-muted',
           className,
         )}
       >
-        <span className="min-w-0 flex-1 truncate text-left">
-          {triggerContent}
-        </span>
+        <SelectValue placeholder={placeholderContent} />
       </SelectTrigger>
 
-      <SelectContent>
-        {normalizedOptions.map((option) => (
-          <SelectItem key={option.value} value={option.value}>
-            {option.label ?? option.value}
-          </SelectItem>
-        ))}
+      <SelectContent
+        position="popper"
+        sideOffset={4}
+        className={cn(
+          'z-[9999] max-h-64 min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-[10px]',
+          'border border-dropdown-border bg-dropdown-surface p-1 text-dropdown-foreground',
+          'shadow-[0_4px_6px_-1px_rgba(0,0,0,0.4),0_16px_40px_-4px_rgba(0,0,0,0.5)]',
+        )}
+      >
+        {normalizedOptions.map((option) => {
+          const label = renderValue
+            ? renderValue(option.value)
+            : option.label ?? option.value;
+
+          return (
+            <SelectItem
+              key={option.value}
+              value={option.value}
+              className={cn(
+                'cursor-pointer rounded-[6px] px-2.5 py-[7px] pl-8 text-xs font-medium text-dropdown-muted',
+                'focus:bg-dropdown-option-hover focus:text-dropdown-foreground',
+                'data-[state=checked]:text-dropdown-foreground',
+                '[&_svg]:text-primary',
+              )}
+            >
+              {label}
+            </SelectItem>
+          );
+        })}
       </SelectContent>
     </Select>
   );

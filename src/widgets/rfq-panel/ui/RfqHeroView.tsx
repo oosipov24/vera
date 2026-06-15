@@ -13,6 +13,7 @@ interface RfqHeroViewProps {
   askPrice: string;
   spreadText: string;
   spreadBpsText: string;
+  liquidityProvider: string;
   onRefresh: () => void;
 }
 
@@ -27,6 +28,7 @@ export function RfqHeroView({
   askPrice,
   spreadText,
   spreadBpsText,
+  liquidityProvider,
   onRefresh,
 }: RfqHeroViewProps) {
   const timerClassName = {
@@ -38,23 +40,24 @@ export function RfqHeroView({
   return (
     <section className="flex flex-col gap-4 border-b border-border px-5 py-4">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="text-sm font-bold text-foreground">
+        <div className="flex flex-col items-left gap-3">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground/60">
             {base} / {quoteCcy} · OTC RFQ
           </span>
+          <div className="flex items-center gap-3">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-xs font-bold text-success">
+              <span className="size-1.5 rounded-full bg-success" />
+              QUOTE ACTIVE
+            </span>
 
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-xs font-bold text-success">
-            <span className="size-1.5 rounded-full bg-success" />
-            QUOTE ACTIVE
-          </span>
-
-          <span className={cn('font-mono text-xs', timerClassName)}>
-            {timerText}
-          </span>
+            <span className={cn('font-mono text-xs', timerClassName)}>
+              {timerText}
+            </span>
+          </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 lg:justify-end">
-          <div className="text-left lg:text-right">
+        <div className="flex flex-col gap-3 lg:justify-end">
+          <div className="text-left lg:text-right gap-2 flex flex-col">
             <div className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
               Notional
             </div>
@@ -63,25 +66,26 @@ export function RfqHeroView({
               {notionalText}
             </div>
           </div>
+          <div className="flex items-center gap-3">
+            <span className="inline-flex h-8 items-center rounded-r8 border border-primary/20 bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
+              {liquidityProvider}
+            </span>
 
-          <span className="inline-flex rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
-            Vera Finance
-          </span>
-
-          <Button
-            type="button"
-            size="icon"
-            variant="outline"
-            onClick={onRefresh}
-            title="Refresh quote"
-            aria-label="Refresh quote"
-          >
-            <RefreshCw className="size-4" />
-          </Button>
+            <Button
+              type="button"
+              size="icon"
+              variant="outline"
+              onClick={onRefresh}
+              title="Refresh quote"
+              aria-label="Refresh quote"
+            >
+              <RefreshCw className="size-4" />
+            </Button>
+          </div>
         </div>
       </div>
 
-      <div className="grid gap-3 lg:grid-cols-[1fr_auto_1fr]">
+      <div className="grid gap-3 lg:grid-cols-[1fr_auto_1fr] items-center">
         <QuoteCard
           tone="bid"
           label="BID — YOU SELL"
@@ -90,7 +94,7 @@ export function RfqHeroView({
           tag="Best bid"
         />
 
-        <div className="flex min-w-24 flex-row items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-3 lg:flex-col lg:justify-center">
+        <div className="flex h-auto p-2 w-20 shrink-0 flex-col items-center justify-center rounded-xl border border-border bg-card text-center">
           <div className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
             Spread
           </div>
@@ -136,8 +140,8 @@ function QuoteCard({
       className={cn(
         'relative rounded-xl border p-4',
         isBid
-          ? 'border-success/20 bg-success/10'
-          : 'border-destructive/20 bg-destructive/10',
+          ? 'border-success/20 bg-success-surface'
+          : 'border-destructive/20 bg-danger-surface',
       )}
     >
       <div
