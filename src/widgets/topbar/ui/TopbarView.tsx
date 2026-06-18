@@ -158,7 +158,11 @@ export function TopbarView({
         </div>
 
         <div className="hidden items-center gap-1.5 rounded-full border border-border bg-success-surface px-3 py-1 text-[12px] font-semibold text-success-action md:inline-flex">
-          <span className="size-1.5 rounded-full bg-success-action" />
+          <span
+            className="inline-flex size-2 rounded-full bg-success-action animate-[pulse_1.4s_ease-in-out_infinite]"
+            aria-hidden="true"
+          />
+
           Live Account
         </div>
 

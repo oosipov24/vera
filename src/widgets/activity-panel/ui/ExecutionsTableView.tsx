@@ -7,7 +7,6 @@ import {
 import { useMemo } from 'react';
 
 import { Input } from '@/components/ui/input';
-import { fmtAsset } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import { Dropdown } from '@/shared/ui/Dropdown';
 import type { AssetSymbol, ExecutionStatus } from '@/types';
