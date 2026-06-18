@@ -47,10 +47,10 @@ interface TransactionsTableViewProps {
 const columnHelper = createColumnHelper<TransactionTableRow>();
 
 const FILTER_CONTROL_CLASS =
-  'h-8 w-36 rounded-r8 border-border bg-card px-2 py-1 text-control-sm font-medium';
+  'h-8 w-36 rounded-r8 border-border bg-card px-2 py-1 text-xs font-medium text-muted-foreground';
 
 const STATEMENT_BUTTON_CLASS =
-  'ml-auto h-8 gap-2 rounded-r8 border-border bg-popover px-2 py-1 text-control-sm font-semibold text-foreground shadow-none hover:bg-accent hover:text-foreground';
+  'ml-auto h-8 gap-2 rounded-r8 border-border bg-popover px-2 py-1 text-xs font-semibold text-muted-foreground shadow-none hover:bg-accent hover:text-foreground';
 
 export function TransactionsTableView({
   rows,
@@ -84,7 +84,7 @@ export function TransactionsTableView({
       columnHelper.accessor('asset', {
         header: 'Asset',
         cell: (info) => (
-          <span className="font-semibold text-foreground">
+          <span className="font-semibold text-muted-foreground">
             {info.getValue()}
           </span>
         ),
@@ -95,7 +95,7 @@ export function TransactionsTableView({
           const transaction = info.row.original;
 
           return (
-            <span className="trading-mono text-foreground">
+            <span className="trading-mono text-muted-foreground">
               {fmtAsset(transaction.asset, info.getValue())}
             </span>
           );
@@ -114,7 +114,7 @@ export function TransactionsTableView({
       columnHelper.accessor('created', {
         header: 'Created',
         cell: (info) => (
-          <span className="trading-mono text-control-sm text-muted-foreground">
+          <span className="trading-mono text-xs text-muted-foreground">
             {info.getValue()}
           </span>
         ),
@@ -160,12 +160,13 @@ export function TransactionsTableView({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="mb-3 flex flex-wrap items-center gap-2">
+      <div className="mb-3 flex flex-wrap items-center gap-2 text-muted-foreground">
         <Dropdown
           value={status}
           options={statusOptions}
           onChange={onStatusChange}
           className={FILTER_CONTROL_CLASS}
+      
         />
 
         <Dropdown
@@ -203,7 +204,7 @@ export function TransactionsTableView({
         </Button>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-auto rounded-r8 border border-border">
+      <div className="min-h-0 flex-1 overflow-auto">
         <table className="w-full border-collapse text-sm">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -214,7 +215,7 @@ export function TransactionsTableView({
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="sticky top-0 z-10 whitespace-nowrap bg-background px-3 py-2 text-left text-control-sm font-bold uppercase tracking-wide text-muted-foreground"
+                    className="sticky top-0 z-10 whitespace-nowrap bg-background px-3 py-2 text-left text-xs font-bold uppercase tracking-wide text-foreground"
                   >
                     {header.isPlaceholder
                       ? null
@@ -272,7 +273,7 @@ function TypeTag({ type }: { type: string }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-r8 px-2.5 py-1 text-control-sm font-bold uppercase',
+        'inline-flex items-center gap-1.5 rounded-r4 px-2.5 py-1 text-xs font-bold uppercase',
         isDeposit
           ? 'bg-success-surface text-success-action'
           : 'bg-warning-surface text-warning',

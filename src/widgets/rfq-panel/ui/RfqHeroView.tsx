@@ -40,7 +40,7 @@ export function RfqHeroView({
   return (
     <section className="flex flex-col gap-4 border-b border-border px-5 py-4">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="flex flex-col items-left gap-3">
+        <div className="flex flex-col items-start gap-3">
           <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground/60">
             {base} / {quoteCcy} · OTC RFQ
           </span>
@@ -162,10 +162,10 @@ function QuoteCard({
         {price}
       </div>
 
-      <div className="mt-1 font-mono text-xs text-muted-foreground">
+      <div className="mt-1 trading-mono text-xs text-muted-foreground">
+        <span aria-hidden="true">≈ </span>
         {price} {currency}
       </div>
-
       <span
         className={cn(
           'absolute bottom-3 right-3 rounded-md px-2 py-1 text-[10px] font-bold',

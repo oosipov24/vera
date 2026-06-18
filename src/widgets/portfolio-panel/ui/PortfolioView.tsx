@@ -76,7 +76,7 @@ export function PortfolioView({
               size="sm"
               variant="ghost"
               className={cn(
-                'h-7 rounded-r6 px-3 trading-mono text-control-sm font-bold text-muted-foreground shadow-none hover:bg-accent hover:text-foreground',
+                'h-7 rounded-r6 px-3 trading-mono text-xs font-bold text-muted-foreground shadow-none hover:bg-accent hover:text-foreground',
                 displayCcy === 'USD' &&
                   'bg-primary/10 text-primary hover:bg-primary/10 hover:text-primary',
               )}
@@ -90,7 +90,7 @@ export function PortfolioView({
               size="sm"
               variant="ghost"
               className={cn(
-                'h-7 rounded-r6 px-3 trading-mono text-control-sm font-bold text-muted-foreground shadow-none hover:bg-accent hover:text-foreground',
+                'h-7 rounded-r6 px-3 trading-mono text-xs font-bold text-muted-foreground shadow-none hover:bg-accent hover:text-foreground',
                 displayCcy === 'EUR' &&
                   'bg-primary/10 text-primary hover:bg-primary/10 hover:text-primary',
               )}
@@ -116,7 +116,7 @@ export function PortfolioView({
             size="sm"
             variant="ghost"
             className={cn(
-              'h-8 rounded-r8 px-2 text-control-sm font-bold text-muted-foreground shadow-none hover:bg-muted hover:text-foreground',
+              'h-8 rounded-r8 px-2 text-xs font-bold text-muted-foreground shadow-none hover:bg-muted hover:text-foreground',
               view === item.key && 'bg-muted text-foreground hover:bg-muted hover:text-foreground',
             )}
             onClick={() => onViewChange(item.key)}

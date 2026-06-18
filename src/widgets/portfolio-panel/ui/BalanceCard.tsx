@@ -15,6 +15,7 @@ interface BalanceCardProps {
   onWithdraw: (asset: AssetSymbol) => void;
 }
 
+
 /** A single asset balance row with quick deposit/withdraw actions. */
 export function BalanceCard({
   asset,
@@ -35,7 +36,6 @@ export function BalanceCard({
           <div className="truncate text-sm font-bold text-foreground">
             {name}
           </div>
-
           <div className="truncate text-xs text-muted-foreground">{sub}</div>
         </div>
 
@@ -58,7 +58,7 @@ export function BalanceCard({
         <Button
           type="button"
           variant="ghost"
-          className="h-9 flex-1 rounded-none border-0 text-control-sm font-semibold text-success-action shadow-none hover:bg-success-surface hover:text-success-action"
+          className="h-9 flex-1 rounded-none border-0 text-xs font-semibold text-success-action shadow-none hover:bg-success-surface hover:text-success-action"
           onClick={() => onDeposit(asset)}
         >
           <ArrowDownToLine className="size-3.5" />
@@ -70,7 +70,7 @@ export function BalanceCard({
         <Button
           type="button"
           variant="ghost"
-          className="h-9 flex-1 rounded-none border-0 text-control-sm font-semibold text-primary shadow-none hover:bg-primary/10 hover:text-primary"
+          className="h-9 flex-1 rounded-none border-0 text-xs font-semibold text-primary shadow-none hover:bg-primary/10 hover:text-primary"
           onClick={() => onWithdraw(asset)}
         >
           <ArrowUpFromLine className="size-3.5" />

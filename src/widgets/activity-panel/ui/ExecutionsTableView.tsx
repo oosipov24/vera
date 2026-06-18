@@ -15,7 +15,7 @@ import type { AssetSymbol, ExecutionStatus } from '@/types';
 import { StatusBadge } from './StatusBadge';
 
 const FILTER_CONTROL_CLASS =
-  'h-8 w-36 rounded-r8 border-border bg-card px-2 py-1 text-xs font-medium';
+  'h-8 w-36 rounded-r8 border-border bg-card px-2 py-1 text-xs font-medium text-muted-foreground';
 
 const SEARCH_CONTROL_CLASS =
   'h-8 w-56 rounded-r8 border-border bg-card px-2 py-1 text-xs';
@@ -71,7 +71,7 @@ export function ExecutionsTableView({
       columnHelper.accessor('pair', {
         header: 'Pair',
         cell: (info) => (
-          <span className="font-semibold text-foreground">
+          <span className="font-bold text-muted-foreground">
             {info.getValue()}
           </span>
         ),
@@ -86,9 +86,9 @@ export function ExecutionsTableView({
           const execution = info.row.original;
 
           return (
-            <span className="font-mono text-foreground">
-              {fmtAsset(execution.asset, info.getValue())}{' '}
-              <span className="text-xs text-muted-foreground">
+            <span className="trading-mono text-xs font-bold text-muted-foreground">
+              {formatExecutionAmount(info.getValue())}{' '}
+              <span className="text-dropdown-placeholder font-normal text-caption">
                 {execution.asset}
               </span>
             </span>
@@ -98,7 +98,7 @@ export function ExecutionsTableView({
       columnHelper.accessor('price', {
         header: 'Price',
         cell: (info) => (
-          <span className="font-mono text-foreground">
+          <span className="font-mono text-muted-foreground">
             {info.getValue().toLocaleString('en-US')}
           </span>
         ),
@@ -106,7 +106,7 @@ export function ExecutionsTableView({
       columnHelper.accessor('total', {
         header: 'Total',
         cell: (info) => (
-          <span className="font-mono text-foreground">
+          <span className="font-mono text-muted-foreground">
             {info.getValue().toLocaleString('en-US', {
               minimumFractionDigits: 2,
             })}
@@ -147,7 +147,7 @@ export function ExecutionsTableView({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="mb-3 flex flex-wrap items-center gap-2">
+      <div className="mb-3 flex flex-wrap items-center gap-2 text-muted-foreground">
         <Dropdown
           value={status}
           options={statusOptions}
@@ -155,6 +155,13 @@ export function ExecutionsTableView({
           className={FILTER_CONTROL_CLASS}
         />
 
+        <Input
+          className={SEARCH_CONTROL_CLASS}
+          placeholder="Search"
+          value={query}
+          onChange={(event) => onQueryChange(event.target.value)}
+        />
+        
         <Input
           type="date"
           aria-label="Created date"
@@ -171,16 +178,10 @@ export function ExecutionsTableView({
           onChange={(event) => onExecutedDateChange?.(event.target.value)}
         />
 
-        <Input
-          className={SEARCH_CONTROL_CLASS}
-          placeholder="Search"
-          value={query}
-          onChange={(event) => onQueryChange(event.target.value)}
-        />
       </div>
 
-      <div className="min-h-0 flex-1 overflow-auto rounded-r8 border border-border">
-        <table className="w-full border-collapse text-sm">
+      <div className="min-h-0 flex-1 overflow-auto">
+        <table className="w-full border-collapse text-xs">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr
@@ -190,7 +191,7 @@ export function ExecutionsTableView({
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="sticky top-0 z-10 whitespace-nowrap bg-background px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wide text-muted-foreground"
+                    className="sticky top-0 z-10 whitespace-nowrap bg-background px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-foreground"
                   >
                     {header.isPlaceholder
                       ? null
@@ -208,12 +209,13 @@ export function ExecutionsTableView({
             {table.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}
-                className="border-b border-border last:border-b-0 hover:bg-muted/40"
+                className="border-b border-border last:border-b-0 hover:bg-muted/40 "
               >
                 {row.getVisibleCells().map((cell) => (
                   <td
                     key={cell.id}
                     className="whitespace-nowrap px-3 py-3 align-middle text-xs text-muted-foreground"
+                    
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
@@ -246,7 +248,7 @@ function SideTag({ side }: { side: string }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-r8 px-2.5 py-1 text-xs font-bold uppercase',
+        'inline-flex items-center gap-1.5 rounded-r4 px-2.5 py-1 text-badge font-bold uppercase',
         isBuy
           ? 'bg-success-surface text-success-action'
           : 'bg-danger-surface text-danger-action',
@@ -256,4 +258,11 @@ function SideTag({ side }: { side: string }) {
       {side}
     </span>
   );
+}
+
+function formatExecutionAmount(value: number) {
+  return value.toLocaleString('en-US', {
+    minimumFractionDigits: 4,
+    maximumFractionDigits: 4,
+  });
 }

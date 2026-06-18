@@ -106,7 +106,7 @@ export function PasswordResetForm() {
       </div>
 
       <div className="flex justify-end">
-        <Button type="submit" disabled={isSubmitting}>
+        <Button type="submit" className="px-5 py-5" disabled={isSubmitting}>
           Update Password
         </Button>
       </div>

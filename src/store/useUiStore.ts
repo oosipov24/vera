@@ -1,8 +1,8 @@
+import { toast } from 'react-toastify';
 import { create } from 'zustand';
 
-import { showToast } from '@/app/providers/ToastProvider';
-import { applyPalette } from '@/lib/palette';
 import type { DisplayCurrency, ThemeMode, ToastKind } from '@/types';
+import { applyPalette } from '@/lib/palette';
 
 /**
  * UI/presentation state: theme, accent palette, display currency, and toast dispatch.
@@ -49,16 +49,18 @@ export const useUiStore = create<UiState>((set, get) => ({
   },
 
   pushToast(kind, title, message) {
+    const content = `${title}: ${message}`;
+
     if (kind === 'success') {
-      showToast.success(title, message);
+      toast.success(content);
       return;
     }
 
     if (kind === 'error') {
-      showToast.error(title, message);
+      toast.error(content);
       return;
     }
 
-    showToast.info(title, message);
+    toast.info(content);
   },
 }));

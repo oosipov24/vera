@@ -116,7 +116,7 @@ export function TopbarView({
         <Button
           type="button"
           size="sm"
-          className="h-8 gap-2 rounded-r8 border border-success-action bg-success-action px-2.5 py-1 text-control font-semibold text-success-action-foreground shadow-none hover:bg-success-action/90 hover:text-success-action-foreground"
+          className="h-8 gap-2 rounded-r8 border border-success-action bg-success-action px-2.5 py-1 text-xs font-semibold text-success-action-foreground shadow-none hover:bg-success-action/90 hover:text-success-action-foreground"
           onClick={onDeposit}
         >
           <ArrowDownToLine className="size-4" />

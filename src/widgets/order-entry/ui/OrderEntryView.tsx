@@ -232,12 +232,9 @@ export function OrderEntryView<TPair extends string>({
           {liquidityProvider} · Active LP
         </span>
 
-        <span className="flex items-center gap-1 text-[11px] font-semibold text-success">
-          <span className="relative flex size-1.5">
-            <span className="absolute inline-flex size-full animate-ping rounded-full bg-success opacity-75" />
-            <span className="relative inline-flex size-1.5 rounded-full bg-success" />
-          </span>
-            Connected
+        <span className="inline-flex items-center gap-1.5 text-xs font-semibold leading-none text-success-action">
+          <PulsingDot className="bg-success-action" />
+          Connected
         </span>
       </div>
       <Button
@@ -280,6 +277,25 @@ function LabelText({ children }: { children: string }) {
   );
 }
 
+function PulsingDot({ className }: { className: string }) {
+  return (
+    <span
+      className="relative flex size-3 items-center justify-center"
+      aria-hidden="true"
+    >
+      <span
+        className={cn(
+          'absolute inline-flex size-2 animate-ping rounded-full opacity-40',
+          className,
+        )}
+      />
+      <span
+        className={cn('relative inline-flex size-1.5 rounded-full', className)}
+      />
+    </span>
+  );
+}
+
 function InfoPlaque({
   badge,
   tone,
@@ -301,20 +317,7 @@ function InfoPlaque({
             : 'border-primary/25 bg-brand-surface text-primary',
         )}
       >
-        <span className="relative flex size-1.5">
-          <span
-            className={cn(
-              'absolute inline-flex size-full animate-ping rounded-full opacity-75',
-              dotClassName,
-            )}
-          />
-          <span
-            className={cn(
-              'relative inline-flex size-1.5 rounded-full',
-              dotClassName,
-            )}
-          />
-        </span>
+      <PulsingDot className={dotClassName} />
 
         {badge}
       </span>

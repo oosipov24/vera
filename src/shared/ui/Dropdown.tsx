@@ -1,5 +1,8 @@
+import { Check } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { useMemo, useState } from 'react';
 
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -26,72 +29,117 @@ interface DropdownProps<T extends string> {
   renderValue?: (value: T | '') => ReactNode;
 }
 
-function normalizeOption<T extends string>(
-  option: DropdownOption<T> | T,
-): DropdownOption<T> {
-  return typeof option === 'string' ? { value: option } : option;
-}
-
 export function Dropdown<T extends string>({
   value,
   options,
   onChange,
-  placeholder = 'Select…',
+  placeholder = 'Select',
+  searchable = false,
+  searchPlaceholder = 'Search...',
   className,
   renderValue,
 }: DropdownProps<T>) {
-  const normalizedOptions = options.map(normalizeOption);
+  const [query, setQuery] = useState('');
 
-  const placeholderContent = renderValue ? (
-    renderValue('')
-  ) : (
-    <span className="text-dropdown-placeholder">{placeholder}</span>
+  const normalizedOptions = useMemo(
+    () =>
+      options.map((option) =>
+        typeof option === 'string'
+          ? {
+              value: option as T,
+              label: option,
+              search: option,
+            }
+          : {
+              value: option.value,
+              label: option.label ?? option.value,
+              search: option.search ?? String(option.label ?? option.value),
+            },
+      ),
+    [options],
   );
+
+  const filteredOptions = useMemo(() => {
+    const normalizedQuery = query.trim().toLowerCase();
+
+    if (!searchable || !normalizedQuery) {
+      return normalizedOptions;
+    }
+
+    return normalizedOptions.filter((option) =>
+      option.search.toLowerCase().includes(normalizedQuery),
+    );
+  }, [normalizedOptions, query, searchable]);
+
+  const selectedOption = normalizedOptions.find((option) => option.value === value);
 
   return (
     <Select
-      value={value || undefined}
-      onValueChange={(nextValue) => onChange(nextValue as T)}
+      value={value}
+      onValueChange={(nextValue) => {
+        onChange(nextValue as T);
+        setQuery('');
+      }}
     >
       <SelectTrigger
         className={cn(
-          'h-9 rounded-[8px] border border-border bg-card px-[11px] text-left text-xs font-medium text-dropdown-foreground shadow-none',
-          'hover:bg-muted focus:ring-0 focus:ring-offset-0 data-[state=open]:border-primary data-[state=open]:bg-muted',
+          'h-7 rounded-r8 border-border bg-card px-2 py-1 text-xs font-medium text-foreground shadow-none',
           className,
         )}
       >
-        <SelectValue placeholder={placeholderContent} />
+        <SelectValue placeholder={placeholder}>
+          {renderValue ? renderValue(value) : selectedOption?.label}
+        </SelectValue>
       </SelectTrigger>
 
       <SelectContent
         position="popper"
         sideOffset={4}
         className={cn(
-          'z-[9999] max-h-64 min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-[10px]',
-          'border border-dropdown-border bg-dropdown-surface p-1 text-dropdown-foreground',
-          'shadow-[0_4px_6px_-1px_rgba(0,0,0,0.4),0_16px_40px_-4px_rgba(0,0,0,0.5)]',
+          'z-[9999] max-h-80 min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-r8',
+          'border border-border bg-dropdown-surface px-1 text-dropdown-foreground shadow-2xl',
+          'outline-none ring-0 focus:outline-none focus:ring-0 focus-visible:ring-0',
         )}
       >
-        {normalizedOptions.map((option) => {
-          const label = renderValue
-            ? renderValue(option.value)
-            : option.label ?? option.value;
+      {searchable && (
+        <div className="sticky top-0 z-10 border-b border-dropdown-border bg-dropdown-surface px-3 py-2">
+          <Input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            onKeyDown={(event) => {
+              event.stopPropagation();
+            }}
+            placeholder={searchPlaceholder}
+            className="h-7 rounded-none border-0 bg-transparent px-0 py-0 text-xs font-medium text-foreground shadow-none outline-none placeholder:text-dropdown-placeholder focus-visible:ring-0 focus-visible:ring-offset-0"
+          />
+        </div>
+      )}
 
-          return (
-            <SelectItem
-              key={option.value}
-              value={option.value}
-              className={cn(
-                'cursor-pointer rounded-[6px] px-2.5 py-[7px] pl-8 text-xs font-medium text-dropdown-muted',
-                'focus:bg-dropdown-option-hover focus:text-dropdown-foreground',
-                'data-[state=checked]:text-dropdown-foreground',
-                '[&_svg]:text-primary',
-              )}
-            >
-              {label}
-            </SelectItem>
-          );
-        })}
+        <div className="max-h-64 overflow-y-auto">
+          {filteredOptions.length > 0 ? (
+            filteredOptions.map((option) => (
+              <SelectItem
+                key={option.value}
+                value={option.value}
+                className="h-8 cursor-pointer rounded-r6 px-2.5 text-xs font-medium text-dropdown-muted focus:bg-dropdown-option-hover focus:text-dropdown-foreground data-[state=checked]:text-foreground"
+              >
+                <span className="flex items-center gap-2">
+                  <Check
+                    className={cn(
+                      'size-3.5 text-primary opacity-0',
+                      option.value === value && 'opacity-100',
+                    )}
+                  />
+                  <span>{option.label}</span>
+                </span>
+              </SelectItem>
+            ))
+          ) : (
+            <div className="px-3 py-3 text-xs text-muted-foreground">
+              No results found
+            </div>
+          )}
+        </div>
       </SelectContent>
     </Select>
   );
