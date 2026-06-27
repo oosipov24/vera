@@ -172,7 +172,7 @@ function AllPortfolioView({
         <div key={section.key}>
           <button
             type="button"
-            className="flex w-full items-center gap-2 py-2 text-left text-xs font-bold uppercase tracking-wide text-muted-foreground transition-colors hover:text-foreground"
+            className="flex w-full items-center gap-2 py-2 text-left text-caption font-bold uppercase tracking-wide text-muted-foreground transition-colors hover:text-foreground"
             onClick={() => onToggleSection(section.key)}
           >
             <ChevronRight

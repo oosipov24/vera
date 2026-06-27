@@ -70,7 +70,7 @@ const SEARCH_CONTROL_CLASS =
   'h-8 w-36 rounded-r8 border-border bg-card px-2 py-1 text-xs hover:border-primary';
 
 const STATEMENT_BUTTON_CLASS =
-  'ml-auto h-8 gap-2 rounded-r8 border-border bg-popover px-2 py-1 text-xs font-semibold text-muted-foreground shadow-none hover:bg-accent hover:text-foreground hover:border-primary';
+  'ml-auto h-8 gap-2 rounded-r8 border-primary/30 bg-primary/10 px-2 py-1 text-xs font-semibold text-primary shadow-none hover:bg-accent hover:text-foreground hover:border-primary';
 
 const FOOTER_BUTTON_CLASS =
   'h-8 rounded-r8 border-border bg-popover px-3 py-1 text-xs font-semibold text-muted-foreground shadow-none hover:bg-accent hover:text-foreground';
