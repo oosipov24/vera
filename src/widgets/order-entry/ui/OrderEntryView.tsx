@@ -102,7 +102,7 @@ export function OrderEntryView<TPair extends string>({
           value={market}
           options={marketOptions}
           onChange={onMarketChange}
-          className="h-9 rounded-r8 border-border bg-card px-[11px] text-xs font-semibold w-full text-[12px]"
+          className="h-9 rounded-r8 border-border bg-card px-[11px] !text-control-lg font-semibold w-full text-[12px]"
         />
       </FieldBlock>
 
@@ -114,7 +114,7 @@ export function OrderEntryView<TPair extends string>({
           searchable
           searchPlaceholder="Search symbol…"
           placeholder="Select symbol"
-          className="h-9 rounded-r8 border-border bg-card px-[11px] text-xs font-semibold w-full text-[12px]"
+          className="h-9 rounded-r8 border-border bg-card px-[11px] !text-control-lg font-semibold w-full text-[12px]"
         />
       </FieldBlock>
 

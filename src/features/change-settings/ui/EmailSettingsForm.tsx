@@ -31,7 +31,7 @@ export function EmailSettingsForm() {
   };
 
   return (
-    <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
+    <form className="space-y-5 mx-auto w-full" onSubmit={handleSubmit(onSubmit)}>
       <div>
         <h2 className="text-lg font-semibold text-foreground">Email Address</h2>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -54,7 +54,7 @@ export function EmailSettingsForm() {
             </div>
           </div>
 
-          <Badge variant="secondary" className="gap-1 text-success-action bg-success-surface px-2 py-3 text-center border border-success/20">
+          <Badge variant="secondary" className="gap-1 text-success-action bg-success-surface/10 px-2 py-3 text-center border border-success/20">
             <Check className="size-3" />
             Verified
           </Badge>

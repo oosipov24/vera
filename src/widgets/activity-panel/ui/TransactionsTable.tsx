@@ -20,7 +20,7 @@ const FIAT_METHOD_SET: string[] = [...FIAT_METHODS];
 /**
  * Deposits / withdrawals table container.
  *
- * Filters: payment rail, method, status, and created date.
+ * Filters: payment rail, method, status, search, and created date range.
  */
 export function TransactionsTable() {
   const transactions = useTradeStore((state) => state.transactions);
@@ -28,7 +28,9 @@ export function TransactionsTable() {
   const [rail, setRail] = useState<RailFilter>('All Rails');
   const [method, setMethod] = useState<MethodFilter>('All');
   const [status, setStatus] = useState<StatusFilter>('All Status');
-  const [createdDate, setCreatedDate] = useState('');
+  const [query, setQuery] = useState('');
+  const [createdDateFrom, setCreatedDateFrom] = useState('');
+  const [createdDateTo, setCreatedDateTo] = useState('');
 
   const methodOptions = useMemo<MethodFilter[]>(() => {
     const fiatRails = [
@@ -82,16 +84,41 @@ export function TransactionsTable() {
         return false;
       }
 
-      if (
-        createdDate &&
-        normalizeDateForFilter(transaction.created) !== createdDate
-      ) {
+      const normalizedQuery = query.trim().toLowerCase();
+
+      if (normalizedQuery) {
+        const searchableText = [
+          transaction.id,
+          transaction.type,
+          transaction.asset,
+          transaction.amount,
+          transaction.method,
+          transaction.status,
+          transaction.created,
+          transaction.reason,
+        ]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase();
+
+        if (!searchableText.includes(normalizedQuery)) {
+          return false;
+        }
+      }
+
+      const normalizedCreatedDate = normalizeDateForFilter(transaction.created);
+
+      if (createdDateFrom && normalizedCreatedDate < createdDateFrom) {
+        return false;
+      }
+
+      if (createdDateTo && normalizedCreatedDate > createdDateTo) {
         return false;
       }
 
       return true;
     });
-  }, [transactions, rail, method, status, createdDate]);
+  }, [transactions, rail, method, status, query, createdDateFrom, createdDateTo]);
 
   const onRailChange = (nextRail: RailFilter) => {
     setRail(nextRail);
@@ -148,11 +175,15 @@ export function TransactionsTable() {
       railOptions={RAIL_OPTS}
       method={method}
       methodOptions={methodOptions}
-      createdDate={createdDate}
+      query={query}
+      createdDateFrom={createdDateFrom}
+      createdDateTo={createdDateTo}
       onStatusChange={setStatus}
       onRailChange={onRailChange}
       onMethodChange={setMethod}
-      onCreatedDateChange={setCreatedDate}
+      onQueryChange={setQuery}
+      onCreatedDateFromChange={setCreatedDateFrom}
+      onCreatedDateToChange={setCreatedDateTo}
       onDownloadStatement={downloadStatement}
     />
   );

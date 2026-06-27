@@ -66,7 +66,7 @@ export function PortfolioView({
     <aside className="flex h-full flex-col gap-4 p-4">
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-3">
-          <div className="text-cap font-bold uppercase tracking-wide text-muted-foreground">
+          <div className="text-caption font-bold uppercase tracking-wide text-muted-foreground">
             Estimated Portfolio Value
           </div>
 

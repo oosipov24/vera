@@ -94,7 +94,7 @@ export function RfqHeroView({
           tag="Best bid"
         />
 
-        <div className="flex h-auto p-2 w-20 shrink-0 flex-col items-center justify-center rounded-xl border border-dropdown-border bg-dropdown-surface text-center">
+        <div className="flex h-auto p-2 w-20 shrink-0 flex-col items-center justify-center rounded-xl border border-dropdown-border bg-dropdown-surface text-center mx-auto">
           <div className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
             Spread
           </div>

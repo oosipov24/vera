@@ -19,7 +19,7 @@ export function ToastProvider() {
       icon={false}
       className="top-16 w-[36rem] max-w-[calc(100vw-2rem)] p-0"
       toastClassName={() =>
-        'relative mb-3 min-h-0 rounded-r12 border border-border bg-popover px-5 py-5 pr-14 text-popover-foreground shadow-2xl'
+        'rounded-r8 border border-border !bg-popover px-4 py-3 !text-popover-foreground shadow-2xl'
       }
       closeButton={({ closeToast }) => (
         <Button

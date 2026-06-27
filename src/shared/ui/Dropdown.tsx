@@ -1,4 +1,3 @@
-import { Check } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useMemo, useState } from 'react';
 
@@ -71,7 +70,9 @@ export function Dropdown<T extends string>({
     );
   }, [normalizedOptions, query, searchable]);
 
-  const selectedOption = normalizedOptions.find((option) => option.value === value);
+  const selectedOption = normalizedOptions.find(
+    (option) => option.value === value,
+  );
 
   return (
     <Select
@@ -101,19 +102,19 @@ export function Dropdown<T extends string>({
           'outline-none ring-0 focus:outline-none focus:ring-0 focus-visible:ring-0',
         )}
       >
-      {searchable && (
-        <div className="sticky top-0 z-10 border-b border-dropdown-border bg-dropdown-surface px-3 py-2">
-          <Input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            onKeyDown={(event) => {
-              event.stopPropagation();
-            }}
-            placeholder={searchPlaceholder}
-            className="h-7 rounded-none border-0 bg-transparent px-0 py-0 text-xs font-medium text-foreground shadow-none outline-none placeholder:text-dropdown-placeholder focus-visible:ring-0 focus-visible:ring-offset-0"
-          />
-        </div>
-      )}
+        {searchable && (
+          <div className="sticky top-0 z-10 border-b border-dropdown-border bg-dropdown-surface px-3 py-2">
+            <Input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              onKeyDown={(event) => {
+                event.stopPropagation();
+              }}
+              placeholder={searchPlaceholder}
+              className="h-7 rounded-none border-0 bg-transparent px-0 py-0 text-xs font-medium text-foreground shadow-none outline-none placeholder:text-dropdown-placeholder focus-visible:ring-0 focus-visible:ring-offset-0"
+            />
+          </div>
+        )}
 
         <div className="max-h-64 overflow-y-auto">
           {filteredOptions.length > 0 ? (
@@ -121,17 +122,9 @@ export function Dropdown<T extends string>({
               <SelectItem
                 key={option.value}
                 value={option.value}
-                className="h-8 cursor-pointer rounded-r6 px-2.5 text-xs font-medium text-dropdown-muted focus:bg-dropdown-option-hover focus:text-dropdown-foreground data-[state=checked]:text-foreground"
+                className="h-8 cursor-pointer rounded-r6 pl-8 pr-2.5 text-xs font-medium text-dropdown-muted focus:bg-dropdown-option-hover focus:text-dropdown-foreground data-[state=checked]:text-foreground"
               >
-                <span className="flex items-center gap-2">
-                  <Check
-                    className={cn(
-                      'size-3.5 text-primary opacity-0',
-                      option.value === value && 'opacity-100',
-                    )}
-                  />
-                  <span>{option.label}</span>
-                </span>
+                {option.label}
               </SelectItem>
             ))
           ) : (

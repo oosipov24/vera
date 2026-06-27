@@ -2,10 +2,20 @@ import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
+  getPaginationRowModel,
   useReactTable,
+  type PaginationState,
+  type VisibilityState,
 } from '@tanstack/react-table';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { Dropdown } from '@/shared/ui/Dropdown';
@@ -14,10 +24,32 @@ import type { AssetSymbol, ExecutionStatus } from '@/types';
 import { StatusBadge } from './StatusBadge';
 
 const FILTER_CONTROL_CLASS =
-  'h-8 w-36 rounded-r8 border-border bg-card px-2 py-1 text-xs font-mono font-normal text-muted-foreground';
+  'h-8 w-36 rounded-r8 border-border bg-card px-2 py-1 text-xs font-normal text-muted-foreground hover:border-primary';
+
+const FILTER_CONTROL_CLASS_DATE =
+'h-8 w-36 rounded-r8 border-border bg-card px-2 py-1 text-xs !font-mono font-normal text-muted-foreground hover:border-primary';
 
 const SEARCH_CONTROL_CLASS =
-  'h-8 w-36 rounded-r8 border-border bg-card px-2 py-1 text-xs';
+  'h-8 w-36 rounded-r8 border-border bg-card px-2 py-1 text-xs hover:border-primary';
+
+const FOOTER_BUTTON_CLASS =
+  'h-8 rounded-r8 border-border bg-popover px-3 py-1 text-xs  font-semibold text-muted-foreground shadow-none hover:bg-accent hover:text-foreground';
+
+const PAGE_SIZE_OPTIONS = ['10', '20', '50'] as const;
+
+type PageSizeOption = (typeof PAGE_SIZE_OPTIONS)[number];
+
+const COLUMN_LABELS: Record<string, string> = {
+  id: 'OrderId',
+  pair: 'CurrencyPair',
+  side: 'Side',
+  amount: 'Amount',
+  price: 'Price',
+  total: 'Total',
+  status: 'Status',
+  created: 'CreatedAt',
+  executed: 'ExecutedAt',
+};
 
 export interface ExecutionTableRow {
   id: string;
@@ -59,6 +91,13 @@ export function ExecutionsTableView({
   onStatusChange,
   onQueryChange,
 }: ExecutionsTableViewProps) {
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 20,
+  });
+  const [columnSearch, setColumnSearch] = useState('');
+
   const columns = useMemo(
     () => [
       columnHelper.accessor('id', {
@@ -139,10 +178,24 @@ export function ExecutionsTableView({
   const table = useReactTable({
     data: rows,
     columns,
+    state: {
+      columnVisibility,
+      pagination,
+    },
+    onColumnVisibilityChange: setColumnVisibility,
+    onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
   });
 
-  const rowCount = table.getRowModel().rows.length;
+  const rowCount = table.getPrePaginationRowModel().rows.length;
+  const visibleRows = table.getRowModel().rows;
+  const pageSizeValue = String(pagination.pageSize) as PageSizeOption;
+  const normalizedColumnSearch = columnSearch.trim().toLowerCase();
+  const hideableColumns = table.getAllLeafColumns().filter((column) => column.getCanHide());
+  const filteredColumns = hideableColumns.filter((column) =>
+    getColumnLabel(column.id).toLowerCase().includes(normalizedColumnSearch),
+  );
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -164,7 +217,7 @@ export function ExecutionsTableView({
         <Input
           type="date"
           aria-label="Created date"
-          className={FILTER_CONTROL_CLASS}
+          className={FILTER_CONTROL_CLASS_DATE}
           value={createdDate ?? ''}
           onChange={(event) => onCreatedDateChange?.(event.target.value)}
         />
@@ -172,7 +225,7 @@ export function ExecutionsTableView({
         <Input
           type="date"
           aria-label="Executed date"
-          className={FILTER_CONTROL_CLASS}
+          className={FILTER_CONTROL_CLASS_DATE}
           value={executedDate ?? ''}
           onChange={(event) => onExecutedDateChange?.(event.target.value)}
         />
@@ -205,7 +258,7 @@ export function ExecutionsTableView({
           </thead>
 
           <tbody>
-            {table.getRowModel().rows.map((row) => (
+            {visibleRows.map((row) => (
               <tr
                 key={row.id}
                 className="border-b border-border last:border-b-0 hover:bg-muted/40 "
@@ -214,7 +267,6 @@ export function ExecutionsTableView({
                   <td
                     key={cell.id}
                     className="whitespace-nowrap px-2 py-2 align-middle text-xs text-muted-foreground"
-                    
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
@@ -225,7 +277,7 @@ export function ExecutionsTableView({
             {rowCount === 0 && (
               <tr>
                 <td
-                  colSpan={columns.length}
+                  colSpan={table.getVisibleLeafColumns().length}
                   className="px-3 py-8 text-center text-xs text-muted-foreground"
                 >
                   No executions match your filters
@@ -236,9 +288,73 @@ export function ExecutionsTableView({
         </table>
       </div>
 
-      <div className="pt-2 text-xs text-muted-foreground">{rowCount} rows</div>
+      <div className="mt-2 flex items-center justify-between border-t border-border pt-2">
+        <div className="text-xs text-muted-foreground">{rowCount} rows</div>
+
+        <div className="flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className={FOOTER_BUTTON_CLASS}
+              >
+                Columns
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent
+              align="end"
+              sideOffset={8}
+              className="z-[80] w-48 rounded-r8 border border-border bg-popover p-1 text-popover-foreground shadow-2xl"
+            >
+              <div className="border-b border-border px-2 py-2">
+                <Input
+                  value={columnSearch}
+                  onChange={(event) => setColumnSearch(event.target.value)}
+                  onKeyDown={(event) => event.stopPropagation()}
+                  placeholder="Search columns..."
+                  className="h-8 rounded-r8 border-border bg-card px-2 py-1 text-xs"
+                />
+              </div>
+
+              <div className="max-h-56 overflow-y-auto py-1">
+                {filteredColumns.map((column) => (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) => column.toggleVisibility(Boolean(value))}
+                    onSelect={(event) => event.preventDefault()}
+                    className="h-8 rounded-r6 px-2 pr-8 text-xs font-medium text-muted-foreground focus:bg-muted focus:text-foreground"
+                  >
+                    {getColumnLabel(column.id)}
+                  </DropdownMenuCheckboxItem>
+                ))}
+
+                {filteredColumns.length === 0 && (
+                  <div className="px-2 py-3 text-xs text-muted-foreground">
+                    No columns found
+                  </div>
+                )}
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Dropdown
+            value={pageSizeValue}
+            options={PAGE_SIZE_OPTIONS}
+            onChange={(value) => table.setPageSize(Number(value))}
+            className="h-8 w-14 rounded-r8 border-border bg-popover px-2 py-1 text-xs !font-mono font-semibold text-muted-foreground"
+          />
+        </div>
+      </div>
     </div>
   );
+}
+
+function getColumnLabel(columnId: string) {
+  return COLUMN_LABELS[columnId] ?? columnId;
 }
 
 function SideTag({ side }: { side: string }) {

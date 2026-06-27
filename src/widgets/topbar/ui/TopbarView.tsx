@@ -109,7 +109,7 @@ export function TopbarView({
             <div className="flex size-7 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">
               V
             </div>
-            <span className="hidden whitespace-nowrap text-control-l font-bold tracking-tight text-foreground sm:inline">
+            <span className="hidden whitespace-nowrap text-control-l font-bold tracking-tight text-foreground inline">
               Vera Finance<span className="text-primary">*</span>
             </span>
           </div>
@@ -190,7 +190,7 @@ export function TopbarView({
                 type="button"
                 variant="outline"
                 size="sm"
-                className="h-8 gap-2 rounded-r8 border border-border bg-popover px-2 py-4 font-semibold text-muted-foreground shadow-none hover:bg-accent hover:text-foreground leading-none hover:border-primary sm:px-3.75"
+                className="h-auto gap-2 rounded-r8 border border-border bg-popover px-2 py-1 font-semibold text-muted-foreground shadow-none hover:bg-accent hover:text-foreground leading-none hover:border-primary sm:px-3.75"
               >
                 <span className="flex size-6 items-center justify-center rounded-full border border-primary/30 bg-primary/10 text-caption font-bold text-primary">
                   T1
@@ -203,7 +203,7 @@ export function TopbarView({
             <DropdownMenuContent
               align="end"
               sideOffset={8}
-              className="z-[80] w-56 rounded-r8 border border-border bg-popover p-1 text-popover-foreground shadow-2xl"
+              className="z-[80] w-56 overflow-visible rounded-r8 border border-border bg-popover p-1 text-popover-foreground shadow-2xl"
             >
               <DropdownMenuLabel className="px-3 py-2">
                 <div className="flex flex-col gap-1">
@@ -233,7 +233,7 @@ export function TopbarView({
 
               <div className="grid grid-cols-2 gap-3 px-3 py-2 lg:hidden">
                 <div className="min-w-0">
-                  <p className="mb-1.5 text-xs text-muted-foreground">Theme color</p>
+                  <p className="mb-1.5 text-control-lg text-muted-foreground">Theme color</p>
                   <PalettePicker
                     paletteIndex={paletteIndex}
                     onPaletteChange={onPaletteChange}
@@ -242,7 +242,7 @@ export function TopbarView({
                 </div>
 
                 <div className="min-w-0">
-                  <p className="mb-1.5 text-xs text-muted-foreground">Theme style</p>
+                  <p className="mb-1.5 text-control-lg text-muted-foreground">Theme style</p>
                   <Button
                     size="icon"
                     variant="outline"
@@ -263,7 +263,7 @@ export function TopbarView({
               <DropdownMenuSeparator className="my-1 bg-border" />
 
               <DropdownMenuItem
-                className="h-8 rounded-r6 px-3 text-xs font-medium text-muted-foreground focus:bg-muted focus:text-foreground"
+                className="h-8 rounded-r6 px-3 text-control-lg font-bold text-muted-foreground focus:bg-muted focus:text-foreground"
                 onClick={() => onOpenSettings('email')}
               >
                 <Mail className="size-4 text-muted-foreground" />
@@ -271,7 +271,7 @@ export function TopbarView({
               </DropdownMenuItem>
 
               <DropdownMenuItem
-                className="h-8 rounded-r6 px-3 text-xs font-medium text-muted-foreground focus:bg-muted focus:text-foreground"
+                className="h-8 rounded-r6 px-3 text-control-lg font-bold text-muted-foreground focus:bg-muted focus:text-foreground"
                 onClick={() => onOpenSettings('password')}
               >
                 <LockKeyhole className="size-4 text-muted-foreground" />

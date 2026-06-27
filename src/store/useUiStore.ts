@@ -1,5 +1,7 @@
 import { toast } from 'react-toastify';
 import { create } from 'zustand';
+import { createElement } from 'react';
+import { ToastContent } from '@/shared/ui/ToastContent';
 
 import type { DisplayCurrency, ThemeMode, ToastKind } from '@/types';
 import { applyPalette } from '@/lib/palette';
@@ -49,7 +51,11 @@ export const useUiStore = create<UiState>((set, get) => ({
   },
 
   pushToast(kind, title, message) {
-    const content = `${title}: ${message}`;
+    const content = createElement(ToastContent, {
+      type: kind,
+      title,
+      message,
+    });
 
     if (kind === 'success') {
       toast.success(content);

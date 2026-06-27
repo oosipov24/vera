@@ -18,7 +18,7 @@ export function ActivityPanel() {
   const [tab, setTab] = useState<Tab>('executions');
 
   return (
-    <section className="flex min-h-0 flex-1 flex-col px-5 pb-4">
+    <section className="flex min-h-0 flex-1 flex-col px-5 py-3">
       <div className="mb-4 flex gap-2 border-b border-border">
         {TABS.map((item) => {
           const active = tab === item.value;
