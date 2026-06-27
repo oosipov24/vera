@@ -58,12 +58,13 @@ export function PalettePicker({
         title="Accent color"
         aria-label="Accent color"
         onClick={() => setOpen((current) => !current)}
+        className="hover:border-primary"
       >
         <Palette className="size-4" />
       </Button>
 
       {open && (
-        <div className="absolute right-0 top-11 z-50 w-44 rounded-xl border border-border bg-popover p-3 text-popover-foreground shadow-lg">
+        <div className="absolute right-0 top-11 z-50 w-44 rounded-xl border border-border bg-popover p-3 text-popover-foreground shadow-lg ">
           <div className="mb-3 text-xs font-bold uppercase tracking-wide text-muted-foreground">
             Accent color
           </div>
@@ -74,7 +75,7 @@ export function PalettePicker({
                 key={palette.name}
                 type="button"
                 className={cn(
-                  'relative size-8 rounded-full border-2 border-transparent transition-transform hover:scale-110',
+                  'relative size-8 rounded-full border-2 border-transparent transition-transform hover:scale-110 ',
                   PALETTE_SWATCH_CLASS_NAMES[index] ?? 'bg-primary',
                   index === paletteIndex && 'border-foreground',
                 )}

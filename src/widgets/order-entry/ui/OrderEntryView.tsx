@@ -68,18 +68,15 @@ export function OrderEntryView<TPair extends string>({
 }: OrderEntryViewProps<TPair>) {
   return (
     <div className="flex flex-col">
-      <div className="mb-3 text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground/60">
-        OTC Order Entry
-      </div>
 
-      <div className="mb-3 grid grid-cols-2 gap-0.5 rounded-[10px] border border-border bg-card p-[3px]">
+      <div className="mb-3 grid grid-cols-2 gap-0.5 rounded-[10px] border border-border bg-card p-0.5">
         <Button
           type="button"
           variant="ghost"
           className={cn(
-            'h-8 rounded-[8px] text-[12px] font-semibold text-muted-foreground/50 hover:bg-muted hover:text-muted-foreground',
+            'h-8 rounded-r8 text-[12px] font-semibold text-muted-foreground/50 hover:bg-muted hover:text-muted-foreground',
             side === 'buy' &&
-              'bg-success-surface text-success hover:bg-success-surface',
+              'bg-success-surface/10 border-success/20 text-success hover:bg-success-surface',
           )}
           onClick={() => onSideChange('buy')}
         >
@@ -90,7 +87,7 @@ export function OrderEntryView<TPair extends string>({
           type="button"
           variant="ghost"
           className={cn(
-            'h-8 rounded-[8px] text-[12px] font-semibold text-muted-foreground/50 hover:bg-muted hover:text-muted-foreground',
+            'h-8 rounded-r8 text-[12px] font-semibold text-muted-foreground/50 hover:bg-muted hover:text-muted-foreground',
             side === 'sell' &&
               'bg-danger-surface text-danger hover:bg-danger-surface',
           )}
@@ -105,7 +102,7 @@ export function OrderEntryView<TPair extends string>({
           value={market}
           options={marketOptions}
           onChange={onMarketChange}
-          className="h-9 rounded-[8px] border-border bg-card px-[11px] text-xs font-semibold w-full text-[12px]"
+          className="h-9 rounded-r8 border-border bg-card px-[11px] text-xs font-semibold w-full text-[12px]"
         />
       </FieldBlock>
 
@@ -117,12 +114,12 @@ export function OrderEntryView<TPair extends string>({
           searchable
           searchPlaceholder="Search symbol…"
           placeholder="Select symbol"
-          className="h-9 rounded-[8px] border-border bg-card px-[11px] text-xs font-semibold w-full text-[12px]"
+          className="h-9 rounded-r8 border-border bg-card px-[11px] text-xs font-semibold w-full text-[12px]"
         />
       </FieldBlock>
 
       <FieldBlock label="Quantity">
-        <div className="flex h-9 overflow-hidden rounded-[8px] border border-border bg-card">
+        <div className="flex h-9 overflow-hidden rounded-r8 border border-border bg-card">
           <Input
             className="h-full min-w-0 flex-1 rounded-none border-0 bg-transparent px-[11px] text-[11px] text-foreground shadow-none placeholder:text-muted-foreground/50 hover:bg-muted focus-visible:ring-0"
             type="number"
@@ -168,7 +165,7 @@ export function OrderEntryView<TPair extends string>({
           options={liquidityProviderOptions}
           onChange={onLiquidityProviderChange}
           placeholder="Select LP"
-          className="h-9 rounded-[8px] border-border bg-card px-[11px] text-xs font-medium w-full"
+          className="h-9 rounded-r8 border-border bg-card px-[11px] text-xs font-medium w-full"
         />
       </FieldBlock>
 
@@ -227,12 +224,12 @@ export function OrderEntryView<TPair extends string>({
           {alert.msg}
         </div>
       )}
-      <div className="mt-2 flex items-center justify-between rounded-[8px] border border-border bg-card px-2.5 py-[7px] w-full">
+      <div className="mt-2 flex items-center justify-between rounded-r8 border border-border bg-card px-2.5 py-[7px] w-full">
         <span className="text-[11px] font-medium text-muted-foreground">
           {liquidityProvider} · Active LP
         </span>
         
-        <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-success-action">
+        <span className="inline-flex items-center gap-1.5 text-11 font-semibold text-success-action">
           <span
             className="inline-flex size-2 rounded-full bg-success-action animate-[pulse_1.4s_ease-in-out_infinite]"
             aria-hidden="true"
@@ -293,25 +290,25 @@ function InfoPlaque({
   const dotClassName = tone === 'green' ? 'bg-success-action' : 'bg-primary';
 
   return (
-    <div className="flex min-h-9 items-center gap-2 rounded-[8px] border border-border bg-card px-[11px] py-2">
+    <div className="flex min-h-9 items-center gap-2 rounded-r8 border border-border bg-card px-[11px] py-2">
       <span
         className={cn(
           'inline-flex shrink-0 items-center gap-1.5 rounded-full border px-[9px] py-[3px] text-[11px] font-bold tracking-[0.04em]',
           tone === 'green'
-            ? 'border-success-surface-strong bg-success-surface text-success-action'
+            ? 'border-success-surface-strong bg-success-surface/10 text-success-action '
             : 'border-primary/25 bg-brand-surface text-primary',
         )}
       >
         <span className="relative flex size-1.5">
           <span
             className={cn(
-              'absolute inline-flex size-full animate-ping rounded-full opacity-75',
+              'absolute inline-flex size-full animate-ping rounded-full opacity-75 ',
               dotClassName,
             )}
           />
           <span
             className={cn(
-              'relative inline-flex size-1.5 rounded-full',
+              'relative inline-flex size-1.5 rounded-full ',
               dotClassName,
             )}
           />
@@ -341,7 +338,7 @@ function SummaryRow({
       <span
         className={cn(
           'text-[11px]',
-          strong ? 'font-semibold text-muted-foreground' : 'text-muted-foreground',
+          strong ? 'font-bold text-muted-foreground ' : 'text-muted-foreground',
         )}
       >
         {label}
@@ -350,7 +347,7 @@ function SummaryRow({
       <span
         className={cn(
           'text-right font-mono text-[11px] font-medium text-foreground',
-          strong && 'text-[13px] font-semibold',
+          strong && 'text-[13px] font-bold',
           valueClassName,
         )}
       >

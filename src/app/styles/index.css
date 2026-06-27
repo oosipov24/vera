@@ -15,12 +15,12 @@
  * blue) are NOT retinted by palettes — they convey meaning.
  */
 :root {
-  --bg: #0A0C10; --bg2: #0F1117; --bg3: #141720; --bg4: #191D28; --bg5: #1E2230;
+  --bg: #0b0a0f; --bg2: #100f15; --bg3: #141720; --bg4: #191D28; --bg5: #1E2230;
   --b1: #1E2230; --b2: #272C3F; --b3: #323748;
-  --t1: #F0F2F8; --t2: #A8AEC4; --t3: #565C78; --t4: #5A6184;
+  --t1: #F0F2F8; --t2: #aaa6bf; --t3: #565C78; --t4: ##a5a0ba;
 
   --purple: #7B6EF6; --purple-bg: rgba(123, 110, 246, .12); --purple-dim: rgba(123, 110, 246, .25);
-  --green: #34D399; --green-bg: #0B2A1E; --green-dim: rgba(52, 211, 153, .2); --green-text: #042B1A;
+  --green: #34D399; --green-bg: #34D399; --green-hover: #4ADEA8; --green-dim: rgba(52, 211, 153, .2); --green-text: #042B1A;
   --red: #F87171; --red-bg: #2A0E0E; --red-dim: rgba(248, 113, 113, .2); --red-text: #2A0505;
   --yellow: #FBBF24; --yellow-bg: rgba(251, 191, 36, .1);
   --orange: #FB923C; --orange-bg: rgba(251, 146, 60, .1);
@@ -37,7 +37,7 @@
   --t1: #0F1730; --t2: #48506B; --t3: #697090; --t4: #373D58;
 
   --purple: #6B5CE6; --purple-bg: rgba(107, 92, 230, .1); --purple-dim: rgba(107, 92, 230, .28);
-  --green: #0F9D6B; --green-bg: rgba(15, 157, 107, .1); --green-dim: rgba(15, 157, 107, .25); --green-text: #FFFFFF;
+  --green: #0F9D6B; --green-bg: #34D399; --green-hover: #4ADEA8; --green-dim: rgba(15, 157, 107, .25); --green-text: #FFFFFF;
   --red: #DC4C4C; --red-bg: rgba(220, 76, 76, .09); --red-dim: rgba(220, 76, 76, .22); --red-text: #FFFFFF;
   --yellow: #C98A00; --yellow-bg: rgba(201, 138, 0, .1);
   --orange: #E0731F; --orange-bg: rgba(224, 115, 31, .1);
@@ -79,6 +79,7 @@
   --success-surface: var(--green-bg);
   --success-surface-strong: var(--green-dim);
   --success-action: var(--green);
+  --success-action-hover: var(--green-hover);
   --success-action-foreground: var(--green-text);
 
   --danger: var(--red);
@@ -137,17 +138,38 @@
 }
 
 @theme inline {
-  
+
+  --text-xs: 12px;
+  --text-xs--line-height: 16px;
+
+  --text-8: 8px;
+  --text-8--line-height: 10px;
+
   --text-badge: 9px;
   --text-badge--line-height: 12px;
 
   --text-caption: 10px;
   --text-caption--line-height: 14px;
 
-  --spacing: 0.25rem;
+  --text-11: 11px;
+  --text-11--line-height: 14px;
 
-  --text-xs: 12px;
-  --text-xs--line-height: 16px;
+  --text-12: 12px;
+  --text-12--line-height: 16px;
+
+  --text-14: 14px;
+  --text-14--line-height: 20px;
+
+  --text-15: 15px;
+  --text-15--line-height: 22px;
+
+  --text-control-lg: 13px;
+  --text-control-lg--line-height: 18px;
+
+  --text-control-l: 15px;
+  --text-control-l--line-height: 20px;
+
+  --spacing: 4px;
 
   --font-heading: var(--font-sans);
   --font-sans: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", sans-serif;
@@ -158,6 +180,7 @@
   --color-success-surface: var(--success-surface);
   --color-success-surface-strong: var(--success-surface-strong);
   --color-success-action: var(--success-action);
+  --color-success-action-hover: var(--success-action-hover);
   --color-success-action-foreground: var(--success-action-foreground);
 
   --color-danger: var(--danger);

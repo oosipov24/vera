@@ -58,7 +58,7 @@ export function BalanceCard({
         <Button
           type="button"
           variant="ghost"
-          className="h-9 flex-1 rounded-none border-0 text-xs font-semibold text-success-action shadow-none hover:bg-success-surface hover:text-success-action"
+          className="h-9 flex-1 rounded-none border-0 text-xs font-semibold text-success-action shadow-none hover:bg-success-surface/10 hover:text-success-action"
           onClick={() => onDeposit(asset)}
         >
           <ArrowDownToLine className="size-3.5" />

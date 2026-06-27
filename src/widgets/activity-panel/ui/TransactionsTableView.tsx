@@ -72,7 +72,7 @@ export function TransactionsTableView({
       columnHelper.accessor('id', {
         header: 'Txn ID',
         cell: (info) => (
-          <span className="trading-mono text-muted-foreground">
+          <span className="trading-mono text-dropdown-muted">
             {info.getValue()}
           </span>
         ),
@@ -84,7 +84,7 @@ export function TransactionsTableView({
       columnHelper.accessor('asset', {
         header: 'Asset',
         cell: (info) => (
-          <span className="font-semibold text-muted-foreground">
+          <span className="font-semibold text-dropdown-muted">
             {info.getValue()}
           </span>
         ),
@@ -95,7 +95,7 @@ export function TransactionsTableView({
           const transaction = info.row.original;
 
           return (
-            <span className="trading-mono text-muted-foreground">
+            <span className="trading-mono text-dropdown-muted">
               {fmtAsset(transaction.asset, info.getValue())}
             </span>
           );
@@ -104,7 +104,7 @@ export function TransactionsTableView({
       columnHelper.accessor('method', {
         header: 'Method',
         cell: (info) => (
-          <span className="text-muted-foreground">{info.getValue()}</span>
+          <span className="text-dropdown-muted">{info.getValue()}</span>
         ),
       }),
       columnHelper.accessor('status', {
@@ -114,7 +114,7 @@ export function TransactionsTableView({
       columnHelper.accessor('created', {
         header: 'Created',
         cell: (info) => (
-          <span className="trading-mono text-xs text-muted-foreground">
+          <span className="trading-mono text-xs text-dropdown-muted">
             {info.getValue()}
           </span>
         ),
@@ -126,14 +126,14 @@ export function TransactionsTableView({
           const isRFI = info.row.original.status === 'RFI Hold';
 
           if (!reason) {
-            return <span className="text-muted-foreground">—</span>;
+            return <span className="text-dropdown-muted">—</span>;
           }
 
           return (
             <TooltipCell
               text={reason}
               className={cn(
-                'inline-block max-w-56 cursor-default overflow-hidden text-ellipsis whitespace-nowrap text-muted-foreground',
+                'inline-block max-w-56 cursor-default overflow-hidden text-ellipsis whitespace-nowrap text-dropdown-muted',
                 isRFI && 'text-warning',
               )}
             >
@@ -273,9 +273,9 @@ function TypeTag({ type }: { type: string }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-r4 px-2.5 py-1 text-xs font-bold uppercase',
+        'inline-flex items-center gap-1.5 rounded-r4 px-2 py-0.5 !text-caption font-bold uppercase',
         isDeposit
-          ? 'bg-success-surface text-success-action'
+          ? 'bg-success-surface/10 text-success-action'
           : 'bg-warning-surface text-warning',
       )}
     >

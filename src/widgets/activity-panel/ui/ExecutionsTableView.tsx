@@ -14,10 +14,10 @@ import type { AssetSymbol, ExecutionStatus } from '@/types';
 import { StatusBadge } from './StatusBadge';
 
 const FILTER_CONTROL_CLASS =
-  'h-8 w-36 rounded-r8 border-border bg-card px-2 py-1 text-xs font-medium text-muted-foreground';
+  'h-8 w-36 rounded-r8 border-border bg-card px-2 py-1 text-xs font-mono font-normal text-muted-foreground';
 
 const SEARCH_CONTROL_CLASS =
-  'h-8 w-56 rounded-r8 border-border bg-card px-2 py-1 text-xs';
+  'h-8 w-36 rounded-r8 border-border bg-card px-2 py-1 text-xs';
 
 export interface ExecutionTableRow {
   id: string;
@@ -64,13 +64,13 @@ export function ExecutionsTableView({
       columnHelper.accessor('id', {
         header: 'Order ID',
         cell: (info) => (
-          <span className="font-mono text-muted-foreground">{info.getValue()}</span>
+          <span className="font-mono text-dropdown-muted text-control-lg">{info.getValue()}</span>
         ),
       }),
       columnHelper.accessor('pair', {
         header: 'Pair',
         cell: (info) => (
-          <span className="font-bold text-muted-foreground">
+          <span className="font-bold text-dropdown-muted text-control-lg">
             {info.getValue()}
           </span>
         ),
@@ -85,7 +85,7 @@ export function ExecutionsTableView({
           const execution = info.row.original;
 
           return (
-            <span className="trading-mono text-xs font-bold text-muted-foreground">
+            <span className="trading-mono text-xs font-bold text-dropdown-muted">
               {formatExecutionAmount(info.getValue())}{' '}
               <span className="text-dropdown-placeholder font-normal text-caption">
                 {execution.asset}
@@ -97,7 +97,7 @@ export function ExecutionsTableView({
       columnHelper.accessor('price', {
         header: 'Price',
         cell: (info) => (
-          <span className="font-mono text-muted-foreground">
+          <span className="font-mono text-dropdown-muted">
             {info.getValue().toLocaleString('en-US')}
           </span>
         ),
@@ -105,7 +105,7 @@ export function ExecutionsTableView({
       columnHelper.accessor('total', {
         header: 'Total',
         cell: (info) => (
-          <span className="font-mono text-muted-foreground">
+          <span className="font-mono text-dropdown-muted">
             {info.getValue().toLocaleString('en-US', {
               minimumFractionDigits: 2,
             })}
@@ -119,7 +119,7 @@ export function ExecutionsTableView({
       columnHelper.accessor('created', {
         header: 'Created',
         cell: (info) => (
-          <span className="font-mono text-xs text-muted-foreground">
+          <span className="font-mono text-xs text-dropdown-muted">
             {info.getValue()}
           </span>
         ),
@@ -127,7 +127,7 @@ export function ExecutionsTableView({
       columnHelper.accessor('executed', {
         header: 'Executed',
         cell: (info) => (
-          <span className="font-mono text-xs text-muted-foreground">
+          <span className="font-mono text-xs text-dropdown-muted">
             {info.getValue()}
           </span>
         ),
@@ -213,7 +213,7 @@ export function ExecutionsTableView({
                 {row.getVisibleCells().map((cell) => (
                   <td
                     key={cell.id}
-                    className="whitespace-nowrap px-3 py-3 align-middle text-xs text-muted-foreground"
+                    className="whitespace-nowrap px-2 py-2 align-middle text-xs text-muted-foreground"
                     
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -247,9 +247,9 @@ function SideTag({ side }: { side: string }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-r4 px-2.5 py-1 text-badge font-bold uppercase',
+        'inline-flex items-center gap-1.5 rounded-r4 px-2 py-0.5 !text-caption font-bold uppercase',
         isBuy
-          ? 'bg-success-surface text-success-action'
+          ? 'bg-success-surface/10 text-success-action'
           : 'bg-danger-surface text-danger-action',
       )}
     >

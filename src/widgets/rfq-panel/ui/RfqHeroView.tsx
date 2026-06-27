@@ -45,7 +45,7 @@ export function RfqHeroView({
             {base} / {quoteCcy} · OTC RFQ
           </span>
           <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-xs font-bold text-success">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-caption font-bold text-success">
               <span className="size-1.5 rounded-full bg-success" />
               QUOTE ACTIVE
             </span>
@@ -58,7 +58,7 @@ export function RfqHeroView({
 
         <div className="flex flex-col gap-3 lg:justify-end">
           <div className="text-left lg:text-right gap-2 flex flex-col">
-            <div className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+            <div className="text-[10px] font-normal tracking-wide text-muted-foreground">
               Notional
             </div>
 
@@ -94,7 +94,7 @@ export function RfqHeroView({
           tag="Best bid"
         />
 
-        <div className="flex h-auto p-2 w-20 shrink-0 flex-col items-center justify-center rounded-xl border border-border bg-card text-center">
+        <div className="flex h-auto p-2 w-20 shrink-0 flex-col items-center justify-center rounded-xl border border-dropdown-border bg-dropdown-surface text-center">
           <div className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
             Spread
           </div>
@@ -138,10 +138,10 @@ function QuoteCard({
   return (
     <div
       className={cn(
-        'relative rounded-xl border p-4',
+        'relative rounded-xl border py-4 px-4.5',
         isBid
-          ? 'border-success/20 bg-success-surface'
-          : 'border-destructive/20 bg-danger-surface',
+          ? 'border-success/20 bg-success-surface/10'
+          : 'border-destructive/20 bg-destructive/10',
       )}
     >
       <div
@@ -155,7 +155,7 @@ function QuoteCard({
 
       <div
         className={cn(
-          'mt-1 font-mono text-3xl font-bold tracking-tight',
+          'mt-1 font-mono text-[34px] font-bold tracking-tight',
           isBid ? 'text-success' : 'text-destructive',
         )}
       >

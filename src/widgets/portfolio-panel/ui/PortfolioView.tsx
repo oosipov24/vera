@@ -66,11 +66,11 @@ export function PortfolioView({
     <aside className="flex h-full flex-col gap-4 p-4">
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-3">
-          <div className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+          <div className="text-caption font-bold uppercase tracking-wide text-muted-foreground">
             Estimated Portfolio Value
           </div>
 
-          <div className="flex rounded-r8 border border-border bg-muted p-1">
+          <div className="flex rounded-r8 border border-border bg-muted p-0.5">
             <Button
               type="button"
               size="sm"
@@ -108,7 +108,7 @@ export function PortfolioView({
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-1 rounded-r8 border border-border bg-card p-1">
+      <div className="grid grid-cols-4 gap-1 rounded-r8 border border-border bg-card p-0.5">
         {views.map((item) => (
           <Button
             key={item.key}
