@@ -130,7 +130,7 @@ export function TopbarView({
             aria-label="Deposit"
           >
             <ArrowDownToLine className="size-3.5" />
-            <span className="hidden sm:inline">Deposit</span>
+            <span>Deposit</span>
           </Button>
 
           {/* Withdraw */}
@@ -160,7 +160,7 @@ export function TopbarView({
             type="button"
             onClick={onThemeToggle}
             aria-label="Toggle theme"
-            className="hover:border-primary"
+            className="hidden bg-popover hover:border-primary lg:inline-flex"
           >
             {theme === 'dark' ? (
               <Moon className="size-4" />
@@ -203,7 +203,7 @@ export function TopbarView({
             <DropdownMenuContent
               align="end"
               sideOffset={8}
-              className="w-56 rounded-r8 border border-border bg-popover p-1 text-popover-foreground shadow-2xl"
+              className="z-[80] w-56 rounded-r8 border border-border bg-popover p-1 text-popover-foreground shadow-2xl"
             >
               <DropdownMenuLabel className="px-3 py-2">
                 <div className="flex flex-col gap-1">
@@ -216,7 +216,6 @@ export function TopbarView({
                 </div>
               </DropdownMenuLabel>
 
-              {/* Badges + PalettePicker in dropdown on mobile/tablet */}
               <DropdownMenuSeparator className="my-1 bg-border lg:hidden" />
 
               <div className="flex flex-wrap items-center gap-1.5 px-3 py-2 lg:hidden">
@@ -232,12 +231,33 @@ export function TopbarView({
                 </div>
               </div>
 
-              <div className="px-3 py-2 lg:hidden">
-                <p className="mb-1.5 text-xs text-muted-foreground">Theme color</p>
-                <PalettePicker
-                  paletteIndex={paletteIndex}
-                  onPaletteChange={onPaletteChange}
-                />
+              <div className="grid grid-cols-2 gap-3 px-3 py-2 lg:hidden">
+                <div className="min-w-0">
+                  <p className="mb-1.5 text-xs text-muted-foreground">Theme color</p>
+                  <PalettePicker
+                    paletteIndex={paletteIndex}
+                    onPaletteChange={onPaletteChange}
+                    menuAlign="start"
+                  />
+                </div>
+
+                <div className="min-w-0">
+                  <p className="mb-1.5 text-xs text-muted-foreground">Theme style</p>
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    type="button"
+                    onClick={onThemeToggle}
+                    aria-label="Toggle theme"
+                    className="bg-popover hover:border-primary"
+                  >
+                    {theme === 'dark' ? (
+                      <Moon className="size-4" />
+                    ) : (
+                      <Sun className="size-4" />
+                    )}
+                  </Button>
+                </div>
               </div>
 
               <DropdownMenuSeparator className="my-1 bg-border" />

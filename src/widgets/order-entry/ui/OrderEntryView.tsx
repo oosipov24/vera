@@ -74,7 +74,7 @@ export function OrderEntryView<TPair extends string>({
           type="button"
           variant="ghost"
           className={cn(
-            'h-8 rounded-r8 text-[12px] font-semibold text-muted-foreground/50 hover:bg-muted hover:text-muted-foreground',
+            'rounded-r8 !text-control-lg font-semibold text-muted-foreground/50 hover:bg-muted hover:text-muted-foreground p-2',
             side === 'buy' &&
               'bg-success-surface/10 border-success/20 text-success hover:bg-success-surface',
           )}
@@ -87,7 +87,7 @@ export function OrderEntryView<TPair extends string>({
           type="button"
           variant="ghost"
           className={cn(
-            'h-8 rounded-r8 text-[12px] font-semibold text-muted-foreground/50 hover:bg-muted hover:text-muted-foreground',
+            'rounded-r8 !text-control-lg font-semibold text-muted-foreground/50 hover:bg-muted hover:text-muted-foreground p-2',
             side === 'sell' &&
               'bg-danger-surface text-danger hover:bg-danger-surface',
           )}

@@ -38,9 +38,8 @@ export function RfqHeroView({
   }[timerTone];
 
   return (
-    <section className="flex flex-col gap-4 border-b border-border px-4 py-4 sm:px-5">
-      {/* Header row: pair info + notional + LP */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+    <section className="flex flex-col gap-4 border-b border-border px-5 py-4">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="flex flex-col items-start gap-3">
           <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground/60">
             {base} / {quoteCcy} · OTC RFQ
@@ -50,25 +49,28 @@ export function RfqHeroView({
               <span className="size-1.5 rounded-full bg-success" />
               QUOTE ACTIVE
             </span>
+
             <span className={cn('font-mono text-xs', timerClassName)}>
               {timerText}
             </span>
           </div>
         </div>
 
-        <div className="flex flex-row items-center justify-between gap-3 sm:flex-col sm:items-end sm:justify-end">
-          <div className="flex flex-col gap-1 sm:text-right">
+        <div className="flex flex-col gap-3 lg:justify-end">
+          <div className="text-left lg:text-right gap-2 flex flex-col">
             <div className="text-[10px] font-normal tracking-wide text-muted-foreground">
               Notional
             </div>
+
             <div className="font-mono text-sm font-bold text-foreground">
               {notionalText}
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <span className="inline-flex h-8 items-center rounded-r8 border border-primary/20 bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
               {liquidityProvider}
             </span>
+
             <Button
               type="button"
               size="icon"
@@ -83,8 +85,7 @@ export function RfqHeroView({
         </div>
       </div>
 
-      {/* Quote cards: stacked on mobile, side-by-side lg+ */}
-      <div className="grid gap-3 lg:grid-cols-[1fr_auto_1fr]">
+      <div className="grid gap-3 lg:grid-cols-[1fr_auto_1fr] items-center">
         <QuoteCard
           tone="bid"
           label="BID — YOU SELL"
@@ -93,18 +94,17 @@ export function RfqHeroView({
           tag="Best bid"
         />
 
-        {/* Spread: inline on mobile between cards, center column lg+ */}
-        <div className="flex items-center justify-between gap-3 rounded-xl border border-dropdown-border bg-dropdown-surface px-4 py-2 lg:h-auto lg:w-20 lg:flex-col lg:items-center lg:justify-center lg:p-2 lg:text-center">
+        <div className="flex h-auto p-2 w-20 shrink-0 flex-col items-center justify-center rounded-xl border border-dropdown-border bg-dropdown-surface text-center">
           <div className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
             Spread
           </div>
-          <div className="flex items-baseline gap-2 lg:flex-col lg:items-center lg:gap-0">
-            <div className="font-mono text-lg font-bold text-foreground">
-              {spreadText}
-            </div>
-            <div className="font-mono text-xs text-muted-foreground">
-              {spreadBpsText}
-            </div>
+
+          <div className="font-mono text-lg font-bold text-foreground">
+            {spreadText}
+          </div>
+
+          <div className="font-mono text-xs text-muted-foreground">
+            {spreadBpsText}
           </div>
         </div>
 
@@ -138,7 +138,7 @@ function QuoteCard({
   return (
     <div
       className={cn(
-        'relative rounded-xl border px-4 py-3 sm:py-4 sm:px-4.5',
+        'relative rounded-xl border py-4 px-4.5',
         isBid
           ? 'border-success/20 bg-success-surface/10'
           : 'border-destructive/20 bg-destructive/10',
@@ -153,11 +153,9 @@ function QuoteCard({
         {label}
       </div>
 
-      {/* Price scales down on mobile */}
       <div
         className={cn(
-          'mt-1 font-mono font-bold tracking-tight',
-          'text-2xl sm:text-[34px]',
+          'mt-1 font-mono text-[34px] font-bold tracking-tight',
           isBid ? 'text-success' : 'text-destructive',
         )}
       >
@@ -168,7 +166,6 @@ function QuoteCard({
         <span aria-hidden="true">≈ </span>
         {price} {currency}
       </div>
-
       <span
         className={cn(
           'absolute bottom-3 right-3 rounded-md px-2 py-1 text-[10px] font-bold',

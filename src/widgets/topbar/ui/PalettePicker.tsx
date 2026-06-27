@@ -19,6 +19,7 @@ const PALETTE_SWATCH_CLASS_NAMES = [
 interface PalettePickerProps {
   paletteIndex: number;
   onPaletteChange: (index: number) => void;
+  menuAlign?: 'start' | 'end';
 }
 
 /**
@@ -27,6 +28,7 @@ interface PalettePickerProps {
 export function PalettePicker({
   paletteIndex,
   onPaletteChange,
+  menuAlign = 'end',
 }: PalettePickerProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -58,13 +60,18 @@ export function PalettePicker({
         title="Accent color"
         aria-label="Accent color"
         onClick={() => setOpen((current) => !current)}
-        className="hover:border-primary"
+        className="bg-popover hover:border-primary"
       >
         <Palette className="size-4" />
       </Button>
 
       {open && (
-        <div className="absolute right-0 top-11 z-50 w-44 rounded-xl border border-border bg-popover p-3 text-popover-foreground shadow-lg ">
+        <div
+          className={cn(
+            'absolute top-11 z-[100] w-44 rounded-xl border border-border bg-popover p-3 text-popover-foreground shadow-2xl',
+            menuAlign === 'start' ? 'left-0' : 'right-0',
+          )}
+        >
           <div className="mb-3 text-xs font-bold uppercase tracking-wide text-muted-foreground">
             Accent color
           </div>
@@ -75,7 +82,7 @@ export function PalettePicker({
                 key={palette.name}
                 type="button"
                 className={cn(
-                  'relative size-8 rounded-full border-2 border-transparent transition-transform hover:scale-110 ',
+                  'relative size-8 rounded-full border-2 border-transparent transition-transform hover:scale-110',
                   PALETTE_SWATCH_CLASS_NAMES[index] ?? 'bg-primary',
                   index === paletteIndex && 'border-foreground',
                 )}

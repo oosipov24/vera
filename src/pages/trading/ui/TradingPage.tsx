@@ -42,7 +42,7 @@ export function TradingPage() {
       <Topbar onDeposit={() => openDeposit()} onWithdraw={() => openWithdraw()} />
 
       <main className="grid min-h-0 flex-1 grid-cols-[320px_1fr_360px] gap-px overflow-hidden bg-border max-[1200px]:grid-cols-[280px_1fr]">
-        <div className="min-h-0 overflow-y-auto bg-background p-[18px]">
+        <div className="min-h-0 overflow-y-auto bg-background p-4">
           <OrderEntry />
         </div>
 
