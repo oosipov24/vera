@@ -16,8 +16,8 @@
  */
 :root {
   --bg: #0b0a0f; --bg2: #100f15; --bg3: #141720; --bg4: #191D28; --bg5: #1E2230;
-  --b1: #1E2230; --b2: #272C3F; --b3: #323748;
-  --t1: #F0F2F8; --t2: #aaa6bf; --t3: #565C78; --t4: ##a5a0ba;
+  --b1: #1E2230; --b2: #272C3F; --b3: #323748; --b4: #7d7d7d;
+  --t1: #F0F2F8; --t2: #aaa6bf; --t3: #565C78; --t4: #a5a0ba;
 
   --purple: #7B6EF6; --purple-bg: rgba(123, 110, 246, .12); --purple-dim: rgba(123, 110, 246, .25);
   --green: #34D399; --green-bg: #34D399; --green-hover: #4ADEA8; --green-dim: rgba(52, 211, 153, .2); --green-text: #042B1A;
@@ -33,7 +33,7 @@
 
 [data-theme="light"] {
   --bg: #F4F6FB; --bg2: #FFFFFF; --bg3: #FFFFFF; --bg4: #EEF1F8; --bg5: #E4E8F2;
-  --b1: #E2E7F0; --b2: #D2D9E6; --b3: #BCC5D8;
+  --b1: #E2E7F0; --b2: #D2D9E6; --b3: #BCC5D8; --b4: #8a8a8a;
   --t1: #0F1730; --t2: #48506B; --t3: #697090; --t4: #373D58;
 
   --purple: #6B5CE6; --purple-bg: rgba(107, 92, 230, .1); --purple-dim: rgba(107, 92, 230, .28);
@@ -100,6 +100,8 @@
   --brand-surface: var(--purple-bg);
 
   --border: var(--b1);
+  --border-point: var(--b4);
+
   --input: var(--b2);
   --ring: var(--purple);
 
@@ -135,39 +137,71 @@
   --palette-5: #10B981;
   --palette-6: #F59E0B;
   --palette-7: #F43F5E;
+
+
+
+  --fs-xs: 12px;
+  --lh-xs: 16px;
+
+  --fs-8: 8px;
+  --lh-8: 10px;
+
+  --fs-badge: 9px;
+  --lh-badge: 12px;
+
+  --fs-caption: 10px;
+  --lh-caption: 14px;
+
+  --fs-11: 11px;
+  --lh-11: 14px;
+
+  --fs-12: 12px;
+  --lh-12: 16px;
+
+  --fs-14: 14px;
+  --lh-14: 20px;
+
+  --fs-15: 15px;
+  --lh-15: 22px;
+
+  --fs-control-lg: 13px;
+  --lh-control-lg: 18px;
+
+  --fs-control-l: 15px;
+  --lh-control-l: 20px;
 }
 
 @theme inline {
 
-  --text-xs: 12px;
-  --text-xs--line-height: 16px;
+  --text-xs: var(--fs-xs);
+  --text-xs--line-height: var(--lh-xs);
 
-  --text-8: 8px;
-  --text-8--line-height: 10px;
+  --text-8: var(--fs-8);
+  --text-8--line-height: var(--lh-8);
 
-  --text-badge: 9px;
-  --text-badge--line-height: 12px;
+  --text-badge: var(--fs-badge);
+  --text-badge--line-height: var(--lh-badge);
 
-  --text-caption: 10px;
-  --text-caption--line-height: 14px;
+  --text-caption: var(--fs-caption);
+  --text-caption--line-height: var(--lh-caption);
 
-  --text-11: 11px;
-  --text-11--line-height: 14px;
+  --text-11: var(--fs-11);
+  --text-11--line-height: var(--lh-11);
 
-  --text-12: 12px;
-  --text-12--line-height: 16px;
+  --text-12: var(--fs-12);
+  --text-12--line-height: var(--lh-12);
 
-  --text-14: 14px;
-  --text-14--line-height: 20px;
+  --text-14: var(--fs-14);
+  --text-14--line-height: var(--lh-14);
 
-  --text-15: 15px;
-  --text-15--line-height: 22px;
+  --text-15: var(--fs-15);
+  --text-15--line-height: var(--lh-15);
 
-  --text-control-lg: 13px;
-  --text-control-lg--line-height: 18px;
+  --text-control-lg: var(--fs-control-lg);
+  --text-control-lg--line-height: var(--lh-control-lg);
 
-  --text-control-l: 15px;
-  --text-control-l--line-height: 20px;
+  --text-control-l: var(--fs-control-l);
+  --text-control-l--line-height: var(--lh-control-l);
 
   --spacing: 4px;
 
@@ -234,6 +268,7 @@
   --color-info-foreground: var(--info-foreground);
 
   --color-border: var(--border);
+  --color-border-point: var(--border-point);
   --color-input: var(--input);
   --color-ring: var(--ring);
 
@@ -274,6 +309,8 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 }
+
+
 .trading-mono {
   font-family: var(--font-trading-mono) !important;
   font-variant-numeric: tabular-nums;
@@ -349,6 +386,7 @@ input {
   border-radius: 4px;
 }
 
+
 @keyframes ticker {
   from {
     transform: translateX(0);
@@ -381,5 +419,50 @@ input {
 
   100% {
     box-shadow: 0 0 0 0 color-mix(in srgb, var(--success) 0%, transparent);
+  }
+}
+
+
+/* 4K / ultra-wide desktop.
+   2200px works better than 2600px when Windows display scaling is enabled.
+*/
+@media (min-width: 2200px) {
+  :root {
+    --fs-xs: 14px;
+    --lh-xs: 18px;
+
+    --fs-8: 10px;
+    --lh-8: 12px;
+
+    --fs-badge: 11px;
+    --lh-badge: 14px;
+
+    --fs-caption: 12px;
+    --lh-caption: 16px;
+
+    --fs-11: 13px;
+    --lh-11: 17px;
+
+    --fs-12: 14px;
+    --lh-12: 18px;
+
+    --fs-14: 16px;
+    --lh-14: 23px;
+
+    --fs-15: 17px;
+    --lh-15: 24px;
+
+    --fs-control-lg: 15px;
+    --lh-control-lg: 20px;
+
+    --fs-control-l: 17px;
+    --lh-control-l: 22px;
+
+    --density-spacing: 5px;
+  }
+
+  html,
+  body {
+    font-size: 16px;
   }
 }

@@ -75,8 +75,8 @@ function TickerStrip() {
               <span
                 className={
                   isUp
-                    ? 'rounded bg-success-surface/10 px-1.5 py-0.5 font-mono text-[11px] text-success-action'
-                    : 'rounded bg-destructive/10 px-1.5 py-0.5 font-mono text-[11px] text-destructive'
+                    ? 'rounded bg-success-surface/10 px-1.5 py-0.5 font-mono text-11 text-success-action'
+                    : 'rounded bg-destructive/10 px-1.5 py-0.5 font-mono text-11 text-destructive'
                 }
               >
                 {item.chg}

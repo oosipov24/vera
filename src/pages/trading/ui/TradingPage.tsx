@@ -21,36 +21,37 @@ const WithdrawDialog = lazy(() =>
   })),
 );
 
-function useIsDesktopLayout() {
-  const [isDesktopLayout, setIsDesktopLayout] = useState(() => {
+function useMediaQuery(query: string, defaultValue = true) {
+  const [matches, setMatches] = useState(() => {
     if (typeof window === 'undefined') {
-      return true;
+      return defaultValue;
     }
 
-    return window.matchMedia('(min-width: 1024px)').matches;
+    return window.matchMedia(query).matches;
   });
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(min-width: 1024px)');
+    const mediaQuery = window.matchMedia(query);
 
     const onChange = (event: MediaQueryListEvent) => {
-      setIsDesktopLayout(event.matches);
+      setMatches(event.matches);
     };
 
-    setIsDesktopLayout(mediaQuery.matches);
+    setMatches(mediaQuery.matches);
     mediaQuery.addEventListener('change', onChange);
 
     return () => {
       mediaQuery.removeEventListener('change', onChange);
     };
-  }, []);
+  }, [query]);
 
-  return isDesktopLayout;
+  return matches;
 }
 
 // Trading layout: order ticket, RFQ, activity, and portfolio.
 export function TradingPage() {
-  const isDesktopLayout = useIsDesktopLayout();
+  const isDesktopLayout = useMediaQuery('(min-width: 1024px)');
+  const isWideDesktopLayout = useMediaQuery('(min-width: 1201px)');
 
   const [depositOpen, setDepositOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
@@ -76,19 +77,42 @@ export function TradingPage() {
 
       <main className="min-h-0 flex-1 overflow-hidden bg-border">
         {isDesktopLayout ? (
-          <div className="grid h-full min-h-0 grid-cols-[320px_minmax(0,1fr)_360px] gap-px overflow-hidden bg-border max-[1200px]:grid-cols-[280px_minmax(0,1fr)]">
+          <div
+            className={
+              isWideDesktopLayout
+                ? 'grid h-full min-h-0 grid-cols-[320px_minmax(0,1fr)_360px] gap-px overflow-hidden bg-border'
+                : 'grid h-full min-h-0 grid-cols-[280px_minmax(0,1fr)] gap-px overflow-hidden bg-border'
+            }
+          >
             <div className="min-h-0 overflow-y-auto bg-background p-4">
               <OrderEntry />
             </div>
 
             <div className="flex min-h-0 flex-col overflow-y-auto bg-background">
               <RfqHero />
-              <ActivityPanel />
+
+              <section className="min-h-[420px] shrink-0 border-t border-border">
+                <ActivityPanel />
+              </section>
+
+              {!isWideDesktopLayout && (
+                <section className="shrink-0 border-t border-border">
+                  <Portfolio
+                    onDeposit={openDeposit}
+                    onWithdraw={openWithdraw}
+                  />
+                </section>
+              )}
             </div>
 
-            <div className="min-h-0 overflow-y-auto bg-background p-0 max-[1200px]:hidden">
-              <Portfolio onDeposit={openDeposit} onWithdraw={openWithdraw} />
-            </div>
+            {isWideDesktopLayout && (
+              <div className="min-h-0 overflow-y-auto bg-background p-0">
+                <Portfolio
+                  onDeposit={openDeposit}
+                  onWithdraw={openWithdraw}
+                />
+              </div>
+            )}
           </div>
         ) : (
           <div className="relative h-full min-h-0 overflow-hidden bg-background">
@@ -104,7 +128,10 @@ export function TradingPage() {
               </div>
 
               <div className="border-t border-border">
-                <Portfolio onDeposit={openDeposit} onWithdraw={openWithdraw} />
+                <Portfolio
+                  onDeposit={openDeposit}
+                  onWithdraw={openWithdraw}
+                />
               </div>
             </div>
           </div>

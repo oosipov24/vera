@@ -21,6 +21,7 @@ interface OrderEntryViewProps<TPair extends string> {
   unit: OrderUnit;
   base: string;
   quoteCcy: string;
+  availableBalanceText: string;
   summary: {
     pair: string;
     side: string;
@@ -56,6 +57,7 @@ export function OrderEntryView<TPair extends string>({
   unit,
   base,
   quoteCcy,
+  availableBalanceText,
   summary,
   alert,
   onMarketChange,
@@ -69,7 +71,7 @@ export function OrderEntryView<TPair extends string>({
   return (
     <div className="flex flex-col">
 
-      <div className="mb-3 grid grid-cols-2 gap-0.5 rounded-[10px] border border-border bg-card p-0.5">
+      <div className="mb-3 grid grid-cols-2 gap-0.5 rounded-r8 border border-border bg-card p-0.5">
         <Button
           type="button"
           variant="ghost"
@@ -102,7 +104,7 @@ export function OrderEntryView<TPair extends string>({
           value={market}
           options={marketOptions}
           onChange={onMarketChange}
-          className="h-9 rounded-r8 border-border bg-card px-[11px] !text-control-lg font-semibold w-full text-[12px]"
+          className="h-9 rounded-r8 border-border bg-card px-[11px] !text-control-lg font-semibold w-full text-xs"
         />
       </FieldBlock>
 
@@ -114,14 +116,14 @@ export function OrderEntryView<TPair extends string>({
           searchable
           searchPlaceholder="Search symbol…"
           placeholder="Select symbol"
-          className="h-9 rounded-r8 border-border bg-card px-[11px] !text-control-lg font-semibold w-full text-[12px]"
+          className="h-9 rounded-r8 border-border bg-card px-[11px] !text-control-lg font-semibold w-full text-xs"
         />
       </FieldBlock>
 
       <FieldBlock label="Quantity">
         <div className="flex h-9 overflow-hidden rounded-r8 border border-border bg-card">
           <Input
-            className="h-full min-w-0 flex-1 rounded-none border-0 bg-transparent px-[11px] text-[11px] text-foreground shadow-none placeholder:text-muted-foreground/50 hover:bg-muted focus-visible:ring-0"
+            className="h-full min-w-0 flex-1 rounded-none border-0 bg-transparent px-[11px] !text-11 text-foreground shadow-none placeholder:text-muted-foreground/50 hover:bg-muted focus-visible:ring-0"
             type="number"
             inputMode="decimal"
             placeholder={unit === 'quote' ? `0.00 ${quoteCcy}` : '0.00'}
@@ -135,7 +137,7 @@ export function OrderEntryView<TPair extends string>({
               size="sm"
               variant="ghost"
               className={cn(
-                'h-full rounded-none px-[11px] trading-mono text-[11px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground',
+                'h-full rounded-none px-[11px] trading-mono !text-11 font-medium text-muted-foreground hover:bg-muted hover:text-foreground',
                 unit === 'asset' && 'bg-muted text-foreground',
               )}
               onClick={() => onUnitChange('asset')}
@@ -148,7 +150,7 @@ export function OrderEntryView<TPair extends string>({
               size="sm"
               variant="ghost"
               className={cn(
-                'h-full rounded-none px-[11px] trading-mono text-[11px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground',
+                'h-full rounded-none px-[11px] trading-mono !text-11 font-medium text-muted-foreground hover:bg-muted hover:text-foreground',
                 unit === 'quote' && 'bg-muted text-foreground',
               )}
               onClick={() => onUnitChange('quote')}
@@ -156,6 +158,13 @@ export function OrderEntryView<TPair extends string>({
               {quoteCcy}
             </Button>
           </div>
+        </div>
+
+        <div className="mt-1 flex items-center justify-between gap-2 !text-11 leading-4">
+          <span className="text-muted-foreground">Available balance</span>
+          <span className="trading-mono font-semibold text-foreground">
+            {availableBalanceText}
+          </span>
         </div>
       </FieldBlock>
 
@@ -181,8 +190,8 @@ export function OrderEntryView<TPair extends string>({
         </InfoPlaque>
       </FieldBlock>
 
-      <div className="mt-1 rounded-[10px] border border-border bg-card px-[13px] py-3">
-        <div className="mb-2.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground/60">
+      <div className="mt-1 rounded-r8 border border-border bg-card px-[13px] py-3">
+        <div className="mb-2.5 text-caption font-semibold uppercase tracking-[0.08em] text-muted-foreground/60">
           Order Summary
         </div>
 
@@ -215,7 +224,7 @@ export function OrderEntryView<TPair extends string>({
       {alert && (
         <div
           className={cn(
-            'mt-3 rounded-[10px] border px-3 py-2 text-xs leading-5',
+            'mt-3 rounded-r8 border px-3 py-2 text-xs leading-5',
             alert.kind === 'danger'
               ? 'border-destructive/20 bg-destructive/10 text-destructive'
               : 'border-primary/20 bg-primary/10 text-primary',
@@ -225,11 +234,11 @@ export function OrderEntryView<TPair extends string>({
         </div>
       )}
       <div className="mt-2 flex items-center justify-between rounded-r8 border border-border bg-card px-2.5 py-[7px] w-full">
-        <span className="text-[11px] font-medium text-muted-foreground">
+        <span className="!text-11 font-medium text-muted-foreground">
           {liquidityProvider} · Active LP
         </span>
         
-        <span className="inline-flex items-center gap-1.5 text-11 font-semibold text-success-action">
+        <span className="inline-flex items-center gap-1.5 !text-11 font-semibold text-success-action">
           <span
             className="inline-flex size-2 rounded-full bg-success-action animate-[pulse_1.4s_ease-in-out_infinite]"
             aria-hidden="true"
@@ -240,7 +249,7 @@ export function OrderEntryView<TPair extends string>({
       <Button
         type="button"
         className={cn(
-          'mt-2 h-11 rounded-[10px] text-[13px] font-bold tracking-[0.02em]',
+          'mt-2 h-11 rounded-r8 text-control-lg font-bold tracking-[0.02em]',
           side === 'buy'
             ? 'bg-success-action text-success-action-foreground hover:bg-success-action/90'
             : 'bg-danger-action text-danger-action-foreground hover:bg-danger-action/90',
@@ -271,7 +280,7 @@ function FieldBlock({
 
 function LabelText({ children }: { children: string }) {
   return (
-    <div className="mb-[5px] text-[11px] font-medium text-muted-foreground">
+    <div className="mb-[5px] !text-11 font-medium text-muted-foreground">
       {children}
     </div>
   );
@@ -293,7 +302,7 @@ function InfoPlaque({
     <div className="flex min-h-9 items-center gap-2 rounded-r8 border border-border bg-card px-[11px] py-2">
       <span
         className={cn(
-          'inline-flex shrink-0 items-center gap-1.5 rounded-full border px-[9px] py-[3px] text-[11px] font-bold tracking-[0.04em]',
+          'inline-flex shrink-0 items-center gap-1.5 rounded-full border px-[9px] py-[3px] !text-11 font-bold tracking-[0.04em]',
           tone === 'green'
             ? 'border-success-surface-strong bg-success-surface/10 text-success-action '
             : 'border-primary/25 bg-brand-surface text-primary',
@@ -317,7 +326,7 @@ function InfoPlaque({
         {badge}
       </span>
 
-      <span className="text-[11px] text-muted-foreground">{children}</span>
+      <span className="!text-11 text-muted-foreground">{children}</span>
     </div>
   );
 }
@@ -337,7 +346,7 @@ function SummaryRow({
     <div className="mb-1.5 flex items-center justify-between gap-3 last:mb-0">
       <span
         className={cn(
-          'text-[11px]',
+          '!text-11',
           strong ? 'font-bold text-muted-foreground ' : 'text-muted-foreground',
         )}
       >
@@ -346,8 +355,8 @@ function SummaryRow({
 
       <span
         className={cn(
-          'text-right font-mono text-[11px] font-medium text-foreground',
-          strong && 'text-[13px] font-bold',
+          'text-right font-mono !text-11 font-medium text-foreground',
+          strong && 'text-control-lg font-bold',
           valueClassName,
         )}
       >

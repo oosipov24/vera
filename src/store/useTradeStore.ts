@@ -25,7 +25,6 @@ export interface TradeState {
   executions: Execution[];
   transactions: Transaction[];
 
-  // ── Trade actions ──────────────────────────────────────────────────────────
   /**
    * Execute an RFQ order against current balances.
    * Returns an outcome the caller can surface as a toast / alert.
@@ -39,7 +38,6 @@ export interface TradeState {
     price: number;
   }): { ok: true; execution: Execution } | { ok: false; reason: string };
 
-  // ── Ledger actions ─────────────────────────────────────────────────────────
   /** Record a deposit (held as Pending until verified — balance not credited). */
   deposit(asset: AssetSymbol, amount: number, method: PaymentMethod): Transaction;
   /** Debit a withdrawal from balance + record it. Returns false if insufficient. */

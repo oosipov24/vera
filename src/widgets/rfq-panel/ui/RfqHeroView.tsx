@@ -41,7 +41,7 @@ export function RfqHeroView({
     <section className="flex flex-col gap-4 border-b border-border px-5 py-4">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="flex flex-col items-start gap-3">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground/60">
+          <span className="text-caption font-semibold uppercase tracking-[0.1em] text-muted-foreground/60">
             {base} / {quoteCcy} · OTC RFQ
           </span>
           <div className="flex items-center gap-3">
@@ -58,7 +58,7 @@ export function RfqHeroView({
 
         <div className="flex flex-col gap-3 lg:justify-end">
           <div className="text-left lg:text-right gap-2 flex flex-col">
-            <div className="text-[10px] font-normal tracking-wide text-muted-foreground">
+            <div className="text-caption font-normal tracking-wide text-muted-foreground">
               Notional
             </div>
 
@@ -95,7 +95,7 @@ export function RfqHeroView({
         />
 
         <div className="flex h-auto p-2 w-20 shrink-0 flex-col items-center justify-center rounded-xl border border-dropdown-border bg-dropdown-surface text-center mx-auto">
-          <div className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+          <div className="text-caption font-bold uppercase tracking-wide text-muted-foreground">
             Spread
           </div>
 
@@ -146,7 +146,7 @@ function QuoteCard({
     >
       <div
         className={cn(
-          'text-[10px] font-bold uppercase tracking-wide',
+          'text-caption font-bold uppercase tracking-wide',
           isBid ? 'text-success' : 'text-destructive',
         )}
       >
@@ -168,7 +168,7 @@ function QuoteCard({
       </div>
       <span
         className={cn(
-          'absolute bottom-3 right-3 rounded-md px-2 py-1 text-[10px] font-bold',
+          'absolute bottom-3 right-3 rounded-md px-2 py-1 text-caption font-bold',
           isBid
             ? 'bg-success/10 text-success'
             : 'bg-destructive/10 text-destructive',

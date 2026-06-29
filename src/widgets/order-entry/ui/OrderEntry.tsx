@@ -16,17 +16,26 @@ export function OrderEntry() {
     setUnit,
     setLiquidityProvider,
   } = useOrderStore();
+
   const submitOrder = useTradeStore((state) => state.submitOrder);
   const balances = useTradeStore((state) => state.balances);
   const pushToast = useUiStore((state) => state.pushToast);
 
   const { base, quote: quoteCcy } = splitPair(pair);
+
   const { raw, price, assetQty, total } = deriveTicket({
     qty,
     unit,
     side,
     quote,
   });
+
+  const initialCurrency = side === 'buy' ? quoteCcy : base;
+  const availableBalance = balances[initialCurrency] ?? 0;
+  const availableBalanceText = `${fmtAsset(
+    initialCurrency,
+    availableBalance,
+  )} ${initialCurrency}`;
 
   const pricePrecision = priceDecimals(price);
 
@@ -46,7 +55,8 @@ export function OrderEntry() {
       maximumFractionDigits: pricePrecision,
     });
 
-  const formatQuote = (value: number) => `${fmtAsset(quoteCcy, value)} ${quoteCcy}`;
+  const formatQuote = (value: number) =>
+    `${fmtAsset(quoteCcy, value)} ${quoteCcy}`;
 
   const summary = {
     pair: `${base} / ${quoteCcy}`,
@@ -104,6 +114,7 @@ export function OrderEntry() {
       unit={unit}
       base={base}
       quoteCcy={quoteCcy}
+      availableBalanceText={availableBalanceText}
       summary={summary}
       alert={alert}
       onPairChange={setPair}
@@ -139,17 +150,20 @@ function getBalanceAlert({
   if (side === 'sell' && assetQty > (balances[base] ?? 0)) {
     return {
       kind: 'danger' as const,
-      msg: `Insufficient ${base} — you hold ${fmtAsset(base, balances[base] ?? 0)} ${base}`,
+      msg: `Insufficient ${base} — you hold ${fmtAsset(
+        base,
+        balances[base] ?? 0,
+      )} ${base}`,
     };
   }
 
   if (side === 'buy' && total > (balances[quoteCcy] ?? 0)) {
     return {
       kind: 'danger' as const,
-      msg: `Insufficient ${quoteCcy} — need ${fmtAsset(quoteCcy, total)}, have ${fmtAsset(
+      msg: `Insufficient ${quoteCcy} — need ${fmtAsset(
         quoteCcy,
-        balances[quoteCcy] ?? 0,
-      )}`,
+        total,
+      )}, have ${fmtAsset(quoteCcy, balances[quoteCcy] ?? 0)}`,
     };
   }
 

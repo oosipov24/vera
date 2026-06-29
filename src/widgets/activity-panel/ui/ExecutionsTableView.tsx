@@ -9,6 +9,8 @@ import {
 } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 
+import { TooltipCell } from '@/shared/ui/feedback';
+
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -102,9 +104,7 @@ export function ExecutionsTableView({
     () => [
       columnHelper.accessor('id', {
         header: 'Order ID',
-        cell: (info) => (
-          <span className="font-mono text-dropdown-muted text-control-lg">{info.getValue()}</span>
-        ),
+        cell: (info) => <CopyableShortId value={info.getValue()} />,
       }),
       columnHelper.accessor('pair', {
         header: 'Pair',
@@ -158,17 +158,19 @@ export function ExecutionsTableView({
       columnHelper.accessor('created', {
         header: 'Created',
         cell: (info) => (
-          <span className="font-mono text-xs text-dropdown-muted">
-            {info.getValue()}
-          </span>
+          <TruncatedCell
+            value={info.getValue()}
+            className="font-mono text-xs text-dropdown-muted"
+          />
         ),
       }),
-      columnHelper.accessor('executed', {
-        header: 'Executed',
+      columnHelper.accessor('created', {
+        header: 'Created',
         cell: (info) => (
-          <span className="font-mono text-xs text-dropdown-muted">
-            {info.getValue()}
-          </span>
+          <TruncatedCell
+            value={info.getValue()}
+            className="font-mono text-xs text-dropdown-muted"
+          />
         ),
       }),
     ],
@@ -233,7 +235,7 @@ export function ExecutionsTableView({
       </div>
 
       <div className="min-h-0 flex-1 overflow-auto">
-        <table className="w-full border-collapse text-xs">
+        <table className="min-w-[760px] border-collapse text-xs lg:w-full lg:min-w-0 lg:table-fixed">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr
@@ -261,12 +263,12 @@ export function ExecutionsTableView({
             {visibleRows.map((row) => (
               <tr
                 key={row.id}
-                className="border-b border-border last:border-b-0 hover:bg-muted/40 "
+                className="border-b !border-border-point last:border-b-0 hover:bg-muted/40 "
               >
                 {row.getVisibleCells().map((cell) => (
                   <td
                     key={cell.id}
-                    className="whitespace-nowrap px-2 py-2 align-middle text-xs text-muted-foreground"
+                    className="overflow-hidden text-ellipsis whitespace-nowrap px-2 py-2 align-middle text-xs text-muted-foreground"
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
@@ -355,6 +357,57 @@ export function ExecutionsTableView({
 
 function getColumnLabel(columnId: string) {
   return COLUMN_LABELS[columnId] ?? columnId;
+}
+
+function CopyableShortId({ value }: { value: string }) {
+  const [copied, setCopied] = useState(false);
+  const shortValue = value.length > 5 ? `${value.slice(0, 5)}…` : value;
+
+  const onCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+
+      window.setTimeout(() => {
+        setCopied(false);
+      }, 1200);
+    } catch {
+      setCopied(false);
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      title={value}
+      aria-label={`Copy full order id ${value}`}
+      onClick={onCopy}
+      className="font-mono text-control-lg text-dropdown-muted underline-offset-4 transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+    >
+      {copied ? 'Copied' : shortValue}
+    </button>
+  );
+}
+
+
+function TruncatedCell({
+  value,
+  className,
+}: {
+  value: string;
+  className?: string;
+}) {
+  return (
+    <TooltipCell
+      text={value}
+      className={cn(
+        'block max-w-full cursor-default overflow-hidden text-ellipsis whitespace-nowrap',
+        className,
+      )}
+    >
+      {value}
+    </TooltipCell>
+  );
 }
 
 function SideTag({ side }: { side: string }) {

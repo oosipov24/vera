@@ -310,7 +310,7 @@ export function TransactionsTableView({
             {visibleRows.map((row) => (
               <tr
                 key={row.id}
-                className="border-b border-border last:border-b-0 hover:bg-muted/40"
+                className="border-b border-border-point last:border-b-0 hover:bg-muted/40"
               >
                 {row.getVisibleCells().map((cell) => (
                   <td
@@ -377,7 +377,7 @@ export function TransactionsTableView({
                     checked={column.getIsVisible()}
                     onCheckedChange={(value) => column.toggleVisibility(Boolean(value))}
                     onSelect={(event) => event.preventDefault()}
-                    className="h-8 rounded-r6 px-2 pr-8 text-xs font-medium text-muted-foreground focus:bg-muted focus:text-foreground"
+                    className="h-8 rounded-r6 px-2 pr-8 text-xs !font-mono font-medium text-muted-foreground focus:bg-muted focus:text-foreground"
                   >
                     {getColumnLabel(column.id)}
                   </DropdownMenuCheckboxItem>
@@ -416,7 +416,7 @@ function PageSizeDropdown({
           type="button"
           variant="outline"
           size="sm"
-          className="h-8 w-14 justify-between rounded-r8 border-border bg-popover px-2 py-1 text-xs font-semibold text-muted-foreground shadow-none hover:bg-accent hover:text-foreground"
+          className="h-8 w-14 justify-between rounded-r8 border-border bg-popover px-2 py-1 text-xs font-semibold  !font-mono text-muted-foreground shadow-none hover:bg-accent hover:text-foreground"
         >
           {value}
           <ChevronDown className="size-3.5 text-muted-foreground" />
